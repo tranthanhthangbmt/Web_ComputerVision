@@ -1,0 +1,101 @@
+﻿Slide 1: CHƯƠNG 1 (TIẾT 1) - TỔNG QUAN VỀ THỊ GIÁC MÁY TÍNH
+Người 1: Chào các bạn sinh viên lớp IT23M. Chào mừng các em đến với môn học đầy thú vị và cũng nhiều thách thức: Thị giác máy tính (Computer Vision). Hôm nay chúng ta sẽ đi vào Tiết 1 của Chương 1: Tổng quan, Ứng dụng và những Thách thức. Các em hãy nhìn lên Slide đầu tiên. Các em thấy gì trong ba bức ảnh này?
+Người 2: Dạ, em thấy bên trái là góc nhìn từ một chiếc xe ô tô đang chạy, có các khung xanh đỏ bao quanh xe cộ và người đi đường. Ở giữa là ảnh chụp cắt lớp bộ não người. Còn bên phải là khuôn mặt một cô gái với lưới định vị 3D phủ lên, giống như công nghệ FaceID.
+Người 1: Chính xác. Ba hình ảnh này đại diện cho ba mũi nhọn quyền lực nhất của môn học này: Xe tự hành, Y tế và An ninh. Nếu như Web hay App giúp con người tương tác với dữ liệu, thì Thị giác máy tính giúp máy móc thực sự “nhìn” thấy thế giới như chúng ta. Bây giờ, chúng ta hãy xem mục tiêu của bài học hôm nay là gì.
+
+Slide 2: MỤC TIÊU BÀI HỌC
+Người 1: Mời các em chuyển sang Slide số 2. Để làm chủ môn này, chúng ta không chỉ code (lập trình), mà phải hiểu bản chất vấn đề. Có 4 mục tiêu chính chúng ta cần đạt được trong buổi hôm nay.
+Người 2: Dạ, nhìn vào bảng trên slide, em thấy mục tiêu đầu tiên là “Hiểu Khái Niệm”. Có phải chúng ta cần định nghĩa chính xác cơ chế máy tính “nhìn” thế giới không ạ?
+Người 1: Đúng vậy. Nhưng quan trọng hơn là mục tiêu số 2: “Phân Biệt”. Rất nhiều bạn IT nhầm lẫn giữa Thị giác máy tính (CV), Xử lý ảnh (IP) và Học máy (ML). Hôm nay chúng ta phải rạch ròi được sự khác nhau cốt lõi giữa chúng.
+Người 2: Em thấy hai mục tiêu còn lại có vẻ thực tế hơn, đó là “Khám phá Ứng dụng” trong y tế, an ninh… và “Nhận diện Thách thức”. Thách thức ở đây cụ thể là gì vậy thầy?
+Người 1: Đó là những khó khăn về mặt khoa học như sự thay đổi góc nhìn, ánh sáng hay bị che khuất. Máy tính rất “ngốc” so với mắt người, và nhiệm vụ của các kỹ sư IT23M chúng ta là giải quyết những bài toán hóc búa đó. Cụ thể thế nào, chúng ta đi vào định nghĩa ngay sau đây.
+
+Slide 3: THỊ GIÁC MÁY TÍNH LÀ GÌ? - BÀI TOÁN NGƯỢC
+Người 1: Mời các em sang Slide 3. Đây là slide quan trọng nhất về mặt lý thuyết nền tảng. Nhìn vào sơ đồ: Chúng ta có một ngôi nhà thật (Thế giới 3D) , qua camera thu nhận biến thành một bức ảnh số (2D). Vậy Thị giác máy tính nằm ở đâu trong quy trình này?
+Người 2: Dạ, theo sơ đồ thì Thị giác máy tính là bước xử lý từ “Ảnh số 2D” để cho ra kết quả là “Mô hình 3D” hoặc các nhãn ngữ nghĩa như “House” (ngôi nhà), “Tree” (cây) đúng không ạ?.
+Người 1: Rất chuẩn. Vì vậy, người ta định nghĩa Thị giác máy tính là lĩnh vực khoa học dạy cho máy móc cách “nhìn” và “hiểu” thế giới. Nhưng các em hãy chú ý dòng chữ này: “Đây là một Bài Toán Ngược (Inverse Problem)”. Tại sao lại gọi là “Ngược”?
+Người 2: Có phải vì bình thường chúng ta nhìn thế giới 3D rồi chụp lại thành ảnh 2D (xuôi), còn máy tính thì phải từ tấm ảnh 2D phẳng lì đó “suy luận ngược” lại ra không gian 3D và thông tin gốc không ạ?.
+Người 1: Xuất sắc. Đó chính là vấn đề. Khi chụp ảnh, chúng ta bị mất thông tin chiều sâu (từ 3D nén xuống 2D). Nhiệm vụ của thuật toán CV là phục hồi thông tin 3D chưa biết từ dữ liệu 2D không đầy đủ đó. Đó là lý do tại sao môn này khó, nhưng cũng vì thế mà nó cực kỳ thú vị đối với dân lập trình như chúng ta.
+
+Slide 4: KHOẢNG CÁCH NGỮ NGHĨA (SEMANTIC GAP)
+Người 1: Mời các em chuyển sang Slide số 4. Đây là lý do tại sao lập trình viên CV lương thường cao, nhưng tóc cũng rụng nhiều hơn. Các em nhìn vào hình ảnh chú chó này.
+Người 2: Dạ, một chú chó Golden rất vui vẻ đang chạy trên cỏ ạ.
+Người 1: Đúng, đó là Thị giác con người. Chúng ta nhìn và hiểu ngay lập tức các khái niệm trừu tượng: “chó”, “cỏ”, “vui vẻ”. Nhưng hãy nhìn sang phần bên phải slide, những ma trận số chằng chịt kia. Đó mới là thứ máy tính thực sự nhìn thấy.
+Người 2: À, tức là máy tính không hề biết con chó là gì, nó chỉ thấy một mảng khổng lồ các con số từ 0 đến 255 biểu diễn cường độ điểm ảnh thôi đúng không thầy?
+Người 1: Chính xác. Một bức ảnh Full HD là một ma trận 1920x1080x3. Khoảng cách giữa “dữ liệu thô” (những con số vô tri này) và “ý nghĩa thực tế” (đây là con chó) được gọi là Semantic Gap (Khoảng cách ngữ nghĩa). Nhiệm vụ của lớp IT23M chúng ta là viết code để lấp đầy khoảng trống đó.
+
+Slide 5: MỐI LIÊN HỆ LIÊN NGÀNH (THE INTERDISCIPLINARY CONNECTION)
+Người 1: Vậy để lấp đầy khoảng trống đó, chúng ta cần những công cụ gì? Mời các em xem Slide 5. Đây là biểu đồ Venn thể hiện vị trí của môn học này trong thế giới công nghệ.
+Người 2: Em thấy Thị giác máy tính (CV) nằm ở giữa, giao thoa với Xử lý ảnh (IP), Học máy (ML) và cả AI. Nhưng thầy ơi, Xử lý ảnh và Thị giác máy tính khác nhau chỗ nào ạ? Em thấy nhiều người hay dùng lẫn lộn.
+Người 1: Câu hỏi rất hay. Hãy nhìn vào định nghĩa trên slide:
+• Xử lý ảnh (IP): Đầu vào là ảnh, đầu ra cũng là ảnh. Ví dụ: Photoshop, làm mịn da, tăng độ sáng.
+• Thị giác máy tính (CV): Đầu vào là ảnh, nhưng đầu ra là thông tin. Ví dụ: Từ bức ảnh, máy tính trả về kết quả “Đây là khuôn mặt của bạn An”.
+Người 2: Em hiểu rồi. Còn Học máy (Machine Learning) đóng vai trò gì ở đây ạ?
+Người 1: ML đóng vai trò là “bộ não”. Thay vì chúng ta lập trình cứng nhắc (if/else), ML giúp máy tính tự học các mẫu (patterns) từ dữ liệu ảnh để nhận diện đối tượng. Còn AI là bước mở rộng hơn, khi máy tính không chỉ nhìn mà còn hành động và tương tác với môi trường dựa trên những gì nó thấy.
+
+Slide 6: LƯỢC SỬ PHÁT TRIỂN (HISTORY OF CV)
+Người 1: Chúng ta sang Slide 6. Để hiểu hiện tại, phải biết quá khứ. Ngành này đã đi một chặng đường dài từ những năm 1960.
+Người 2: Nhìn vào hình đầu tiên thập niên 60, em thấy có vẻ rất đơn giản, chỉ là các khối hình học.
+Người 1: Đúng vậy, thời đó tại MIT người ta chỉ dám mơ về “Microworlds” - thế giới vi mô với các hình khối đơn giản. Đến thập niên 80, nhà khoa học David Marr đưa ra lý thuyết nền tảng về việc xây dựng mô hình 3D từ các bản phác thảo (Sketches).
+Người 2: Còn giai đoạn những năm 2000 thì sao ạ? Em thấy hình ảnh tòa nhà với rất nhiều đường kẻ vàng.
+Người 1: Đó là kỷ nguyên của SIFT và Feature Engineering. Lúc này, các kỹ sư phải “cầm tay chỉ việc”, tự thiết kế các thuật toán trích xuất đặc trưng thủ công. Nhưng bước ngoặt thực sự đến vào năm 2012. Em thấy hình ảnh mạng lưới chằng chịt ở cuối slide chứ?
+Người 2: Dạ thấy, đó là kiến trúc CNN AlexNet đúng không ạ?
+Người 1: Chính xác. Đây là thời điểm bùng nổ của Deep Learning. Thay vì con người phải thiết kế đặc trưng, mạng nơ-ron (CNN) đã cho phép máy tính tự động học đặc trưng từ dữ liệu. Đây chính là công nghệ nền tảng mà chúng ta sẽ học kỹ ở chương 6 của môn này.
+
+Slide 7: ỨNG DỤNG TRONG GIAO THÔNG VÀ AN NINH
+Người 1: Chúng ta vừa đi qua lý thuyết và lịch sử. Bây giờ, hãy xem thế giới đang dùng Thị giác máy tính để làm gì. Mời các em sang Slide 7: Ứng dụng trong Giao thông và An ninh. Các em nhìn vào bức ảnh bên trái, đây là góc nhìn của cái gì?
+Người 2: Dạ, đây giống như màn hình hiển thị của một chiếc xe Tesla hoặc xe tự lái ạ. Em thấy nó đang vẽ các khung (bounding box) quanh các xe khác và tô màu làn đường.
+Người 1: Đúng vậy. Trong ngành công nghiệp ô tô tự hành, Thị giác máy tính đóng vai trò là “cảm biến cốt lõi”. Nó không chỉ nhận dạng làn đường, biển báo mà còn thực hiện thuật toán SLAM (Simultaneous Localization and Mapping) để định vị xe trong thời gian thực. Còn bức ảnh bên phải thì quá quen thuộc rồi đúng không?
+Người 2: Dạ, FaceID trên iPhone ạ. Nhưng thầy ơi, trong an ninh, ngoài mở khóa điện thoại thì nó còn làm gì nữa ạ?
+Người 1: Trong các hệ thống giám sát quy mô lớn, CV giúp phát hiện hành vi bất thường trong đám đông hoặc truy vết đối tượng. Với lớp IT23M, sau này các em có thể làm việc tại các công ty phát triển giải pháp Smart City, nơi những thuật toán này được triển khai thực tế.
+
+Slide 8: ỨNG DỤNG TRONG Y TẾ VÀ THƯƠNG MẠI
+Người 1: Tiếp tục với Slide 8. Đây là hai lĩnh vực hái ra tiền nhưng cũng đòi hỏi độ chính xác cực cao: Y tế và Bán lẻ.
+Người 2: Em nhìn thấy bức ảnh chụp não bộ và đáy mắt. Có phải máy tính sẽ thay thế bác sĩ chẩn đoán bệnh không thầy?
+Người 1: Chưa thay thế hoàn toàn, nhưng hỗ trợ đắc lực. Hệ thống CV phân tích ảnh X-quang, CT, MRI để phát hiện sớm khối u hoặc bệnh võng mạc tiểu đường nhanh hơn mắt thường rất nhiều. Thậm chí nó còn hỗ trợ robot phẫu thuật chính xác từng milimet. Còn ở bức ảnh dưới, các em có nhận ra mô hình cửa hàng nào không?
+Người 2: Nhìn các khung xanh bao quanh người mua hàng, em đoán là mô hình cửa hàng không thu ngân kiểu Amazon Go.
+Người 1: Chuẩn xác. Đây là Smart Retail. Hệ thống camera sẽ theo dõi khách hàng lấy món đồ nào để tự động trừ tiền vào tài khoản, khách chỉ việc cầm đồ và đi ra. Ngoài ra, nó còn phân tích hành vi khách hàng xem họ hay dừng lại ở quầy nào nhất.
+
+Slide 9: ỨNG DỤNG TRONG NÔNG NGHIỆP VÀ GIẢI TRÍ
+Người 1: Cuối cùng trong phần ứng dụng, mời các em xem Slide 9. Có vẻ hơi trái ngược nhau: một bên là đồng ruộng, một bên là phim ảnh.
+Người 2: Bức ảnh cánh đồng nhìn từ trên cao có các nhãn “Healthy” (Khỏe mạnh) và “Unhealthy” (Không khỏe). Có phải đây là dùng Drone để kiểm tra cây trồng không ạ?
+Người 1: Đúng vậy. Đây là Nông nghiệp thông minh. Drone bay qua cánh đồng, chụp ảnh và dùng thuật toán phân loại để phát hiện sâu bệnh hoặc đánh giá độ chín của nông sản, giúp thu hoạch tự động. Còn bên phải, fan của phim Marvel chắc chắn biết kỹ thuật này.
+Người 2: Dạ, Motion Tracking (Bắt chuyển động). Diễn viên mặc bộ đồ đen có gắn cảm biến để máy tính ghép vật thể 3D vào.
+Người 1: Chính xác. Không chỉ phim ảnh, mà cả AR/VR (Thực tế ảo tăng cường) như các filter trên TikTok, Facebook mà các em dùng hàng ngày đều là sản phẩm của Thị giác máy tính. Các em thấy đấy, cơ hội nghề nghiệp của môn này trải rộng từ làm nông nghiệp công nghệ cao đến làm kỹ xảo điện ảnh.
+
+Slide 10: CASE STUDY - HỆ THỐNG CAMERA AN NINH THÔNG MINH
+Người 1: Lý thuyết là vậy, giờ chúng ta xem một quy trình xử lý (pipeline) cụ thể trong thực tế. Mời các em xem Slide 10. Đây là logic của một hệ thống Camera AI mà các em hoàn toàn có thể xây dựng trong đồ án môn học này. Hãy nhìn 4 bước xử lý trên hình.
+Người 2: Dạ, em thấy quy trình bắt đầu bằng bước 1 là “Phát hiện chuyển động”. Có phải nó so sánh các pixel giữa các khung hình liên tiếp để xem có gì thay đổi không ạ?
+Người 1: Đúng vậy. Sau đó đến bước 2: “Tách nền” (Background Subtraction). Máy tính sẽ trừ ảnh hiện tại cho mô hình nền tĩnh để lọc ra đối tượng. Nhưng lúc này máy tính mới chỉ biết “có cái gì đó đang di chuyển”, chưa biết là cái gì. Vậy bước 3 làm gì?
+Người 2: Bước 3 là “Phân loại đối tượng”. Lúc này mới dùng đến mạng CNN để xác định đây là người (Person: 98%), xe hay vật nuôi. Cuối cùng là bước 4 “Phân tích hành vi” để đưa ra cảnh báo nếu đi vào vùng cấm.
+Người 1: Rất tốt. Quy trình này nghe có vẻ trơn tru, nhưng thực tế để làm được nó, chúng ta phải đối mặt với vô vàn khó khăn. Chúng ta hãy sang các slide tiếp theo để xem tại sao thị giác máy tính lại khó đến thế.
+
+Slide 11: THÁCH THỨC KHOA HỌC - BIẾN THIÊN GÓC NHÌN
+Người 1: Slide 11: Biến thiên góc nhìn (Viewpoint Variation). Các em nhìn 3 bức ảnh Tượng Nữ Thần Tự Do. Đối với mắt chúng ta, đây rõ ràng là cùng một bức tượng. Nhưng với máy tính thì sao?
+Người 2: Dạ, với máy tính thì đây là 3 ma trận số hoàn toàn khác nhau. Ảnh trái nhìn từ dưới lên, ảnh giữa nhìn từ trên cao xuống. Các giá trị pixel không hề trùng khớp nhau.
+Người 1: Chính xác. Một vật thể 3D duy nhất tạo ra vô số hình ảnh 2D khác nhau khi vị trí camera thay đổi. Thách thức của các em là viết thuật toán sao cho dù ma trận số thay đổi, máy vẫn nhận ra đó là cùng một vật thể.
+
+Slide 12: THÁCH THỨC - TỶ LỆ VÀ BIẾN DẠNG
+Người 1: Chưa hết đâu, mời các em sang Slide 12. Chúng ta có hai vấn đề nữa: Tỷ lệ (Scale) và Biến dạng (Deformation).
+Người 2: Về tỷ lệ thì em hiểu. Như trong hình, cái xe ở gần thì to, xe ở xa thì bé xíu. Bộ lọc của chúng ta phải nhận diện được xe ở mọi kích thước. Nhưng còn hình cô vũ công ballet kia là sao ạ?
+Người 1: Đó là ví dụ về Biến dạng. Cơ thể người là vật thể không cứng (non-rigid). Cô ấy có thể đứng thẳng, hoặc uốn cong người như trong hình. Máy tính không thể nhớ một hình dạng cố định, mà phải học được cấu trúc xương khớp để hiểu dù ở tư thế nào, đó vẫn là một con người.
+
+PHẦN 5: THÁCH THỨC MÔI TRƯỜNG VÀ TỔNG KẾT (SLIDE 13 - 15)
+Slide 13: THÁCH THỨC - CHE KHUẤT VÀ ÁNH SÁNG
+Người 1: Chúng ta tiếp tục với những kẻ thù lớn nhất của camera: Vật cản và Ánh sáng. Mời các em xem Slide 13. Bức ảnh con mèo này có gì đặc biệt?
+Người 2: Dạ, con mèo bị cái tay vịn ghế sofa che mất phần thân, chỉ thấy mỗi cái đầu và cái đuôi. Đây là vấn đề Che khuất (Occlusion).
+Người 1: Đúng vậy. Máy tính phải học cách “suy luận” toàn bộ đối tượng từ các phần nhìn thấy, giống như con người vậy. Còn hai bức ảnh khuôn mặt cô gái bên cạnh?
+Người 2: Một tấm sáng rõ, một tấm bị bóng đen che nửa mặt. Đây là vấn đề Ánh sáng (Illumination). Cường độ sáng thay đổi làm giá trị pixel thay đổi hoàn toàn, khiến việc nhận diện dựa trên màu sắc trở nên vô dụng.
+
+Slide 14: THÁCH THỨC - ĐA DẠNG TRONG CÙNG LỚP
+Người 1: Thách thức cuối cùng, Slide 14: Đa dạng trong cùng lớp (Intra-class Variation). Các em nhìn bông hoa này, nó héo khô, màu nâu tím, nhăn nheo. Tại sao máy tính vẫn phải gọi nó là “Hoa Tulip”?
+Người 2: Dạ, vì bản chất nó vẫn là hoa Tulip. Nhưng nếu chúng ta lập trình luật đơn giản kiểu “Hoa Tulip phải màu đỏ” thì chắc chắn sai trường hợp này.
+Người 1: Rất chuẩn. Vì vậy, máy tính cần học được biểu diễn bất biến (invariant representation). Tức là nắm bắt được cái “chất” của đối tượng bất chấp sự thay đổi về hình thức bên ngoài.
+
+Slide 15: TỔNG KẾT VÀ HƯỚNG DẪN TIẾP THEO
+Người 1: Chúng ta đã đi hết bài mở đầu. Mời các em xem Slide 15 để tổng kết lại. Hôm nay các em cần nhớ 3 ý chính:
+1. CV giải quyết bài toán ngược từ 2D sang 3D/Ngữ nghĩa.
+2. Chúng ta phải vượt qua “Khoảng cách ngữ nghĩa” và các biến thiên vật lý chúng ta vừa phân tích.
+3. Ứng dụng của nó đang thay đổi thế giới trong Y tế, Giao thông, An ninh.
+Người 2: Dạ, vậy để chuẩn bị cho buổi thực hành và bài học sau, chúng em cần làm gì ạ?
+Người 1: Về nhà, các em hãy cài đặt môi trường Python và OpenCV theo hướng dẫn ở Phụ lục A. Đồng thời, đọc trước mục 1.4 về Ánh sáng & Màu sắc và 1.5 về Mô hình Camera. Tiết sau chúng ta sẽ bắt đầu đụng vào toán và code. Cảm ơn cả lớp!

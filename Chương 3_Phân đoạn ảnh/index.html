@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 3: Phân đoạn ảnh</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="chapter-header">
+        <div class="container flex justify-between items-center" style="display: flex;">
+            <a href="../index.html" class="text-gray-500 hover:text-indigo-600"
+                style="text-decoration: none; color: #6b7280;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại Dashboard
+            </a>
+            <h1 class="chapter-title" id="chapter-title">Chương 3: Phân đoạn ảnh</h1>
+            <div></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tabs Nav -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'theory')">
+                <i class="fa-solid fa-book mr-2"></i> Lý thuyết
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'practice')">
+                <i class="fa-solid fa-code mr-2"></i> Thực hành
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'quiz')">
+                <i class="fa-solid fa-puzzle-piece mr-2"></i> Trắc nghiệm
+            </button>
+        </div>
+
+        <!-- Tab Content: Theory -->
+        <div id="theory" class="tab-content active">
+            <div class="bg-white p-4 rounded-xl shadow-sm" style="height: 800px;">
+                <!-- PDF Viewer -->
+                <iframe id="pdf-frame" width="100%" height="100%" style="border: none;"></iframe>
+            </div>
+        </div>
+
+        <!-- Tab Content: Practice -->
+        <div id="practice" class="tab-content">
+            <div class="notebook-section">
+                <h3 class="text-xl font-bold mb-4">📂 Bài tập & Google Colab</h3>
+                <table class="notebook-table">
+                    <thead>
+                        <tr>
+                            <th>Tuần</th>
+                            <th>Tên Notebook/Bài tập</th>
+                            <th>Mức độ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notebook-list">
+                        <tr>
+                            <td colspan="4" class="text-center">Đang cập nhật bài tập...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content: Quiz -->
+        <div id="quiz" class="tab-content">
+            <!-- Dynamic Quiz Link -->
+            <div class="bg-white p-6 rounded-xl shadow-sm h-full">
+                <h3 class="mb-4 text-center font-bold text-gray-700">Làm Bài Trắc Nghiệm Chương 3</h3>
+                <iframe id="quiz-frame" class="quiz-frame" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Computer Vision Course.</p>
+    </footer>
+
+    <script>
+        // Tab function
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove('active');
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.className += " active";
+        }
+
+        const config = {
+            pdfPath: 'Tai_lieu_Chuong_3.pdf',
+            quizCsv: '../../Quiz/index.html?module=MD_Chuong3.csv&name=Chương%203:%20Phân%20Đoạn%20Ảnh'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewerPath = '../../pdf_viewer_template.html';
+            document.getElementById('pdf-frame').src = `${viewerPath}?file=${encodeURIComponent(config.pdfPath)}`;
+            document.getElementById('quiz-frame').src = config.quizCsv;
+        });
+    </script>
+</body>
+
+</html>

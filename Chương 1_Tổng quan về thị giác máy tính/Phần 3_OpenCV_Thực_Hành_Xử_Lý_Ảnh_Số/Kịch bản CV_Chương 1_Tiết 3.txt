@@ -1,0 +1,100 @@
+﻿Slide 1: TIÊU ĐỀ - THỰC HÀNH CHƯƠNG 1: LÀM QUEN VỚI OPENCV & XỬ LÝ ẢNH SỐ
+Người 1: Chào các bạn sinh viên lớp IT23M. Chào mừng các em đến với Tiết thực hành số 3 của môn Thị giác máy tính. Như các em đã thấy trên màn hình, hôm nay chúng ta sẽ đi vào nội dung cốt lõi: “Làm quen với OpenCV và Xử lý ảnh số”. Nếu như ở các tiết lý thuyết trước, chúng ta nói nhiều về khái niệm, thì hôm nay mục tiêu là chuyển từ những ma trận số khô khan trong NumPy thành các ứng dụng Camera thực tế mà mắt thường có thể nhìn thấy được.
+Người 2: Thưa thầy, em nhìn vào hình nền của slide này thấy rất nhiều con số lộn xộn như 120, 100, 128…. Có phải đây là cách mà máy tính “nhìn” thấy một bức ảnh không ạ?
+Người 1: Rất chính xác. Em đã nắm bắt vấn đề rất nhanh. Với con người, chúng ta thấy màu sắc, hình dáng, nhưng với máy tính, tất cả chỉ là các con số đại diện cho giá trị điểm ảnh, hay còn gọi là Pixel Value. Các số liệu em thấy như 200, 100, 110 chính là cường độ sáng tại từng điểm ảnh. Và nhiệm vụ của chúng ta hôm nay là dùng OpenCV để thao tác trên các con số này. Chúng ta bắt đầu nhé.
+
+Slide 2: MỤC TIÊU BÀI THỰC HÀNH (AGENDA)
+Người 1: Mời cả lớp nhìn sang Slide số 2. Đây là lộ trình, hay còn gọi là Agenda của buổi học hôm nay. Chúng ta sẽ đi qua 4 trạm dừng chân chính để chinh phục bài thực hành này. Thứ nhất, chúng ta cần chuẩn bị “Môi trường”. Dù các em dùng Google Colab hay cài đặt IDE cục bộ trên máy tính cá nhân như VS Code hay PyCharm thì việc thiết lập đúng ngay từ đầu là rất quan trọng. Thứ hai, chúng ta sẽ ôn lại “Cấu trúc dữ liệu”. Các em phải khắc cốt ghi tâm rằng: Trong lập trình thị giác máy tính, Ảnh chính là một ma trận số được quản lý bởi thư viện NumPy.
+Người 2: Dạ, vậy còn phần số 3 và số 4 thì sao ạ? Có vẻ như phần Input Output sẽ liên quan đến việc đọc file đúng không thầy?
+Người 1: Đúng vậy. Phần 3 là “Input và Output”. Chúng ta sẽ học cách Đọc ảnh từ file, Ghi ảnh ra file, và quan trọng nhất là Hiển thị chúng lên màn hình hoặc lấy dữ liệu trực tiếp từ Camera. Cuối cùng, phần 4 là “Xử lý cơ bản”. Chúng ta sẽ thử làm các phép toán như chuyển đổi không gian màu, vẽ các hình khối cơ bản lên ảnh, và kỹ thuật phân ngưỡng hay còn gọi là thresholding. Bốn bước này sẽ là nền móng cho đồ án môn học của lớp IT23M sau này.
+
+Slide 3: CÔNG CỤ VÀ TÀI NGUYÊN HỌC TẬP (THE STACK)
+Người 1: Để làm được những điều trên, chúng ta cần vũ khí. Mời các em xem sơ đồ phân cấp các công cụ ở Slide 3. Hãy tưởng tượng đây là một tòa tháp 3 tầng. Tầng đáy, nền móng vững chắc nhất chính là NumPy. Đây là lõi toán học (Math Core) dùng để xử lý các mảng đa chiều. Nếu không có NumPy, chúng ta không thể tính toán trên ảnh được. Tầng giữa là OpenCV, đây là “động cơ thị giác” (Vision Engine) chứa các thuật toán xử lý ảnh chuyên sâu. Và tầng trên cùng là Matplotlib, công cụ dùng để hiển thị (Display) kết quả hình ảnh cho chúng ta xem, đặc biệt hữu dụng khi các em chạy code trên Jupyter Notebook.
+Người 2: Thưa thầy, em thấy trong phần Môi trường có nhắc đến Google Colab và việc “mount Google Drive”. Tại sao bước này lại bắt buộc ạ? Em tưởng cứ upload ảnh lên là dùng được?
+Người 1: Một câu hỏi rất thực tế. Google Colab là môi trường đám mây (Cloud), nó rất mạnh vì hỗ trợ GPU miễn phí. Tuy nhiên, vì nó chạy trên máy chủ của Google, nó không thể tự động nhìn thấy các file ảnh nằm trong Google Drive của em được. Do đó, dòng lưu ý quan trọng nhất ở đây là: “Mount Google Drive là bước bắt buộc khi dùng Colab”. Em cần cấp quyền để Colab truy cập vào Drive, từ đó mới lấy được dữ liệu ảnh để xử lý. Các em nhớ kỹ điều này để tránh lỗi “File not found” khi chạy code nhé. Ngoài ra, các em có thể tham khảo thêm Notebook số 1, số 6 và tài liệu từ khóa học CS231n để hiểu sâu hơn.
+
+Slide 4: LÝ THUYẾT CỐT LÕI - ẢNH LÀ MẢNG SỐ & CẠM BẪY BGR
+Người 1: Mời các em chuyển sang Slide số 4. Đây là slide quan trọng nhất về mặt lý thuyết trong bài hôm nay: “Ảnh là mảng số”. Nhìn vào hình minh họa ở giữa, các em thấy một bức ảnh màu thực chất được tạo thành từ 3 lớp chồng lên nhau. Chúng ta gọi đó là 3 kênh màu (Channels): Đỏ (Red), Xanh lá (Green) và Xanh dương (Blue). Vì vậy, về mặt toán học, một bức ảnh là một ma trận 3 chiều với các kích thước: Chiều cao (Height), Chiều rộng (Width) và Số kênh (Channels).
+Người 2: Thưa thầy, em thấy bên dưới có một cái khung cảnh báo màu đỏ ghi là “Cạm bẫy BGR” (The BGR Trap). Tại sao bức ảnh khuôn mặt bên phải lại có màu da xanh lè như người ngoài hành tinh vậy ạ?
+Người 1: Đó chính là cái bẫy mà thầy muốn nhắc các em lớp IT23M. Theo chuẩn quốc tế và thư viện Matplotlib, ảnh màu được sắp xếp theo thứ tự R-G-B (Đỏ trước, Xanh sau). Nhưng riêng ông OpenCV lại mặc định đọc ảnh theo thứ tự ngược lại là B-G-R (Xanh dương trước, Đỏ sau). Do đó, nếu các em đọc ảnh bằng OpenCV mà hiển thị ngay bằng Matplotlib mà không hoán đổi kênh màu, kênh Đỏ (da mặt) sẽ bị hiển thị thành kênh Xanh dương, tạo ra bức ảnh “người da xanh” như em thấy. Đây là lỗi kinh điển mà 90% người mới bắt đầu đều gặp phải. Hãy nhớ kỹ: Phải chuyển đổi màu trước khi hiển thị!
+
+Slide 5: THAO TÁC NHẬP/XUẤT CƠ BẢN (INPUT/OUTPUT)
+Người 1: Sau khi hiểu cấu trúc ảnh, chúng ta sang Slide 5 để học cách “giao tiếp” với dữ liệu. Quy trình I/O trong xử lý ảnh gồm 3 bước: Đọc, Hiển thị và Ghi. Nhìn vào sơ đồ luồng dữ liệu trên slide:
+• Đầu tiên, để đưa ảnh từ ổ đĩa (Disk) vào bộ nhớ RAM, chúng ta dùng hàm cv2.imread(). Lưu ý, luôn phải kiểm tra xem ảnh có đọc thành công hay không, nếu biến ảnh trả về giá trị None tức là đường dẫn bị sai.
+• Tiếp theo, để hiển thị ảnh từ RAM lên Màn hình (Monitor), ta dùng cv2.imshow().
+Người 2: Thưa thầy, em thấy có dòng ghi chú nhỏ bên dưới: “Local dùng cv2.imshow, Colab dùng plt.imshow”. Nghĩa là code chạy trên máy tính cá nhân và trên Google Colab sẽ khác nhau ạ?
+Người 1: Chính xác. cv2.imshow() tạo ra một cửa sổ pop-up, điều này chỉ hoạt động trên máy tính cục bộ (Local). Còn trên Google Colab chạy trên trình duyệt, nó không thể bật cửa sổ pop-up được, nên các em buộc phải dùng thư viện Matplotlib (tức là plt.imshow) để vẽ ảnh ra màn hình. Cuối cùng, mũi tên quay ngược về Disk là hàm cv2.imwrite(), dùng để lưu mảng số NumPy trở lại thành file ảnh (như .jpg, .png) trên ổ cứng.
+
+Slide 6: THAO TÁC TRÊN KÊNH MÀU (CHANNELS)
+Người 1: Chúng ta đến với Slide 6 để kiểm chứng lý thuyết về 3 kênh màu. Trên slide là ví dụ về quả dâu tây đỏ trên nền lá xanh. Thầy đã dùng hàm cv2.split() để tách bức ảnh này thành 3 kênh riêng biệt: Xanh dương (Blue), Xanh lá (Green) và Đỏ (Red). Các em hãy nhìn vào góc dưới bên phải, tại sao ảnh ở kênh màu Đỏ (Red Channel) quả dâu lại sáng rực lên gần như màu trắng, trong khi ở kênh Xanh dương (Blue Channel) phía trên nó lại tối đen?
+Người 2: Dạ, theo nguyên lý hiển thị thì vùng nào có giá trị pixel càng cao (càng gần 255) thì càng sáng (màu trắng), còn thấp thì màu đen. Vì quả dâu có màu đỏ, nên cường độ màu đỏ của nó rất mạnh, làm cho kênh Red sáng lên. Ngược lại, quả dâu đỏ thì chứa rất ít màu xanh dương, nên ở kênh Blue nó bị tối đen đúng không ạ?
+Người 1: Rất xuất sắc! Đó chính là quy tắc vàng: “Vùng Sáng = Màu chiếm ưu thế, Vùng Tối = Ít hoặc không có màu đó”. Tương tự, các em nhìn kênh Green (góc dưới trái), phần lá cây sáng lên vì lá cây phản xạ ánh sáng xanh lá mạnh, còn quả dâu thì tối đi. Hiểu được điều này sẽ giúp các em rất nhiều trong các bài toán nhận diện màu sắc sau này, ví dụ như lập trình robot hái dâu chín chẳng hạn.
+
+Slide 7: BÀI TẬP 1 - CHUYỂN ĐỔI ĐỊNH DẠNG ẢNH (IMAGE CONVERSION)
+Người 1: Chúng ta bắt đầu với bài tập thực hành đầu tiên ở Slide số 7. Đây là bài tập “khởi động” nhẹ nhàng: Chuyển đổi định dạng ảnh từ PNG sang JPG. Nghe có vẻ đơn giản như việc “Save As” trong Photoshop, nhưng với lập trình viên thị giác máy tính, chúng ta cần hiểu code hoạt động thế nào. Các em hãy nhìn vào đoạn code Python trên slide. Quy trình chỉ gồm 2 bước: Bước 1 là dùng cv2.imread để đọc ảnh đầu vào. Bước 2 là dùng cv2.imwrite để lưu ra file mới với đuôi .jpg.
+Người 2: Thưa thầy, em để ý trong hình minh họa File Explorer bên dưới, file gốc input.png nặng tới 5.2 MB, nhưng sau khi chạy code thì file output.jpg chỉ còn 0.8 MB. Tại sao lại giảm dung lượng nhiều thế ạ? Code của mình có làm hỏng ảnh không?
+Người 1: Một phát hiện rất tinh tế. Đây không phải lỗi, mà là tính năng. Ảnh PNG thường dùng nén không mất dữ liệu (lossless), giữ nguyên vẹn thông tin nên file rất nặng. Khi chúng ta chuyển sang JPG bằng cv2.imwrite, hàm này mặc định áp dụng thuật toán nén ảnh (JPEG Compression) với chất lượng khoảng 95%. Việc này giúp giảm kích thước file đáng kể để dễ lưu trữ, dù mắt thường khó nhận ra sự khác biệt, nhưng về mặt dữ liệu số thì pixel đã bị thay đổi nhẹ.
+
+Slide 8: BÀI TẬP 2 - VÒNG LẶP CAMERA THỜI GIAN THỰC (REAL-TIME LOOP)
+Người 1: Mời cả lớp sang Slide 8. Bây giờ chúng ta sẽ làm việc với dữ liệu động: Camera. Để xử lý video hoặc camera, chúng ta không thể chỉ đọc 1 lần là xong. Các em hãy nhìn vào sơ đồ “Vòng lặp vô hạn” (Infinite Loop) ở giữa slide. Video thực chất là hàng loạt bức ảnh được chiếu liên tiếp. Do đó, chúng ta cần một vòng lặp while True. Trong mỗi lần lặp, chúng ta thực hiện 3 hành động:
+1. Capture Frame: Đọc 1 khung hình từ camera bằng lệnh cap.read().
+2. Show Frame: Hiển thị khung hình đó lên cửa sổ bằng cv2.imshow().
+3. Wait Key: Dừng lại khoảng 1 mili-giây để chờ xem người dùng có bấm phím gì không bằng lệnh cv2.waitKey(1). Nếu người dùng bấm phím ‘q’, lệnh break sẽ kích hoạt để thoát vòng lặp.
+Người 2: Thưa thầy, em thấy có dấu chấm than cảnh báo màu đỏ bên dưới. Nó ghi là “Chỉ chạy trên máy Local, không chạy trên Colab”. Tại sao vậy ạ? Em tưởng Colab mạnh hơn máy tính của em?
+Người 1: Vấn đề không nằm ở mạnh hay yếu, mà là ở kiến trúc phần mềm. Google Colab chạy trên máy chủ đám mây (Cloud), còn hàm cv2.imshow lại cố gắng mở một cửa sổ đồ họa trên máy tính đang chạy nó (tức là máy chủ Google). Tất nhiên, em không thể nhìn thấy màn hình của máy chủ Google được. Vì vậy, với bài tập Camera này, các em bắt buộc phải code trên IDE cài trên máy tính cá nhân như VS Code hay PyCharm để nó truy cập được Webcam của laptop các em.
+
+Slide 9: BÀI TẬP 3 - LOGIC GHI VIDEO (VIDEO RECORDER LOGIC)
+Người 1: Tiếp theo, chúng ta đến Slide 9. Giả sử bây giờ thầy muốn các em viết một chương trình: “Tự động quay video trong đúng 10 giây rồi dừng lại”. Làm thế nào để máy tính hiểu được “10 giây” là bao lâu?
+Người 2: Dạ, chắc mình phải dùng đồng hồ đếm giờ đúng không thầy? Kiểu như so sánh thời gian bắt đầu và thời gian hiện tại?
+Người 1: Đó là một cách, nhưng trong xử lý video, chúng ta thường dùng cách tư duy theo “khung hình” (Frame) để chính xác hơn. Các em nhìn vào trục thời gian trên slide. Video chuẩn thường có tốc độ 30 khung hình trên giây, tức là FPS bằng 30. Vậy logic toán học ở đây rất đơn giản: Nếu 1 giây cần 30 khung hình. Thì 10 giây sẽ cần: 30 nhân 10 bằng 300 khung hình (Frames).
+Người 2: À, em hiểu rồi. Tức là thay vì canh đồng hồ, mình sẽ lập trình một biến đếm. Cứ mỗi lần vòng lặp chạy (đọc được 1 ảnh), mình tăng biến đếm lên 1. Khi nào đếm đủ 300 ảnh thì mình dừng chương trình?
+Người 1: Chính xác! Đó là tư duy của lập trình viên Computer Vision. Ngoài ra, để ghi file, các em cần thiết lập các thông số cho VideoWriter như: Tên file là output.avi, Bộ mã hóa (Codec) là MJPG hoặc XVID, và Kích thước khung hình phải khớp với camera. Chúng ta sẽ xem code chi tiết ở slide sau.
+
+Slide 10: BÀI TẬP 3 - TRIỂN KHAI CODE GHI VIDEO
+Người 1: Chúng ta tiếp tục với Slide 10. Sau khi đã tính toán logic “300 frames cho 10 giây” ở slide trước, đây là lúc chúng ta hiện thực hóa nó bằng mã nguồn Python. Các em hãy chú ý vào 3 khối lệnh chính:
+1. Khởi tạo (Dòng đầu tiên): Chúng ta khai báo đối tượng video bằng hàm cv2.VideoWriter. Ở đây các em phải điền đúng 4 tham số: Tên file (out.avi), Codec nén ảnh (MJPG), số FPS (30), và độ phân giải (640, 480).
+2. Vòng lặp ghi (Trong vòng while): Sau khi cap.read() lấy được ảnh, chúng ta dùng lệnh video.write(frame) để lưu ngay bức ảnh đó vào file video.
+3. Điều kiện dừng (Cuối cùng): Mỗi lần ghi xong 1 frame, biến đếm frame_count tăng lên 1. Ngay khi biến này chạm mốc 300, lệnh break sẽ kích hoạt để dừng quay.
+Người 2: Thưa thầy, nếu em quên dòng video.write(frame) thì sao ạ? Chương trình có báo lỗi không?
+Người 1: Chương trình sẽ không báo lỗi, nó vẫn chạy, webcam vẫn hiện lên, nhưng khi em mở file video ra thì nó sẽ rỗng hoặc có dung lượng 0KB. Bởi vì em chỉ mới đọc ảnh lên RAM mà chưa ra lệnh ghi xuống đĩa cứng. Đây là lỗi logic rất hay gặp, các em lưu ý nhé.
+
+Slide 11: BÀI TẬP 4 (KHÓ) - THAO TÁC PIXEL TRỰC TIẾP
+Người 1: Mời cả lớp sang Slide 11. Chúng ta bước sang bài tập mức độ Khó: Thao tác Pixel trực tiếp. Nhìn vào bức ảnh chú chó Golden trên slide, các em thấy đôi mắt chú chó bị che bởi một thanh màu đen. Trong Photoshop, em sẽ dùng công cụ bút vẽ để tô đen. Nhưng trong lập trình Thị giác máy tính, chúng ta làm điều đó bằng toán học đại số. Bên phải là hình minh họa ma trận. Các em thấy một vùng các con số lộn xộn (đại diện cho màu sắc ảnh gốc) bỗng nhiên biến thành toàn số 0. Trong ảnh số, số 0 đại diện cho màu đen tuyệt đối.
+Người 2: Vậy là mình phải viết vòng lặp for chạy qua từng điểm ảnh để gán nó bằng 0 hả thầy?
+Người 1: Không cần đâu em. Nhờ thư viện NumPy, chúng ta có thể dùng kỹ thuật “Cắt lát” (Slicing). Các em nhìn dòng code dưới cùng: img[100:110, :] = 0. Dòng này có nghĩa là: “Hãy chọn tất cả các hàng từ 100 đến 110, và lấy toàn bộ chiều ngang của ảnh, sau đó gán tất cả giá trị trong vùng đó bằng 0”. Chỉ một dòng code, chúng ta đã “tô đen” được một dải ngang trên ảnh mà không cần vòng lặp nào cả. Đây chính là sức mạnh của xử lý ma trận.
+
+Slide 12: BÀI TẬP 4 - CHUYỂN ĐỔI ẢNH XÁM THỦ CÔNG (GRAYSCALE LOGIC)
+Người 1: Đến Slide 12, chúng ta sẽ giải quyết một câu hỏi thú vị: “Làm thế nào để biến ảnh màu thành ảnh đen trắng?”. Bình thường các em hay dùng hàm có sẵn cv2.cvtColor, nhưng hôm nay chúng ta sẽ tự viết công thức. Một bức ảnh màu có 3 kênh: Đỏ, Xanh lá, Xanh dương. Theo trực giác, các em có thể nghĩ: Cứ cộng 3 màu lại chia 3 là ra trung bình cộng. Nhưng cách đó là Sai!
+Người 2: Ủa sao sai vậy thầy? Trung bình cộng nghe hợp lý mà?
+Người 1: Sai vì mắt người không hoạt động như máy tính. Các em nhìn biểu đồ “Độ nhạy mắt người” trên slide: Mắt chúng ta cực kỳ nhạy cảm với màu Xanh lá (chiếm tới gần 60% độ sáng cảm nhận), tiếp theo là Đỏ (khoảng 30%), và mắt chúng ta rất kém nhạy với màu Xanh dương (chỉ khoảng 11%) . Vì vậy, công thức chuẩn để tạo ảnh xám đẹp là phép cộng có trọng số: Màu Xám = 0.299 nhân Đỏ + 0.587 nhân Xanh Lá + 0.114 nhân Xanh Dương.
+Người 2: Em hiểu rồi. Nhưng thầy ơi, em nhìn vào dòng code thứ 3: img[:,:,2] rồi mới đến img[:,:,1]. Sao thầy lại nhân hệ số 0.299 (của màu Đỏ) với chỉ số 2 (index 2) ạ? Em tưởng Đỏ là Red thì phải đứng đầu chứ?
+Người 1: Một câu hỏi rất sắc sảo! Em còn nhớ “Cạm bẫy BGR” ở Slide 4 không?. Vì OpenCV lưu trữ ảnh theo thứ tự Blue - Green - Red, nên:
+• Index 0 là Blue.
+• Index 1 là Green.
+• Index 2 là Red. Do đó, khi muốn lấy kênh Đỏ để nhân với 0.299, thầy buộc phải truy cập vào img[:,:,2]. Nếu nhầm lẫn chỉ số này, ảnh xám của em sẽ bị sai độ sáng.
+
+Slide 13: BÀI TẬP 4 - PHÂN TÍCH HISTOGRAM & PHÂN NGƯỠNG (THRESHOLDING)
+Người 1: Mời các em tập trung vào Slide 13. Đây là kỹ thuật quan trọng nhất của buổi hôm nay: Phân ngưỡng (Thresholding). Hãy nhìn vào biểu đồ ở giữa, chúng ta gọi là Histogram. Trục ngang là giá trị pixel từ 0 đến 255 (từ đen sang trắng), trục dọc là số lượng pixel. Các em có nhận xét gì về hình dạng của biểu đồ này không?
+Người 2: Dạ, em thấy biểu đồ này có hình dạng giống như hai ngọn núi tách biệt nhau. Một ngọn núi nằm bên trái (vùng tối) và một ngọn núi nằm bên phải (vùng sáng).
+Người 1: Rất tinh mắt. Đây gọi là Bimodal Histogram (Biểu đồ hai đỉnh).
+• Ngọn núi bên trái đại diện cho các pixel tối màu (như chữ viết, mực đen).
+• Ngọn núi bên phải đại diện cho các pixel sáng màu (như nền giấy trắng). Vấn đề là làm sao tách được chữ ra khỏi giấy? Chúng ta sẽ kẻ một đường ranh giới ở giữa “thung lũng” của hai ngọn núi này. Trên slide, thầy chọn giá trị ngưỡng T=127 .
+Người 2: Vậy logic của máy tính sẽ là gì ạ?
+Người 1: Logic rất đơn giản, giống như chốt chặn kiểm soát:
+• Bất kỳ điểm ảnh nào có giá trị lớn hơn 127 (sáng hơn), máy tính sẽ ép nó thành 255 (Màu Trắng tuyệt đối).
+• Ngược lại, điểm nào nhỏ hơn hoặc bằng 127, máy tính ép nó về 0 (Màu Đen tuyệt đối). Kết quả là chúng ta có bức ảnh bên phải (Output Image) chỉ còn hai màu đen trắng rõ rệt, rất thuận tiện cho các bài toán OCR (Nhận dạng ký tự quang học).
+
+Slide 14: TỔNG KẾT & BÀI TẬP VỀ NHÀ (HOMEWORK)
+Người 1: Chúng ta sang Slide 14 để tổng kết. Hôm nay các em đã bỏ túi được 4 kỹ năng trong Checklist: Chuyển đổi định dạng ảnh, Điều khiển Camera, Thao tác Pixel ma trận và Phân ngưỡng . Bây giờ là Bài tập về nhà: Phân đoạn dòng (Line Segmentation). Các em nhìn vào hình minh họa. Bên trái là một đoạn văn bản màu trắng trên nền đen (Binary Image). Bên phải là một biểu đồ dạng thanh ngang (Horizontal Projection) . Thầy đố các em: Làm thế nào để máy tính biết được văn bản này có bao nhiêu dòng chữ chỉ dựa vào biểu đồ đó?
+Người 2: Dạ… em nhìn thấy những thanh ngang dài thì tương ứng với vị trí có chữ. Còn những khoảng trống không có thanh nào thì tương ứng với khoảng cách giữa các dòng. Có phải ý tưởng là mình sẽ tính tổng các điểm ảnh màu trắng theo hàng ngang không thầy?
+Người 1: Chính xác! Đó là gợi ý cho các em.
+• Em hãy dùng NumPy để tính tổng giá trị pixel theo trục ngang (axis=1).
+• Hàng nào có chữ, tổng giá trị sẽ rất lớn (tạo thành thanh dài trên biểu đồ).
+• Hàng nào là khoảng trắng giữa các dòng, tổng giá trị sẽ bằng 0. Dựa vào sự thay đổi từ 0 lên cao rồi về 0, em sẽ đếm được số dòng chữ.
+
+Slide 15: DẶN DÒ & CHUẨN BỊ (NEXT STEPS)
+Người 1: Cuối cùng, mời các em xem Slide 15 để nắm yêu cầu nộp bài.
+• Với các bài tập 1, 2, 3 (liên quan đến Camera và lưu file), các em nộp file code Python đuôi .py.
+• Riêng bài tập 4 và bài tập về nhà (xử lý ma trận, vẽ biểu đồ), các em làm trên Jupyter Notebook và nộp file đuôi .ipynb để thầy xem được cả code lẫn hình ảnh kết quả .
+Người 2: Dạ thầy, tuần sau chúng ta sẽ học về gì ạ? Có khó hơn hôm nay không thầy?
+Người 1: Tuần sau chúng ta sẽ sang Chương 2: Nâng cao & Khôi phục ảnh. Các từ khóa quan trọng các em cần tìm hiểu trước là: Histogram Equalization (Cân bằng sáng), Filtering (Lọc nhiễu) và Convolution (Tích chập) . Hôm nay chúng ta chỉ mới thay đổi từng điểm ảnh riêng lẻ. Tuần sau, chúng ta sẽ học cách thay đổi một điểm ảnh dựa trên những điểm ảnh hàng xóm của nó. Sẽ phức tạp hơn nhưng cũng thú vị hơn nhiều. Các em có thể tham khảo trước tài liệu CS231n của Stanford ghi trên slide nhé. Buổi học kết thúc tại đây.

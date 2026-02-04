@@ -32,46 +32,163 @@
             color: #fff;
             border-color: #0d6efd;
         }
+
+        /* Info Button Style */
+        .info-btn {
+            background: #fff;
+            color: #8a2be2;
+            /* BlueViolet */
+            border: 1px solid #8a2be2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-btn:hover {
+            background: #8a2be2;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .info-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            text-align: center;
+            /* Center content */
+        }
+
+        .modal-content {
+            margin: auto;
+            display: inline-block;
+            /* Allow centering with text-align */
+            max-width: 98vw;
+            /* Maximize usage of screen */
+            max-height: 98vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation-name: zoom;
+            animation-duration: 0.4s;
+            transition: width 0.3s ease;
+            /* Smooth size transition */
+            cursor: zoom-in;
+        }
+
+        /* Zoomed State - True Scrollable Zoom */
+        .modal-content.zoomed {
+            width: 150%;
+            /* Force wider than screen to enable scrolling */
+            max-width: none;
+            max-height: none;
+            margin: 0;
+            cursor: grab;
+            transform: none;
+            /* Disable CSS transform to allow native scrolling */
+        }
+
+        .modal-content.zoomed:active {
+            cursor: grabbing;
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(0)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 100000;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Mobile adjustments */
+        @media only screen and (max-width: 700px) {
+            .modal-content {
+                width: 100%;
+            }
+
+            .info-btn .btn-text {
+                display: none;
+                /* Hide text on small screens, show icon only */
+            }
+        }
+
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+            font-size: 18px;
+        }
     </style>
 </head>
 
 <body>
-
     <div class="container" style="margin-top: 20px;">
         <!-- Tabs Nav -->
         <div class="tabs" style="display: flex; align-items: center; gap: 10px;">
-            <!-- Back Button (Small) -->
-            <a href="../index.html" class="tab-btn"
-                style="width: auto; padding: 0 15px; font-size: 14px; display: flex; align-items: center; color: #666; text-decoration: none; border-bottom: 3px solid transparent;">
-                <i class="fa-solid fa-arrow-left mr-2"></i>
-            </a>
-
-            <button class="tab-btn active" onclick="openTab(event, 'theory')">
-                <i class="fa-solid fa-book mr-2"></i> Lý thuyết
-            </button>
-            <button class="tab-btn" onclick="openTab(event, 'practice')">
-                <i class="fa-solid fa-code mr-2"></i> Thực hành
-            </button>
-            <button class="tab-btn" onclick="openTab(event, 'quiz')">
-                <i class="fa-solid fa-puzzle-piece mr-2"></i> Trắc nghiệm
+            <!-- Back Button (Small) --><a href="../index.html" class="tab-btn"
+                style="width: auto; padding: 0 15px; font-size: 14px; display: flex; align-items: center; color: #666; text-decoration: none; border-bottom: 3px solid transparent;"><i
+                    class="fa-solid fa-arrow-left mr-2"></i></a><button class="tab-btn active"
+                onclick="openTab(event, 'theory')"><i class="fa-solid fa-book mr-2"></i>Lý thuyết
+            </button><button class="tab-btn" onclick="openTab(event, 'practice')"><i
+                    class="fa-solid fa-code mr-2"></i>Thực hành </button><button class="tab-btn"
+                onclick="openTab(event, 'quiz')"><i class="fa-solid fa-puzzle-piece mr-2"></i>Trắc nghiệm
             </button>
         </div>
-
         <!-- Tab Content: Theory -->
         <div id="theory" class="tab-content active">
-            <!-- PART SELECTION -->
-            <div class="mb-4 flex space-x-2" style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button class="part-btn active" onclick="loadPart(1, this)">Tiết 1: Thị Giác Máy Tính Tổng Quan</button>
-                <button class="part-btn" onclick="loadPart(2, this)">Tiết 2: Computer Vision Fundamentals</button>
-                <button class="part-btn" onclick="loadPart(3, this)">Tiết 3: OpenCV Thực Hành Xử Lý Ảnh Số</button>
+            <!-- PART SELECTION & INFOGRAPHIC -->
+            <div class="mb-4 flex space-x-2"
+                style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; flex-grow: 1;"><button class="part-btn active"
+                        onclick="loadPart(1, this)">Tiết 1: Thị Giác Máy Tính Tổng
+                        Quan</button><button class="part-btn" onclick="loadPart(2, this)">Tiết 2: Computer
+                        Vision Fundamentals</button><button class="part-btn" onclick="loadPart(3, this)">Tiết 3: OpenCV
+                        Thực Hành Xử Lý Ảnh Số</button></div>
+                <!-- Infographic Button --><button class="part-btn info-btn" onclick="showInfographic()"
+                    title="Xem Tóm tắt nội dung (Infographic)"><i class="fa-solid fa-images"></i><span
+                        class="btn-text">Infographic</span></button>
             </div>
-
             <div class="bg-white p-4 rounded-xl shadow-sm" style="height: 800px;">
-                <!-- PDF Viewer / Slide Player -->
-                <iframe id="pdf-frame" width="100%" height="100%" style="border: none;"></iframe>
+                <!-- PDF Viewer / Slide Player --><iframe id="pdf-frame" width="100%" height="100%"
+                    style="border: none;"></iframe>
             </div>
         </div>
-
         <!-- Tab Content: Practice -->
         <div id="practice" class="tab-content">
             <div class="notebook-section">
@@ -90,44 +207,51 @@
                             <td>Tuần 1</td>
                             <td>Giới thiệu Computer Vision & OpenCV</td>
                             <td><span class="badge easy">Cơ bản</span></td>
-                            <td>
-                                <a href="#" class="btn-start" style="padding: 5px 10px; font-size: 0.8rem;">Open
-                                    Colab</a>
-                            </td>
+                            <td><a href="#" class="btn-start" style="padding: 5px 10px; font-size: 0.8rem;">Open
+                                    Colab</a></td>
                         </tr>
                         <!-- Add more rows here -->
                     </tbody>
                 </table>
             </div>
         </div>
-
         <!-- Tab Content: Quiz -->
         <div id="quiz" class="tab-content">
             <!-- Dynamic Quiz Link -->
             <div class="bg-white p-6 rounded-xl shadow-sm h-full">
-                <h3 class="mb-4 text-center font-bold text-gray-700">Làm Bài Trắc Nghiệm Chương 1</h3>
-                <iframe id="quiz-frame" class="quiz-frame" src=""></iframe>
+                <h3 class="mb-4 text-center font-bold text-gray-700">Làm Bài Trắc Nghiệm Chương 1
+                </h3><iframe id="quiz-frame" class="quiz-frame" src=""></iframe>
             </div>
         </div>
     </div>
-
+    <!-- INFOGRAPHIC MODAL -->
+    <div id="info-modal" class="info-modal"><span class="close-modal" onclick="closeInfographic()">&times;
+        </span><img class="modal-content" id="info-image">
+        <div id="caption"></div>
+    </div>
     <footer class="footer">
-        <p>&copy; 2026 Computer Vision Course.</p>
+        <p>&copy;
+            2026 Computer Vision Course.</p>
     </footer>
+    <script> // Tab function
 
-    <script>
-        // Tab function
         function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
+            var i,
+                tabcontent,
+                tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
+
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
                 tabcontent[i].classList.remove('active');
             }
+
             tablinks = document.getElementsByClassName("tab-btn");
+
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
+
             document.getElementById(tabName).style.display = "block";
             document.getElementById(tabName).classList.add('active');
             evt.currentTarget.className += " active";
@@ -139,11 +263,19 @@
                 1: 'Phần 1_Thị_Giác_Máy_Tính_Tổng_Quan/index.html',
                 2: 'Phần 2_Computer_Vision_Fundamentals/index.html',
                 3: 'Phần 3_OpenCV_Thực_Hành_Xử_Lý_Ảnh_Số/index.html'
-            },
+            }
+
+            ,
             quizCsv: '../Quiz/index.html?group=Chuong1'
-        };
+        }
+
+            ;
+
+        let currentPartId = 1; // Track current part
 
         function loadPart(partId, btn) {
+            currentPartId = partId; // Update current part
+
             // Update Active State
             if (btn) {
                 document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
@@ -152,13 +284,95 @@
 
             // Load Content
             const url = config.parts[partId];
+
             if (url) {
                 document.getElementById('pdf-frame').src = url;
-            } else {
+            }
+
+            else {
                 console.error("Part not found:", partId);
                 alert("Nội dung bài học này chưa khả dụng.");
             }
         }
+
+        /* INFOGRAPHIC LOGIC */
+        function showInfographic() {
+            const modal = document.getElementById("info-modal");
+            const modalImg = document.getElementById("info-image");
+            const captionText = document.getElementById("caption");
+
+            // Construct path: "Infographic/Phần 1_.png"
+            const imgPath = `Infographic/Phần ${currentPartId}_.png`;
+
+            modal.style.display = "block";
+            modalImg.src = imgPath;
+            // Reset Zoom
+            modalImg.classList.remove('zoomed');
+            captionText.innerHTML = `Infographic - Tiết ${currentPartId} <br> <span style='font-size:14px; color:#aaa'>(Nhấn vào ảnh để phóng to/thu nhỏ)</span>`;
+        }
+
+        function closeInfographic() {
+            document.getElementById("info-modal").style.display = "none";
+        }
+
+        // Close on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById("info-modal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Drag to Scroll Logic
+        const img = document.getElementById("info-image");
+        const modal = document.getElementById("info-modal");
+        let isDown = false;
+        let startX, startY;
+        let scrollLeft, scrollTop;
+        let isDragging = false; // Flag to distinguish click from drag
+
+        img.addEventListener('mousedown', (e) => {
+            if (!img.classList.contains('zoomed')) return;
+            isDown = true;
+            isDragging = false; // Reset drag flag
+            startX = e.pageX - modal.offsetLeft;
+            startY = e.pageY - modal.offsetTop;
+            scrollLeft = modal.scrollLeft;
+            scrollTop = modal.scrollTop;
+            // cursor is already handled by css :active
+            e.preventDefault(); // prevent image drag
+        });
+
+        img.addEventListener('mouseleave', () => {
+            isDown = false;
+        });
+
+        img.addEventListener('mouseup', (e) => {
+            isDown = false;
+            if (!isDragging) {
+                // It was a click, toggle zoom
+                e.stopPropagation();
+                img.classList.toggle("zoomed");
+            }
+            // If it was a drag, do nothing (just end drag)
+        });
+
+        img.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - modal.offsetLeft;
+            const y = e.pageY - modal.offsetTop;
+            const walkX = (x - startX) * 1.5; // scroll-fast
+            const walkY = (y - startY) * 1.5;
+
+            // If moved more than a few pixels, consider it a drag
+            if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
+                isDragging = true;
+            }
+
+            modal.scrollLeft = scrollLeft - walkX;
+            modal.scrollTop = scrollTop - walkY;
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             // Load Default Part (Part 1)

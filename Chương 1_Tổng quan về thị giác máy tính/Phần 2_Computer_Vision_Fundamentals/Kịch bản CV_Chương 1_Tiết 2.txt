@@ -1,0 +1,111 @@
+﻿Slide 1: CHƯƠNG 1 (TIẾT 2) - CƠ SỞ KỸ THUẬT: TỪ ÁNH SÁNG ĐẾN PIXEL
+Người 1: Chào các bạn lớp IT23M. Ở tiết trước, chúng ta đã biết Thị giác máy tính “làm được gì” (ứng dụng) và “khó ở đâu” (thách thức). Hôm nay, chúng ta sẽ đi sâu vào câu hỏi “làm thế nào”. Mời các em nhìn lên Slide 1. Các em thấy một sơ đồ dài với ấm trà, tia sáng và các chuỗi số 0101. Theo em, sơ đồ này kể câu chuyện gì?
+Người 2: Dạ, em nhìn từ trái sang phải: Bắt đầu là một vật thể thật (ấm trà), sau đó ánh sáng đi qua một cái lỗ nhỏ, tạo ra hình ảnh ngược chiều trên một tấm kính, và cuối cùng biến thành dữ liệu số. Có phải đây là quy trình để một cái máy tính “nhìn” thấy vật thể không ạ?
+Người 1: Chính xác. Đây là “The Vision Pipeline” – Đường ống thị giác. Để lập trình được, các em không thể chỉ nhìn thấy ấm trà như người thường. Các em phải hiểu hành trình của nó: Từ Vật lý (ánh sáng phản xạ) → Hình học (qua lỗ kim camera) → Tín hiệu số (ma trận pixel). Hôm nay chúng ta sẽ giải mã từng bước trong hành trình này.
+
+Slide 2: MỤC TIÊU BÀI HỌC - 4 TRỤ CỘT KIẾN THỨC
+Người 1: Mời các em chuyển sang Slide 2. Để làm chủ được tiết học này, chúng ta có 4 mục tiêu cốt lõi, tương ứng với 4 biểu tượng trên màn hình. Em hãy nhìn vào biểu tượng đầu tiên hình ống kính máy ảnh và biểu tượng thứ hai hình lưới số. Chúng gợi cho em điều gì?
+Người 2: Dạ, biểu tượng ống kính chắc là mục tiêu “Giải mã quá trình tạo ảnh” – tức là hiểu cách camera hoạt động. Còn hình lưới số (0101) chắc chắn là “Bản chất ảnh số” – cách máy tính lưu trữ ảnh dưới dạng ma trận mà thầy đã nhắc sơ qua ở tiết trước.
+Người 1: Rất đúng. Đó là hai nền tảng Toán học. Nhưng chưa đủ, chúng ta còn hai mục tiêu nữa. Nhìn vào vòng tròn màu sắc (Color Wheel) và logo Python kia. Chúng ta phải nắm vững “Lý thuyết màu sắc” – phân biệt khi nào dùng RGB, khi nào dùng HSV. Và cuối cùng là “Làm chủ công cụ”. Lớp IT23M là dân kỹ thuật, học xong lý thuyết là phải code được ngay bằng Python và OpenCV.
+
+Slide 3: QUÁ TRÌNH TẠO ẢNH (IMAGE FORMATION) - HÌNH HỌC & QUANG TRẮC
+Người 1: Chúng ta đi vào nội dung đầu tiên ở Slide 3. Câu hỏi lớn đặt ra là: “Làm thế nào ánh sáng từ vật thể 3D biến thành dữ liệu?” Trên slide, thầy chia làm 2 khía cạnh: Geometric (Hình học) và Photometric (Quang trắc). Em thấy sự khác biệt giữa hai hình minh họa này là gì?
+Người 2: Dạ, ở hình bên trái (Geometric), em thấy sơ đồ các tia sáng đi qua thấu kính để xác định vị trí điểm ảnh (x,y) . Còn hình bên phải (Photometric), em thấy vẽ mặt trời chiếu sáng xuống bề mặt gồ ghề và ánh sáng phản xạ lại. Có phải một cái là xác định “vị trí”, còn một cái là xác định “màu sắc” không thầy?
+Người 1: Phân tích rất sắc sảo.
+• Khía cạnh Hình học: Trả lời câu hỏi “Tại sao điểm ảnh nằm ở đó?”. Nó liên quan đến tọa độ (X,Y,Z) trong không gian 3D được chiếu xuống mặt phẳng 2D như thế nào.
+• Khía cạnh Quang trắc: Trả lời câu hỏi “Tại sao điểm ảnh có giá trị màu đó?”. Nó liên quan đến cường độ sáng, tính chất phản xạ của bề mặt vật thể.
+Trong môn này, chúng ta sẽ tập trung rất nhiều vào khía cạnh Hình học để hiểu về Camera, nhưng đừng quên Quang trắc, vì nó quyết định giá trị pixel mà các em sẽ xử lý.
+
+Slide 4: MÔ HÌNH CAMERA LỖ KIM (PINHOLE CAMERA MODEL)
+Người 1: Chúng ta vừa nói về nguyên lý chung. Giờ hãy cụ thể hóa nó bằng toán học. Mời các em sang Slide 4: Mô hình Camera lỗ kim. Các em nhìn vào sơ đồ. Đây là mô hình đơn giản nhất, không có thấu kính phức tạp, chỉ có một cái lỗ nhỏ. Em thấy điều gì đặc biệt về hình ảnh tạo ra ở mặt phẳng phía sau (Image Plane)?
+Người 2: Dạ, em thấy hình ảnh mũi tên (p) ở mặt phẳng ảnh bị lộn ngược so với vật thể thật (P) ở bên ngoài. Có phải do ánh sáng đi theo đường thẳng qua lỗ nhỏ kia không ạ?
+Người 1: Chính xác. Cái lỗ nhỏ đó gọi là Tâm chiếu (Center of Projection), ký hiệu là O . Khoảng cách từ tâm chiếu này đến mặt phẳng hứng ảnh được gọi là Tiêu cự (Focal Length - f). Trong máy ảnh thật, chúng ta dùng thấu kính để gom sáng tốt hơn, nhưng về mặt hình học toán học, chúng ta luôn quy về mô hình lỗ kim này để tính toán vì nó tuân theo nguyên lý: Các đường thẳng song song trong 3D sẽ hội tụ tại một điểm.
+
+Slide 5: TỪ 3D SANG 2D - PHƯƠNG TRÌNH CHIẾU VÀ “BI KỊCH” MẤT ĐỘ SÂU
+Người 1: Vậy làm sao để tính toán vị trí pixel (x,y) từ tọa độ thực tế (X,Y,Z) ? Mời các em sang Slide 5. Hãy nhìn vào hai tam giác được tô màu xanh và cam trên slide. Em có nhận xét gì về mối quan hệ giữa chúng?
+Người 2: Dạ, nhìn hình thì em thấy đây là hai tam giác đối đỉnh qua tâm chiếu. Theo định lý Thales thì chúng là hai tam giác đồng dạng ạ.
+Người 1: Rất tốt. Dựa vào tính chất đồng dạng đó, chúng ta có công thức chiếu hình huyền thoại này:
+Ta có phương trình: x nhỏ bằng f nhân với X lớn chia cho Z.
+Tức là tọa độ ảnh x bằng tiêu cự f nhân với tọa độ thực X , rồi chia cho độ sâu Z . Em hãy nhìn vào mẫu số Z . Điều gì xảy ra nếu Z (khoảng cách) càng lớn?
+Người 2: Dạ, nếu Z càng lớn thì phân số càng nhỏ, tức là x càng nhỏ. À, em hiểu rồi! Đây là lý do tại sao vật ở càng xa thì lên ảnh nhìn càng bé đúng không thầy?.
+Người 1: Chuẩn xác. Nhưng đây cũng chính là “Bi kịch của Nhiếp ảnh” mà slide nhắc tới. Vì chúng ta chia cho Z để ra x , nên từ x chúng ta không thể suy ngược lại ra Z được nữa (trừ khi có thêm thông tin). Quá trình chụp ảnh làm mất thông tin độ sâu. Nhiệm vụ của kỹ sư CV là tìm cách khôi phục cái Z đã mất đó.
+
+Slide 6: CÁC THAM SỐ CAMERA (NGOẠI TẠI & NỘI TẠI)
+Người 1: Để máy tính hiểu được các phép chiếu đó, chúng ta cần cung cấp các tham số. Mời các em sang Slide 6. Hệ thống thị giác chia làm 2 loại tham số: Ngoại tại (Extrinsic) và Nội tại (Intrinsic). Nhìn vào hình minh họa, em phân biệt chúng thế nào?
+Người 2: Dạ, nhìn hình bên phải có cái máy ảnh đặt trong hệ trục tọa độ, em đoán Ngoại tại liên quan đến vị trí đặt máy ảnh ở đâu trong phòng, xoay hướng nào (các ký hiệu R và t ). Còn hình bên trái phóng to vào ống kính, chắc Nội tại là những gì thuộc về cấu tạo bên trong máy, như tiêu cự f mà mình vừa học.
+Người 1: Phân tích rất chuẩn.
+• Tham số Ngoại tại ( R,t ): Cho biết Camera đang ở đâu trong thế giới thực.
+• Tham số Nội tại ( K ): Cho biết Camera này là loại gì. Tất cả thông tin như tiêu cự ( f_x,f_y ), tâm ảnh ( c_x,c_y ) được gói gọn vào một ma trận 3×3 gọi là Ma trận Camera K .
+Các em nhớ kỹ ma trận K này nhé, vì trong các bài thực hành về Calibration (Hiệu chỉnh camera) sắp tới, chúng ta sẽ phải dùng OpenCV để tìm ra chính xác các con số trong ma trận này đấy.
+
+Slide 7: ẢNH SỐ LÀ GÌ? (DIGITAL IMAGE FUNDAMENTALS)
+Người 1: Chúng ta đã hiểu camera thu nhận ánh sáng thế nào. Giờ hãy xem máy tính lưu trữ nó ra sao. Mời các em sang Slide 7. Hãy nhìn vào bông hoa dừa cạn màu tím trên màn hình. Khi phóng to cực đại một vùng nhỏ, em thấy gì?
+Người 2: Dạ, em thấy nó vỡ ra thành các ô vuông nhỏ xíu, mỗi ô một màu, và bên cạnh có các con số như 128, 64, 32… Đó chính là các Pixel đúng không thầy?
+Người 1: Chính xác. Với chúng ta đó là bông hoa, nhưng với máy tính, ảnh chỉ là một hàm hai chiều I(x,y)  hoặc đơn giản là một bảng số liệu. Quá trình này gồm 2 bước:
+1. Lấy mẫu (Sampling): Chia không gian liên tục thành các điểm rời rạc (Pixel) - quyết định độ phân giải (ví dụ 1920x1080).
+2. Lượng tử hóa (Quantization): Gán cho mỗi pixel một giá trị số nguyên. Thường chúng ta dùng 8-bit, tức là giá trị chạy từ 0 đến bao nhiêu, em còn nhớ kiến thức môn Kiến trúc máy tính không?
+Người 2: Dạ 8-bit là 2^8 , tức là từ 0 đến 255 ạ.
+Người 1: Rất tốt. 0 là đen tuyệt đối, 255 là trắng tuyệt đối (hoặc màu sáng nhất).
+
+Slide 8: BIỂU DIỄN ẢNH DƯỚI DẠNG MA TRẬN (MATRIX REPRESENTATION)
+Người 1: Vậy một bức ảnh màu thì máy tính lưu thế nào? Chẳng lẽ cũng chỉ là một bảng số? Mời các em sang Slide 8. Nhìn vào hình minh họa, em thấy cấu trúc dữ liệu của ảnh màu có gì khác so với ảnh xám?
+Người 2: Dạ, ảnh xám chỉ là một ma trận 2D (H×W) . Còn ảnh màu trên hình vẽ được tách thành 3 lớp ma trận chồng lên nhau: Blue, Green và Red. Vậy kích thước của nó sẽ là (H×W×3) đúng không ạ?
+Người 1: Chuẩn xác. Đó là lý do khi code, ảnh màu là một mảng 3 chiều (3D Array).
+Nhưng thầy có một lưu ý sống còn cho các em khi dùng thư viện OpenCV. Hãy nhìn vào dòng chữ cảnh báo cuối slide. Thứ tự màu của OpenCV không phải là RGB như bình thường, mà là gì?
+Người 2: Dạ là BGR (Blue - Green - Red) ạ. Em sẽ ghi chú lại chỗ này, nếu không lúc hiển thị ảnh màu đỏ sẽ biến thành màu xanh dương mất.
+
+Slide 9: KHÔNG GIAN MÀU RGB (ADDITIVE COLOR MIXING)
+Người 1: Chúng ta vừa nhắc đến 3 kênh màu. Hãy tìm hiểu kỹ hơn về bản chất của chúng ở Slide 9: Không gian màu RGB. Nhìn vào hình lập phương (Cube) trên slide. Tại sao gốc tọa độ (0,0,0) lại là màu Đen, còn điểm xa nhất (255,255,255) lại là màu Trắng?
+Người 2: Dạ, vì RGB là mô hình cộng (Additive). (0,0,0) là không có ánh sáng nào cả nên là đen. Còn khi cộng max cả 3 đèn Đỏ, Lục, Lam lại thì ra ánh sáng trắng. Em thấy đây là chuẩn dùng cho màn hình máy tính và camera.
+Người 1: Đúng vậy. Nhưng RGB có một nhược điểm chí mạng trong thị giác máy tính. Em hãy đọc dòng cuối cùng. Tại sao nó lại “nhạy cảm với thay đổi ánh sáng”?
+Người 2: Dạ… có phải vì thông tin “Màu” và “Độ sáng” bị trộn lẫn không ạ? Nếu em muốn làm bức ảnh tối đi, em phải giảm cả 3 giá trị R, G, B cùng lúc.
+Người 1: Rất thông minh. Chính vì sự trộn lẫn này mà khi trời tối hoặc có bóng râm, máy tính dùng RGB rất dễ nhận diện sai màu sắc. Vậy giải pháp là gì? Chúng ta sẽ tìm hiểu ở slide tiếp theo về không gian màu HSV.
+
+Slide 10: KHÔNG GIAN MÀU HSV (MÔ PHỎNG CẢM NHẬN)
+Người 1: Như chúng ta đã thảo luận ở Slide trước, RGB rất tệ khi ánh sáng thay đổi. Vậy làm sao để máy tính nhìn màu giống mắt người hơn? Mời các em sang Slide 10: Không gian màu HSV. Nhìn vào hình trụ màu trên slide, em thấy nó được cấu tạo bởi 3 thành phần nào?
+Người 2: Dạ, em thấy có:
+• H (Hue): Là vòng tròn màu sắc bao quanh (Đỏ, Vàng, Lục…).
+• S (Saturation): Là độ đậm nhạt, đi từ tâm ra ngoài vỏ.
+• V (Value): Là độ sáng, đi từ dưới (đen) lên trên (trắng).
+Người 1: Chính xác. Điểm “ăn tiền” nhất của mô hình này nằm ở chữ V (Value). Trong HSV, độ sáng được tách biệt hoàn toàn ra một kênh riêng. Điều này có nghĩa là gì? Nghĩa là khi bóng râm che khuất vật thể, chỉ có giá trị V thay đổi, còn giá trị H (màu sắc) vẫn giữ nguyên. Đây chính là chìa khóa để nhận diện vật thể trong môi trường ánh sáng phức tạp.
+
+Slide 11: DEMO - TÁCH KÊNH MÀU (TẠI SAO CHỌN HSV?)
+Người 1: Để chứng minh điều thầy vừa nói, mời các em xem Slide 11. Chúng ta có một quả táo đỏ, một nửa nằm ngoài sáng, một nửa bị bóng râm che khuất. Em hãy so sánh kênh V và kênh H của bức ảnh này.
+Người 2: Dạ, ở kênh V (Value), em thấy rõ sự chênh lệch sáng tối, phần bóng râm rất đen. Nhưng sang kênh H (Hue)… Wow, thật bất ngờ! Cả quả táo hiện lên là một vùng màu xám đều nhau, cái bóng râm gần như biến mất hoàn toàn.
+Người 1: Đó chính là sức mạnh của HSV. Thông tin màu sắc được bảo toàn bất chấp ánh sáng.
+Vì vậy, khi làm bài tập lớn nhận diện biển báo giao thông hay quả bóng, đừng bao giờ dùng RGB, hãy chuyển sang HSV ngay lập tức.
+
+Slide 12: CÔNG CỤ LẬP TRÌNH - PYTHON & NUMPY
+Người 1: Chúng ta đã xong phần lý thuyết. Giờ đến phần “đồ nghề”. Mời các em sang Slide 12. Trong môn này, chúng ta dùng Python. Và thư viện quan trọng nhất không phải là OpenCV, mà là NumPy. Tại sao thầy lại nói ảnh là một mảng NumPy?
+Người 2: Dạ, vì như mình đã học, ảnh là một ma trận số. Mà NumPy là trùm về xử lý ma trận rồi. Em nhìn đoạn code trên slide: image[100:200, 50:150]. Đây là cú pháp cắt ảnh (Slicing) đúng không thầy?
+Người 1: Đúng vậy. Thay vì dùng kéo cắt giấy, chúng ta dùng chỉ số mảng. Dòng code đó nghĩa là: Cắt lấy vùng ảnh từ hàng 100 đến 200 (chiều cao) và cột 50 đến 150 (chiều rộng). Các em phải luyện kỹ năng này thật thành thạo vì chúng ta sẽ dùng nó trong mọi bài lab.
+
+Slide 13: CÔNG CỤ LẬP TRÌNH - OPENCV & MATPLOTLIB
+Người 1: Tiếp theo ở Slide 13 là hai thư viện hiển thị: OpenCV và Matplotlib. Thầy có một lưu ý nhỏ nhưng rất nhiều bạn bị lỗi khi hiển thị ảnh. Em hãy đọc dòng cảnh báo cuối slide.
+Người 2: Dạ, “Matplotlib dùng chuẩn RGB. Cần chuyển đổi từ BGR trước khi hiển thị”. À, em nhớ rồi. OpenCV đọc ảnh vào là BGR, nếu quăng thẳng vào Matplotlib để vẽ biểu đồ thì màu đỏ sẽ thành màu xanh dương. Phải dùng lệnh cv2.cvtColor để đảo lại đúng không ạ?
+Người 1: Rất chính xác. Một lỗi nhỏ nhưng có thể làm sai lệch toàn bộ kết quả phân tích dữ liệu của các em.
+
+Slide 14: CHUẨN BỊ CHO THỰC HÀNH (TIẾT 3) - XÂY DỰNG MÔI TRƯỜNG
+Người 1: Chúng ta đã đi qua toàn bộ lý thuyết nền tảng. Nhưng Thị giác máy tính là môn học thực chiến, “nói ít, code nhiều”. Mời các em sang Slide 14. Đây là hành trang bắt buộc các em phải chuẩn bị cho buổi thực hành Tiết 3 sắp tới. Các em nhìn vào danh sách trên bảng. Theo em, tại sao chúng ta lại cần đúng 3 thư viện: OpenCV, NumPy và Matplotlib? Thiếu một trong ba có được không?
+Người 2: Dạ, để em xâu chuỗi lại kiến thức hôm nay xem sao ạ.
+• OpenCV chắc chắn là quan trọng nhất, nó là “con mắt” chứa các thuật toán thị giác.
+• NumPy thì như thầy nói lúc nãy, ảnh là ma trận số, nên cần NumPy để tính toán cộng trừ nhân chia ma trận.
+• Còn Matplotlib… hình như để vẽ biểu đồ và hiển thị ảnh lên màn hình đúng không ạ?
+Người 1: Hoàn toàn chính xác. Đó là bộ ba “Kiềng ba chân” của dân CV:
+1. OpenCV: Đọc và xử lý ảnh.
+2. NumPy: Xử lý dữ liệu toán học của ảnh.
+3. Matplotlib: Trực quan hóa kết quả.
+Về môi trường lập trình (IDE), thầy khuyên dùng VS Code hoặc PyCharm để chạy local cho nhanh. Tuy nhiên, nếu máy bạn nào yếu hoặc lười cài đặt, các em có thể dùng Google Colab. Lưu ý quan trọng: Các em nhớ tải bộ dữ liệu mẫu (Sample Images) và các đoạn code mẫu (chapter01/*.py) mà thầy đã gửi link. Buổi sau chúng ta sẽ chạy thử ngay trên những ảnh đó.
+
+Slide 15: TỔNG KẾT BÀI HỌC & CÂU HỎI TƯ DUY (VỀ NHÀ)
+Người 1: Vậy là chúng ta đã hoàn thành bài học đầu tiên. Mời các em sang Slide 15 để nhìn lại chặng đường hôm nay. Trên màn hình là bản đồ tư duy tóm tắt 4 mảnh ghép quan trọng nhất. Em hãy giúp cả lớp điểm lại 4 từ khóa này nào?.
+Người 2: Dạ, em xin tóm tắt ạ:
+1. Camera: Chúng ta học về mô hình lỗ kim và chấp nhận việc mất thông tin độ sâu Z khi chuyển từ 3D sang 2D.
+2. Ảnh số: Bản chất ảnh là ma trận và Pixel là đơn vị nhỏ nhất.
+3. Màu sắc: Sự khác biệt “sống còn” giữa RGB (máy móc) và HSV (cảm nhận).
+4. Công cụ: Python và OpenCV là vũ khí chính.
+Người 1: Rất tốt. Để kiểm tra xem các em thực sự hiểu bài hay chưa, thầy có một câu hỏi tư duy (Critical Thinking) dành cho bài tập về nhà. Các em đọc câu hỏi trên slide: “Tại sao khi nhận diện biển báo giao thông vào ban đêm, không gian màu HSV lại hoạt động ổn định hơn RGB?”. Thầy gợi ý: Hãy nghĩ về bản chất của màu Đỏ (trên biển báo cấm) khi trời tối đen.
+Người 2: (Suy nghĩ một chút) Dạ, em xin phép thử trả lời luôn được không ạ? Em nghĩ vấn đề nằm ở ánh sáng. Vào ban đêm, ánh sáng rất yếu. Trong không gian RGB, màu đen là (0,0,0) . Vậy nên cái biển báo màu đỏ lúc đó giá trị R, G, B đều sẽ tụt xuống rất thấp, gần bằng 0. Lúc đó màu đỏ nhìn y hệt màu đen, máy tính không phân biệt được.
+Người 1: Phân tích rất đúng hướng về RGB. Vậy còn HSV thì sao? Tại sao nó lại giải quyết được?
+Người 2: Dạ, vì HSV tách riêng độ sáng ra kênh V (Value). Khi trời tối, chỉ có giá trị V giảm xuống thấp. Nhưng giá trị H (Hue) - tức là “góc màu đỏ” - thì vẫn giữ nguyên giá trị đó. Thuật toán của mình chỉ cần check xem “Kênh H có phải là màu đỏ không?”, bất chấp kênh V đang sáng hay tối. Nhờ vậy mà nó nhận ra biển báo ạ!
+Người 1: Xuất sắc! Đó chính là câu trả lời thầy mong đợi. RGB trộn lẫn màu và sáng, nên sáng thay đổi là màu thay đổi. HSV tách biệt chúng, nên màu là bất biến. Hiểu được điều này, các em đã nắm được 50% bí quyết của các bài toán nhận diện cơ bản rồi. Bài học hôm nay kết thúc tại đây. Các em về nhớ cài đặt môi trường để chuẩn bị chiến đấu vào tuần sau nhé. Cảm ơn cả lớp!

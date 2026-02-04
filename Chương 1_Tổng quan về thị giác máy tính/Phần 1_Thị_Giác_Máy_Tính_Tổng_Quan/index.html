@@ -1179,6 +1179,35 @@
     window.addEventListener('resize', checkOrientation);
     window.addEventListener('orientationchange', checkOrientation);
 
+    /* ================= KEYBOARD CONTROL ================= */
+    document.addEventListener('keydown', (e) => {
+      // 1. Check if document has focus (prevent background firing)
+      if (!document.hasFocus()) return;
+
+      // 2. Ignore if typing in an input (future proofing)
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault();
+          prevBtn.click();
+          break;
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case 'Space':
+        case ' ':
+          e.preventDefault();
+          if (e.key === ' ' && slideAudio.paused && slideAudio.currentTime > 0) playPauseBtn.click();
+          else nextBtn.click(); // Default behavior: Next slide on Space/Right
+          break;
+        case 'Enter':
+          e.preventDefault();
+          playPauseBtn.click();
+          break;
+      }
+    });
+
     /* ================= INIT ================= */
     window.addEventListener('load', () => {
       loadVideoLinks(); // Tải link video

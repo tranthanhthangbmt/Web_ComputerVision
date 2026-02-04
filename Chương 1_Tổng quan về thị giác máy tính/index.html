@@ -9,6 +9,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style -->
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .part-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .part-btn:hover {
+            background: #f3f4f6;
+            color: #0d6efd;
+        }
+
+        .part-btn.active {
+            background: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+        }
+    </style>
 </head>
 
 <body>
@@ -41,8 +65,15 @@
 
         <!-- Tab Content: Theory -->
         <div id="theory" class="tab-content active">
+            <!-- PART SELECTION -->
+            <div class="mb-4 flex space-x-2" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="part-btn active" onclick="loadPart(1, this)">Tiết 1: Giới thiệu & Thách thức</button>
+                <button class="part-btn" onclick="loadPart(2, this)">Tiết 2: Computer Vision Fundamentals</button>
+                <button class="part-btn" onclick="loadPart(3, this)">Tiết 3: OpenCV & Xử lý ảnh số</button>
+            </div>
+
             <div class="bg-white p-4 rounded-xl shadow-sm" style="height: 800px;">
-                <!-- PDF Viewer -->
+                <!-- PDF Viewer / Slide Player -->
                 <iframe id="pdf-frame" width="100%" height="100%" style="border: none;"></iframe>
             </div>
         </div>
@@ -110,17 +141,34 @@
 
         // Config specific for Chapter 1
         const config = {
-            pdfPath: 'Phần 1_Thị_Giác_Máy_Tính_Tổng_Quan/Phần 1_Thị_Giác_Máy_Tính_Tổng_Quan.pdf',
+            parts: {
+                1: 'Phần 1_Thị_Giác_Máy_Tính_Tổng_Quan/index.html',
+                2: 'Phần 2_Computer_Vision_Fundamentals/index.html',
+                3: '../pdf_viewer_template.html?file=' + encodeURIComponent('Chương 1_Tổng quan về thị giác máy tính/Phần 3_OpenCV_Thực_Hành_Xử_Lý_Ảnh_Số/Phần 3_OpenCV_Thực_Hành_Xử_Lý_Ảnh_Số.pdf')
+            },
             quizCsv: '../Quiz/index.html?group=Chuong1'
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Set PDF/Slide src - using the HTML5 Player which now includes the Video tab
-            // const viewerPath = '../pdf_viewer_template.html';
-            // document.getElementById('pdf-frame').src = `${viewerPath}?file=${encodeURIComponent(config.pdfPath)}`;
+        function loadPart(partId, btn) {
+            // Update Active State
+            if (btn) {
+                document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
 
-            // Direct link to the Player
-            document.getElementById('pdf-frame').src = 'Phần 1_Thị_Giác_Máy_Tính_Tổng_Quan/index.html';
+            // Load Content
+            const url = config.parts[partId];
+            if (url) {
+                document.getElementById('pdf-frame').src = url;
+            } else {
+                console.error("Part not found:", partId);
+                alert("Nội dung bài học này chưa khả dụng.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load Default Part (Part 1)
+            loadPart(1, document.querySelector('.part-btn.active'));
 
             // Set Quiz src
             document.getElementById('quiz-frame').src = config.quizCsv;

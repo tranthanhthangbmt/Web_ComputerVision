@@ -466,14 +466,14 @@
 <body>
   <div id="player-container" class="player-container">
 
-    <!-- TAB NAVIGATION -->
-    <div class="tab-nav">
+    <!-- TAB NAVIGATION REMOVED -->
+    <!-- <div class="tab-nav">
       <button class="tab-btn active" onclick="openTab('slide')">📖 Bài Giảng</button>
       <button class="tab-btn" onclick="openTab('video')">🎥 Video</button>
-    </div>
+    </div> -->
 
-    <!-- TAB 1: SLIDE VIEWER -->
-    <div id="tab-slide" class="tab-content active">
+    <!-- TAB 1: SLIDE VIEWER (Full Height) -->
+    <div id="tab-slide" class="tab-content" style="display:flex; padding:0;">
       <div id="slide-viewer" class="slide-viewer" aria-label="Khu vực hiển thị slide" tabindex="0">
         <img id="slide-image" src="" alt="Slide" />
         <!-- Loading Overlay -->
@@ -502,16 +502,6 @@
           <button id="autoscroll-btn" title="Bật/Tắt Tự cuộn">🔄</button>
           <button id="scale-btn" title="Chế độ xem">⛶</button>
           <button id="fullscreen-btn" title="Toàn màn hình">🖼️</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: VIDEO LIST -->
-    <div id="tab-video" class="tab-content">
-      <div class="video-playlist-container" id="video-playlist">
-        <!-- Video items will be injected here -->
-        <div style="text-align:center; color:#888; margin-top:50px;">
-          Đang tải danh sách video...
         </div>
       </div>
     </div>

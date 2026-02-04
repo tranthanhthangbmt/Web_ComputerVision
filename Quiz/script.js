@@ -226,9 +226,15 @@ const app = {
                     return;
                 }
                 this.processData(results.data);
-                this.renderPartSelection();
-                this.showView('view-parts');
-                document.getElementById('header-title').textContent = moduleConfig.name;
+
+                // OPTIMIZATION: If there is only 1 part, start it immediately
+                if (this.state.parts.length === 1) {
+                    this.startQuiz(this.state.parts[0]);
+                } else {
+                    this.renderPartSelection();
+                    this.showView('view-parts');
+                    document.getElementById('header-title').textContent = moduleConfig.name;
+                }
             },
             error: (err) => {
                 document.getElementById('loading').classList.add('hidden');
@@ -436,6 +442,7 @@ const app = {
             // Correct
             element.classList.add('correct');
             element.classList.add('disabled');
+            element.classList.add('flex-wrap'); // Allow content to wrap for explanation
 
             // Disable all other options
             const allOptions = document.querySelectorAll('.quiz-option');
@@ -452,11 +459,18 @@ const app = {
             document.getElementById('question-status').textContent = 'Đã hoàn thành';
             document.getElementById('question-status').className = 'text-sm font-medium text-green-600';
 
+            // SHOW REASONING INSIDE OPTION
+            const question = this.state.quizQuestions[this.state.currentQuestionIndex];
+            if (question.Explanation && question.Explanation.trim() !== "") {
+                const reasonDiv = document.createElement('div');
+                reasonDiv.className = 'basis-full mt-3 pt-3 border-t border-green-200 text-sm text-green-800 animate-fade-in';
+                reasonDiv.innerHTML = `<strong>Giải thích:</strong> ${question.Explanation}`;
+                element.appendChild(reasonDiv);
+            }
+
         } else {
             // Wrong
             element.classList.add('wrong');
-            // Remove wrong class after animation to allow retry (optional, but requested "cho chọn lại")
-            // But we keep it red to show it was wrong.
 
             feedbackArea.className = 'mt-6 p-4 rounded-lg border-l-4 bg-red-50 border-red-500 text-red-700 fade-in';
             feedbackText.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-2"></i> Sai rồi, hãy thử lại!';
@@ -466,23 +480,6 @@ const app = {
             if (this.state.userResults[this.state.currentQuestionIndex] !== 'correct') {
                 this.state.userResults[this.state.currentQuestionIndex] = 'wrong';
                 this.updatePaletteItem(this.state.currentQuestionIndex, 'wrong');
-            }
-        }
-
-        // Show Reasoning/Explanation if available
-        const question = this.state.quizQuestions[this.state.currentQuestionIndex];
-        if (question.Explanation && question.Explanation.trim() !== "") {
-            const reasonDiv = document.createElement('div');
-            reasonDiv.className = 'mt-3 pt-3 border-t border-gray-200 text-sm italic text-gray-600';
-            reasonDiv.innerHTML = `<strong>Giải thích:</strong> ${question.Explanation}`;
-
-            // Avoid duplicate reason if user clicks multiple times
-            if (!feedbackText.nextElementSibling || !feedbackText.nextElementSibling.innerHTML.includes('Giải thích')) {
-                // Clean up previous explanation if any
-                while (feedbackText.nextSibling) {
-                    feedbackText.nextSibling.remove();
-                }
-                feedbackText.parentNode.appendChild(reasonDiv);
             }
         }
     },

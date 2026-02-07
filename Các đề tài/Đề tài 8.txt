@@ -1,0 +1,107 @@
+﻿HỆ THỐNG PHÂN LOẠI CHẤT LƯỢNG NÔNG SẢN
+Tên đề tài (Tiếng Việt): Nghiên cứu mô hình Thị giác máy tính Lai ghép (Hybrid Computer Vision) kết hợp Học sâu và Đặc trưng cấu trúc thủ công để phân loại chất lượng nông sản đa cấp độ trên băng chuyền.
+Tên đề tài (Tiếng Anh - Suggested): Automated Fruit Grading System based on Feature Fusion of Color Histograms, Texture Descriptors, and Convolutional Neural Networks for Surface Defect Detection.
+
+1. Đặt vấn đề (Problem Statement)
+• Thực trạng: Việc phân loại nông sản hiện nay tại Việt Nam chủ yếu dựa vào cảm quan của công nhân. Điều này dẫn đến: (1) Năng suất thấp, (2) Độ chính xác không ổn định (mỏi mắt sau vài giờ làm việc), và (3) Tiêu chuẩn không đồng nhất giữa các lô hàng.
+• Hạn chế công nghệ:
+o Các máy phân loại màu (Color Sorter) hiện có chỉ dựa trên màu sắc (RGB), không phát hiện được các lỗi về cấu trúc bề mặt như: vỏ bị nhăn (shriveled), vết bầm dập (bruise) nhưng chưa đổi màu, hoặc vết nứt nhỏ.
+o Mô hình CNN thuần túy (như ResNet) thường hoạt động như “hộp đen”, khó điều chỉnh theo các tiêu chuẩn nông nghiệp cụ thể (ví dụ: “Cho phép vết xước < 5% diện tích”).
+• Câu hỏi nghiên cứu (Research Question): Làm thế nào để kết hợp sức mạnh trích xuất đặc trưng ngữ nghĩa của Deep Learning (phát hiện thối, sâu) với độ chi tiết của Xử lý ảnh truyền thống (đo độ nhám, độ bóng) để tạo ra một hệ thống phân loại minh bạch, chính xác và có thể tùy chỉnh ngưỡng (Threshold-adjustable)?
+2. Mục tiêu nghiên cứu (Research Objectives)
+1. Xây dựng bộ trích chọn đặc trưng lai (Hybrid Feature Extraction):
+o Màu sắc: Sử dụng không gian màu CIELAB để mô phỏng cảm nhận mắt người.
+o Kết cấu: Sử dụng LBP (Local Binary Patterns) hoặc GLCM để phát hiện độ nhẵn/nhám của vỏ.
+o Ngữ nghĩa: Sử dụng CNN (như EfficientNet) để phát hiện vật thể lạ hoặc vết sâu bệnh phức tạp.
+2. Phát triển thuật toán Phân loại Đa lớp (Multi-class Grading): Không chỉ là Binary (Đạt/Hỏng), mà phân thành 4 cấp: Premium, Class 1, Class 2, Reject.
+3. Xử lý bề mặt 3D (Surface Unrolling): (Nâng cao) Đề xuất giải pháp ghép ảnh từ nhiều góc độ (multi-view) để đảm bảo không bỏ sót vết bệnh nằm ở mặt sau của quả.
+
+3. Tổng quan tài liệu & Khoảng trống nghiên cứu (Literature Review)
+3.1. Phương pháp dựa trên Đặc trưng thủ công (Hand-crafted Features):
+• Màu sắc (Color): Histogram trong không gian HSV hoặc L*a*b* thường được dùng để đánh giá độ chín. Tuy nhiên, nó thất bại khi quả chín không đều [1].
+• Kết cấu (Texture): Các thuật toán như LBP (Local Binary Patterns) và GLCM (Gray Level Co-occurrence Matrix) rất mạnh trong việc phát hiện vỏ cam sần sùi hay vỏ táo nhẵn bóng. Ưu điểm là tính toán cực nhanh, không cần GPU mạnh.
+3.2. Phương pháp Học sâu (Deep Learning):
+• CNNs (ResNet, VGG): Đạt độ chính xác cao trong việc nhận diện loại quả và bệnh. Nhưng nhược điểm là cần lượng dữ liệu gán nhãn khổng lồ cho từng loại lỗi (vết nứt, vết xước, vết thâm).
+• Attention Mechanisms (CBAM): Các nghiên cứu gần đây (2023) tích hợp cơ chế Chú ý Không gian và Kênh (Channel & Spatial Attention) để giúp mạng tập trung vào vết sẹo nhỏ thay vì nhìn vào cuống quả [2].
+3.3. Khoảng trống nghiên cứu (The Gap):
+• Feature Fusion (Dung hợp đặc trưng): Rất ít nghiên cứu kết hợp hiệu quả giữa Texture Features (cổ điển) và Deep Features (hiện đại). Việc kết hợp này có thể giải quyết bài toán “Dữ liệu ít” (Small Data) thường gặp trong nhà máy đóng gói.
+• Tốc độ thực thi: Các mô hình chính xác thường quá chậm cho băng chuyền tốc độ cao (5-10 quả/giây). Cần một kiến trúc nhẹ nhưng tận dụng được thông tin kết cấu.
+
+4. Tài liệu tham khảo minh chứng (References)
+Đề tài cần tham khảo các tạp chí hàng đầu về Kỹ thuật Nông nghiệp (2022-2024):
+1. Về dung hợp đặc trưng (Feature Fusion):
+o Paper: “Fruit Grading Using Hybrid Features of Color, Texture and Deep Learning” (Computers and Electronics in Agriculture, 2023). Bài báo nền tảng cho hướng đi này.
+o Paper: “Automated Grading of Citrus Fruits using Multi-View Computer Vision and Feature Fusion” (IEEE Access, 2024).
+2. Về phân tích kết cấu (Texture Analysis):
+o Paper: “Defect Detection on Fruit Surfaces using Gabor Filters and CNNs” (Postharvest Biology and Technology, 2023).
+3. Về hệ thống thời gian thực:
+o Paper: “Real-time Fruit Sorting System based on Embedded AI” (Journal of Food Engineering, 2022).
+
+5. Tài nguyên bước đầu (Resources Part 1)
+A. Datasets (Dữ liệu):
+1. Fruits-360: Bộ dữ liệu khổng lồ về các loại quả xoay 360 độ. Rất tốt để train model nhận diện loại quả.
+2. Citrus Disease Dataset: Chuyên về các bệnh trên quả có múi (cam/chanh/bưởi) - loại quả có kết cấu vỏ phức tạp nhất.
+3. Kaggle Fruit Detection: Tìm kiếm các bộ dataset có nhãn “Rotten vs Fresh”.
+B. GitHub Repositories & Libraries:
+1. Scikit-image: scikit-image.org
+o Thư viện Python tốt nhất để trích xuất đặc trưng LBP, GLCM, HOG (Traditional CV). Sinh viên bắt buộc phải thành thạo thư viện này.
+2. Deep-Fruit-Grading: github.com/topics/fruit-grading
+o Tìm kiếm các project mẫu về phân loại.
+3. OpenCV: Dùng để chuyển đổi không gian màu (RGB -> HSV/Lab) và tách nền (Background removal).
+5. Phương pháp nghiên cứu & Kiến trúc đề xuất (Methodology)
+Đề tài đề xuất mô hình “Dual-Stream Feature Fusion Network” (Mạng hợp nhất đặc trưng hai luồng). Hệ thống hoạt động song song để bắt trọn cả thông tin màu sắc/kết cấu lẫn ngữ nghĩa sâu.
+Giai đoạn 1: Tiền xử lý & Tách nền (Preprocessing & ROI Extraction)
+Trong nhà máy, nền băng chuyền thường có màu xanh hoặc đen.
+• Bước 1: Chuyển đổi sang không gian màu HSV.
+• Bước 2: Sử dụng kỹ thuật Otsu’s Thresholding trên kênh Saturation (S) để tách quả ra khỏi nền.
+• Bước 3: Cắt khung hình chữ nhật bao quanh quả (Bounding Box) để loại bỏ tối đa phần nền thừa, giảm nhiễu cho các bước sau.
+Giai đoạn 2: Nhánh trích xuất đặc trưng thủ công (Hand-crafted Feature Stream)
+Dựa trên tài liệu tham khảo (“Feature Extraction and Image Processing for Computer Vision” - Mark Nixon), chúng ta áp dụng các kỹ thuật kinh điển:
+1. Đặc trưng Màu sắc (Color Moments):
+o Chuyển ảnh ROI sang không gian màu CIELab (L*: độ sáng, a*: xanh-đỏ, b*: xanh-vàng). Không gian này mô phỏng mắt người tốt hơn RGB.
+o Tính toán 3 moment thống kê cho từng kênh: Mean (Trung bình - đại diện màu chủ đạo), Standard Deviation (Độ lệch chuẩn - độ phân bố màu), Skewness (Độ lệch - độ bóng).
+o → Vector màu V_color (9 chiều).
+2. Đặc trưng Kết cấu (Texture Descriptors):
+o Sử dụng GLCM (Gray Level Co-occurrence Matrix) để tính: Contrast (Độ tương phản), Homogeneity (Độ đồng nhất), Energy (Năng lượng), Correlation (Tương quan).
+o Ý nghĩa: Quả vỏ trơn (nhẵn) có Homogeneity cao; quả bị nhăn hoặc sần sùi có Contrast cao.
+o → Vector kết cấu V_texture (4 chiều).
+Giai đoạn 3: Nhánh học sâu (Deep Learning Stream)
+• Sử dụng EfficientNet-B0 (Pre-trained trên ImageNet).
+• Feature Extraction: Bỏ lớp Classification cuối cùng. Lấy vector đặc trưng tại lớp GlobalAveragePooling.
+• Đây là vector chứa thông tin ngữ nghĩa cao cấp (ví dụ: hình dáng tổng thể, vết cuống, đốm đen bất thường).
+• → Vector ngữ nghĩa V_deep (1280 chiều).
+Giai đoạn 4: Hợp nhất & Phân loại (Fusion & Classification)
+• Feature Fusion: Nối các vector lại với nhau: V_final=[V_color,V_texture,V_deep ] .
+• Classifier: Đưa V_final vào bộ phân lớp Support Vector Machine (SVM) với kernel RBF.
+o Lý do chọn SVM: SVM hoạt động cực tốt với dữ liệu dạng vector đặc trưng hỗn hợp (high-dimensional feature space) và cho phép tìm ra siêu phẳng (hyperplane) tối ưu để phân tách các ranh giới mờ nhạt giữa “Loại 1” và “Loại 2”.
+
+6. Kế hoạch thực nghiệm (Implementation Plan)
+6.1. Thu thập dữ liệu & Thiết lập phần cứng
+• Mô phỏng băng chuyền: Sử dụng Webcam đặt cố định vuông góc với mặt bàn (hoặc băng tải mini).
+• Ánh sáng (Yếu tố sống còn): Sử dụng buồng chụp (lightbox) với đèn LED tản sáng (diffused light) để loại bỏ bóng và điểm lóa (specular reflection) trên vỏ quả bóng.
+• Dữ liệu: Thu thập khoảng 500 quả (Xoài hoặc Táo), chia làm 4 loại theo tiêu chuẩn VietGAP hoặc TCVN:
+o Loại A: Hoàn hảo, không vết xước.
+o Loại B: Vết xước < 5% diện tích.
+o Loại C: Vết xước > 5%, méo mó.
+o Loại D (Hỏng): Thối, dập nát.
+6.2. Metrics đánh giá (Độ đo)
+• Confusion Matrix (Ma trận nhầm lẫn): Rất quan trọng.
+o Chấp nhận được: Nhầm Loại A sang Loại B (thiệt hại kinh tế nhỏ).
+o Không chấp nhận được: Nhầm Loại D (Hỏng) sang Loại A (mất uy tín thương hiệu).
+• Processing Speed: Đo thời gian xử lý trung bình mỗi quả (ms). Yêu cầu hệ thống phải phân loại được ít nhất 5 quả/giây.
+7. Tài nguyên kỹ thuật & Mã nguồn (Resources)
+A. Thư viện Python (Cần thiết):
+1. OpenCV (cv2): Xử lý ảnh cơ bản, chuyển đổi màu.
+2. Scikit-image (skimage): Thư viện chuẩn để tính toán GLCM và LBP.
+3. Scikit-learn (sklearn): Để huấn luyện bộ phân lớp SVM.
+4. TensorFlow/Keras: Để chạy EfficientNet.
+B. GitHub Repositories tham khảo:
+1. Fruit-Grading-SVM: Tìm kiếm các repo kết hợp CNN feature extraction với SVM classification.
+2. Texture-Analysis-GLCM: github.com/topics/glcm (Tham khảo cách tính GLCM tối ưu tốc độ).
+Lời khuyên của chuyên gia (Expert Advice):
+1. Vấn đề “Cuống quả” (Stem vs. Defect):
+o Cuống quả thường có màu đen/nâu, rất giống vết thối. Máy rất dễ nhầm.
+o Giải pháp: Dạy mô hình nhận diện vị trí cuống (Stem Detection). Nếu vết đen nằm ở đúng vị trí lõm đầu quả -> Đó là cuống, không phải lỗi.
+2. Cơ chế lăn (Rolling Mechanism):
+o Một camera chỉ nhìn thấy 50% bề mặt quả. Vết thối có thể nằm ở mặt dưới.
+o Gợi ý cho luận văn xuất sắc: Đề xuất hệ thống gương phản chiếu (Mirrors) hoặc cơ chế xoay quả để chụp được toàn bộ bề mặt, sau đó ghép ảnh (Stitching) trước khi đưa vào phân loại.

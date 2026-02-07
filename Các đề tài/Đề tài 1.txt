@@ -1,0 +1,110 @@
+﻿Tên đề tài (Tiếng Việt): Nghiên cứu và Phát triển Framework Đa phương thức Đánh giá Mức độ Tập trung Thời gian thực trong E-Learning sử dụng Học sâu và Ước lượng Tư thế Đầu (Deep Head Pose Estimation).
+Tên đề tài (Tiếng Anh - Suggested): Real-time Multimodal Student Engagement Assessment Framework in E-Learning based on Lightweight Deep Head Pose Estimation and Temporal Attention Modeling.
+
+Đề tài về Head Pose Estimation (HPE) có giá trị lõi (contribution) phải nằm ở:
+1. Tính thực tiễn (Robustness): Chạy được trên thiết bị yếu (Edge device/Webcam thường) với độ trễ thấp.
+2. Mô hình hóa hành vi (Behavior Modeling): Từ góc quay đầu (Head Pose) phải suy ra được trạng thái “Tập trung” (Attention State) theo chuỗi thời gian, chứ không phải chỉ là lát cắt từng khung hình.
+Phần 1: Tổng quan, Tính cấp thiết và Tổng quan tài liệu (Literature Review). Phần này đóng vai trò “bán” ý tưởng của bạn cho hội đồng, chứng minh rằng đề tài này đáng để làm.
+1. Đặt vấn đề (Problem Statement)
+Sự bùng nổ của E-learning sau đại dịch Covid-19 đã đặt ra một thách thức lớn: “Sự vắng mặt trong hiện diện” (Absent presence). Người học đăng nhập vào hệ thống nhưng tâm trí không tập trung vào bài giảng.
+• Thực trạng: Các phương pháp giám sát truyền thống (click chuột, thời gian online) không phản ánh đúng sự tập trung nhận thức (cognitive engagement).
+• Hạn chế công nghệ hiện tại:
+o Các hệ thống dùng Eye-tracking chuyên dụng thì quá đắt đỏ và xâm lấn.
+o Các giải pháp dùng Webcam hiện tại (chỉ detect khuôn mặt) dễ bị đánh lừa và hoạt động kém khi thiếu sáng hoặc góc quay nghiêng lớn (extreme poses).
+• Câu hỏi nghiên cứu (Research Question): Làm thế nào để ước lượng chính xác mức độ tập trung của người học chỉ thông qua camera đơn (monocular camera) chất lượng thấp, trong điều kiện môi trường không kiểm soát (in-the-wild), với chi phí tính toán tối thiểu?
+2. Mục tiêu nghiên cứu (Research Objectives)
+Đề tài không chỉ dừng lại ở việc “tính góc quay đầu”, mà tập trung vào các mục tiêu sau để đạt hàm lượng khoa học cao:
+1. Xây dựng mô hình Lightweight HPE: Phát triển mạng nơ-ron tích chập nhẹ (dựa trên MobileNetV3 hoặc GhostNet) để ước lượng 3 góc Euler (Pitch, Yaw, Roll) với độ sai số < 5 độ trên tập dữ liệu in-the-wild (như 300W-LP, AFLW2000).
+2. Mô hình hóa chuỗi thời gian (Temporal Modeling): Tích hợp cơ chế Self-Attention (Transformer) hoặc LSTM để phân tích sự thay đổi tư thế đầu theo thời gian. Lý do: Một cái gật đầu nhẹ có thể là “đồng ý/tập trung”, nhưng gục đầu kéo dài là “ngủ gật/mất tập trung”. Ảnh tĩnh không thấy được điều này.
+3. Đề xuất chỉ số “Engagement Score”: Xây dựng công thức toán học định lượng mức độ tập trung tổng hợp từ hướng nhìn (Gaze vector) và tư thế đầu.
+3. Tổng quan tài liệu & Khoảng trống nghiên cứu (Literature Review & Gap Analysis)
+Đây là phần quan trọng nhất để chứng minh tính mới của đề tài.
+3.1. Các phương pháp hình học truyền thống (Geometric Methods):
+• Trước đây, các nghiên cứu sử dụng thuật toán PnP (Perspective-n-Point) để tính toán tư thế đầu từ các điểm đặc trưng (facial landmarks).
+• Nhược điểm: Phụ thuộc hoàn toàn vào độ chính xác của việc phát hiện landmark. Nếu landmark bị che khuất (occlusion) hoặc lệch, kết quả góc quay sẽ sai lệch lớn [1].
+3.2. Các phương pháp Học sâu (Deep Learning Approaches):
+• Các mô hình SOTA (State-of-the-art) gần đây như Hopenet (ResNet-50) [2] hay FSA-Net đã đạt độ chính xác cao bằng cách hồi quy trực tiếp góc quay từ ảnh mà không cần landmark trung gian.
+• Gần đây nhất (2023-2024), xu hướng chuyển sang 6DRepNet [3] (biểu diễn 6D rotation matrix) để giải quyết vấn đề “Gimbal lock” (khóa trục) của góc Euler truyền thống.
+3.3. Khoảng trống nghiên cứu (The Research Gap): Dù độ chính xác của việc đoán góc (Head Pose) đã rất cao, nhưng sự liên kết giữa Head Pose và “Sự tập trung” (Engagement) vẫn còn lỏng lẻo trong các nghiên cứu gần đây:
+• Hầu hết các mô hình chạy theo hướng Frame-based (xử lý từng ảnh rời rạc), bỏ qua thông tin ngữ cảnh thời gian (Temporal Context).
+• Các mô hình chính xác (như ResNet-50) quá nặng để chạy trên trình duyệt web của sinh viên, trong khi các mô hình nhẹ (MobileNet) thường hy sinh độ chính xác quá nhiều.
+• => Đề xuất của đề tài: Sử dụng kiến trúc Teacher-Student Learning (Knowledge Distillation) để nén mô hình lớn vào mô hình nhỏ, kết hợp với module phân tích chuỗi thời gian để đánh giá sự tập trung ổn định.
+
+4. Tài liệu tham khảo & Minh chứng (References)
+Dưới đây là danh sách các bài báo uy tín và mới nhất (2022-2024) mà bạn nên trích dẫn để tăng độ tin cậy:
+1. Về phương pháp Lightweight HPE (Mới nhất 2024):
+o Paper: “Online Learning State Evaluation Method Based on Face Detection and Head Pose Estimation” (MDPI Sensors, 2024). Bài này đề xuất mạng DB-Net nhẹ cho di động, rất sát với đề tài.
+o Paper: “A Novel Student Engagement Analysis of Real Classroom Teaching Using Unified Body Orientation Estimation” (MDPI Sensors, 2025). Cập nhật mới nhất về việc kết hợp hướng cơ thể.
+2. Về kỹ thuật AI nâng cao (6DoF & Representation):
+o Paper: “6DoF Head Pose Estimation through Explicit Bidirectional Interaction with Face Geometry” (ECCV 2024). Dùng để tham khảo phần toán học nâng cao.
+o Paper: “Rank Pose: Learning Generalised Fish-Eye Head Pose Estimation from Multi-View Images” (CVPR 2023).
+3. Về ứng dụng trong Giáo dục (EdTech):
+o Paper: “Student Engagement Detection Using Emotion Analysis, Eye Tracking and Head Movement” (Springer, 2023).
+
+5. Tài nguyên học tập & GitHub (Resources)
+Đây là các kho tài liệu và mã nguồn mở tốt nhất để nghiên cứu sinh bắt đầu ngay lập tức:
+• Sách nền tảng (Must Read):
+o Computer Vision: Algorithms and Applications (2nd Edition, 2022) - Richard Szeliski. (Đặc biệt chương 12 về Face & Head).
+o Deep Learning for Computer Vision with Python - Adrian Rosebrock (Phần thực hành).
+• GitHub Repositories (Code cơ sở để phát triển):
+1. 6DRepNet (SOTA hiện nay): github.com/thohemp/6DRepNet (Mô hình rất tốt để tham khảo cách biểu diễn góc quay 6D).
+2. Lightweight Head Pose: github.com/Shaw-git/Lightweight-Head-Pose-Estimation (Code này dùng MobileNet, rất phù hợp để tối ưu hóa cho web/mobile).
+3. MediaPipe (Google): google.github.io/mediapipe/ (Cực mạnh về real-time landmark, có thể dùng làm baseline để so sánh).
+
+6. Phương pháp nghiên cứu & Kiến trúc đề xuất (Methodology & Proposed Architecture)
+Để giải quyết bài toán chạy real-time trên thiết bị người dùng (edge devices) mà vẫn đảm bảo độ chính xác của một đề tài , tôi đề xuất kiến trúc Hybrid Lightweight Network with Temporal Attention.
+Hệ thống được chia thành 3 module chính:
+Module 1: Phát hiện khuôn mặt thích ứng (Adaptive Face Detection)
+• Vấn đề: Các mô hình nặng như SSD hay Faster R-CNN quá chậm. Haar Cascades thì quá lỗi thời và kém chính xác.
+• Giải pháp đề xuất: Sử dụng BlazeFace (hoặc biến thể của NanoDet). Đây là mô hình siêu nhẹ, thiết kế cho GPU di động.
+• Cải tiến (Contribution): Tích hợp thuật toán Frame Skipping Strategy. Nếu sự thay đổi giữa frame t và t-1 (tính bằng Optical Flow hoặc Pixel Difference) nhỏ hơn ngưỡng ϵ , hệ thống sẽ tái sử dụng vị trí bounding box cũ để tiết kiệm tài nguyên tính toán.
+Module 2: Mạng ước lượng tư thế đầu (Head Pose Estimation Network - The Core)
+Đây là trọng tâm của đề tài. Thay vì dùng ResNet-50 (nặng 100MB+), ta sẽ thiết kế một mạng nhỏ gọn.
+• Backbone: Sử dụng MobileNetV3-Small hoặc ShuffleNetV2 đã được pre-trained trên ImageNet.
+• Cơ chế Loss Function mới (Điểm nhấn học thuật): Hầu hết các sinh viên chỉ dùng MSE (Mean Squared Error). Tuy nhiên, góc quay là đại lượng tuần hoàn (periodic). Ví dụ: 359^∘ rất gần 1^∘ , nhưng MSE sẽ phạt lỗi này rất nặng. Đề xuất sử dụng hàm mất mát kết hợp Wing Loss hoặc Geodesic Loss:
+L_total=λ_1 L_MSE (y,y ̂ )+λ_2 L_Geodesic (R,R ̂ )
+  Trong đó R là ma trận quay (Rotation Matrix) để đảm bảo tính liên tục của không gian 3D.
+Module 3: Mô hình hóa sự tập trung theo chuỗi thời gian (Temporal Engagement Modeling)
+Một bức ảnh tĩnh không nói lên sự tập trung. Sự tập trung là một chuỗi hành vi.
+• Kiến trúc: Đầu ra của Module 2 (vector góc v=[yaw,pitch,roll] ) sẽ được đưa vào một mạng LSTM hoặc TCN (Temporal Convolutional Network) với cửa sổ trượt (sliding window) T=30 frames (1 giây).
+• Công thức định lượng Engagement Score ( E ):
+E_t=α⋅(1-∣normalize(yaw)∣)+β⋅(1-∣normalize(pitch)∣)+γ⋅Stability(v_(t-T:t) )
+o α,β : Trọng số (ví dụ: nhìn nghiêng bị phạt nặng hơn gật đầu).
+o Stability: Hàm đo độ ổn định, phạt các hành vi quay đầu liên tục (bồn chồn).
+
+7. Kế hoạch thực nghiệm & Đánh giá (Implementation & Evaluation Plan)
+Một đề tài tốt cần sự chứng minh chặt chẽ qua số liệu. Bạn cần hướng dẫn sinh viên thiết lập các kịch bản kiểm thử (benchmark).
+7.1. Dữ liệu (Datasets)
+Nghiên cứu sinh cần sử dụng kết hợp 3 loại dữ liệu:
+1. Training (Tổng hợp): 300W-LP (61,000 ảnh). Đây là bộ dữ liệu tiêu chuẩn vàng có nhãn góc quay 3D chính xác.
+2. Validation (Thực tế): AFLW2000-3D. Dùng để đo độ chính xác của mô hình HPE trong môi trường tự nhiên.
+3. Application Testing (Dữ liệu tự thu thập - Quan trọng):
+o Tự xây dựng bộ dữ liệu nhỏ (VN-Student-Engagement): Quay video 50 sinh viên ĐH Đông Á đang học online (có xin phép).
+o Gán nhãn thủ công mức độ tập trung (High/Low) bởi các chuyên gia tâm lý hoặc giáo viên để làm Ground Truth kiểm chứng chỉ số E .
+7.2. Các độ đo đánh giá (Metrics)
+Không chỉ dùng Accuracy, cần dùng các độ đo chuyên sâu:
+• Cho góc quay (HPE): Mean Absolute Error (MAE) của 3 góc Pitch, Yaw, Roll. Mục tiêu: MAE < 〖4.5〗^∘ (SOTA hiện nay khoảng 〖3.5〗^∘-5^∘ trên mobile).
+• Cho mức độ tập trung: Precision, Recall, F1-Score trên tập dữ liệu VN-Student-Engagement.
+• Về hiệu năng: Latency (ms) trên CPU (mục tiêu < 30ms/frame), Model Size (MB) (mục tiêu < 5MB).
+
+8. Tài nguyên kỹ thuật chi tiết (Technical Resources)
+Để sinh viên không bị “bơi”, hãy cung cấp chính xác các công cụ cần dùng:
+A. Thư viện & Framework:
+• PyTorch: Bắt buộc dùng cho nghiên cứu (dễ debug, cộng đồng mạnh).
+• ONNX Runtime: Dùng để convert model PyTorch sang chạy trên Web (trình duyệt) hoặc C++ để demo tính thực tiễn.
+• OpenCV: Dùng cho các thao tác xử lý ảnh cơ bản.
+B. GitHub Repositories tham khảo (Source Code nền tảng):
+1. Ghi chép quan trọng: Tuyệt đối không copy code, chỉ tham khảo kiến trúc.
+2. github.com/natanielruiz/deep-head-pose: Code cơ bản nhất về HPE dùng ResNet, rất dễ hiểu để bắt đầu (Baseline).
+3. github.com/Ascend-Research/HeadPoseEstimation-WHENet: WHENet là một kiến trúc hiện đại, nhẹ, hoạt động tốt trên phạm vi góc rộng (Full-range angles), rất đáng tham khảo cho đề tài này.
+4. github.com/mpatacchiola/deepgaze: Một thư viện cũ nhưng chứa rất nhiều lý thuyết cơ bản về hình học trong thị giác máy (tốt để đọc hiểu code).
+C. Sách nâng cao (Math & Optimization):
+• Deep Learning - Ian Goodfellow (Chương về Optimization & CNN).
+• Multiple View Geometry in Computer Vision - Hartley & Zisserman (Kinh thánh về hình học 3D, dùng để giải thích phần chiếu hình ảnh từ 3D sang 2D).
+
+Lời khuyên:
+Để đề tài này nên làm thêm một bước nhỏ: Explainable AI (XAI).
+• Câu hỏi: Tại sao máy lại bảo sinh viên A mất tập trung?
+• Giải pháp: Sử dụng kỹ thuật Grad-CAM để visualize vùng ảnh mà mạng nơ-ron đang “nhìn” vào. Nếu mạng tập trung vào đôi mắt và hướng đầu -> Tin cậy. Nếu mạng nhìn vào background -> Sai.
+• Việc đưa hình ảnh Grad-CAM vào báo cáo sẽ thuyết phục hoàn toàn hội đồng phản biện.
+

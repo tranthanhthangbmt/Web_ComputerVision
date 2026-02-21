@@ -33,9 +33,6 @@ Người 1: Tuy nhiên, khi các em trượt cái Kernel này đến mép của 
 Người 2: Vậy còn “Stride” - Bước trượt là gì vậy thầy? Có phải lúc nào mình cũng phải trượt từng pixel một không ạ?
 Người 1: Không bắt buộc nhé. Stride chính là khoảng cách di chuyển của Kernel. Mặc định là trượt một bước (như đi bộ). Nhưng nếu ta set Stride lớn hơn một, ví dụ bằng hai, Kernel sẽ “nhảy cóc” bỏ qua các pixel ở giữa. Kết quả là bức ảnh đầu ra sẽ bị giảm kích thước đi đáng kể. Trong các mạng Neural Network (CNN) sau này các em học, người ta hay dùng Stride nhảy cóc này để làm một việc gọi là Pooling, giúp giảm dung lượng dữ liệu đấy.
 
-
-Bạn xem qua phần 1 này nhé. Nếu phong cách diễn đạt này ổn và đúng ý bạn, tôi sẽ tiếp tục bắt tay vào soạn luôn Phần 2 (từ Slide 8 đến 14) với năng lượng tương tự! Cứ thoải mái góp ý nếu bạn muốn điều chỉnh thêm bớt gì nha.
-
 Slide 8: LỌC TRUNG BÌNH (MEAN FILTER)
 Người 1: Sau khi hiểu cơ chế “Cửa sổ trượt”, chúng ta sẽ đi vào bộ lọc đầu tiên và cũng là cơ bản nhất: Lọc Trung bình. Các em có thể gọi đây là triết lý “Dân chủ hóa” hình ảnh, nghĩa là mọi pixel hàng xóm đều có giá trị và tầm quan trọng y như nhau. Với một ma trận Kernel ba nhân ba, tất cả chín ô đều mang chung một giá trị trọng số là một phần chín.
 Người 2: Vậy cơ chế hoạt động của nó là cộng tất cả chín ô lại rồi chia đều cho chín, sau đó lấy kết quả đắp vào ô ở giữa đúng không thưa thầy?

@@ -26,6 +26,14 @@ const app = {
             { name: "Phần 2: Hiểu & Phân tích", file: "../Chương 1_Tổng quan về thị giác máy tính/DB/MD_Chuong1-T2.csv" },
             { name: "Phần 3: Vận dụng & Tổng hợp", file: "../Chương 1_Tổng quan về thị giác máy tính/DB/MD_Chuong1-T3.csv" }
         ],
+        'Chuong2': [
+            { name: "Tiết 1: Image Point Operations", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T1.csv" },
+            { name: "Tiết 2: Advanced Histogram Techniques", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T2.csv" },
+            { name: "Tiết 3: Optimized Image Enhancement", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T3.csv" },
+            { name: "Tiết 4: Convolution and Image Smoothing", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T4.csv" },
+            { name: "Tiết 5: Edges and Image Restoration", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T5.csv" },
+            { name: "Tiết 6: Image Restoration Lab", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T6.csv" }
+        ],
         // Add more groups as needed
     },
 

@@ -1,0 +1,81 @@
+﻿Slide 1: TRANG BÌA & GIỚI THIỆU GIẢNG VIÊN (Trần Thành Thắng)
+Người 1: Chào các em sinh viên lớp I T 23 M. Hôm nay, chúng ta bắt đầu một hành trình rất thú vị trong chương trình học, đó là môn Thị giác máy tính. Thầy sẽ đồng hành cùng các em trong tiết học đầu tiên của Chương 2: Nâng cấp và khôi phục ảnh. Chủ đề cốt lõi hôm nay của chúng ta là “Các phép toán điểm ảnh”.
+Người 2: Dạ chào thầy ạ. Thưa thầy, nhìn cái bảng ma trận số dày đặc trên màn hình cộng với tên bài là “phép toán điểm ảnh”, em có cảm giác môn này giống môn Toán cao cấp hơn là môn Tin học. Nó có khô khan quá không thầy?
+Người 1: Một câu hỏi rất thực tế và cũng là tâm lý chung của nhiều bạn khi mới học Thị giác máy tính. Nhìn những con số từ không đến hai trăm năm mươi lăm trên bảng kia có vẻ khô khan, nhưng thực chất, nó là “phép màu” đằng sau mọi bức ảnh rực rỡ mà các em thấy. Ví dụ ngay trên chiếc điện thoại của các em, mỗi khi các em kéo thanh trượt để bức ảnh selfie sáng hơn, hay áp một cái bộ lọc màu phim cổ điển trên Instagram… tất cả đều vận hành nhờ những “phép toán điểm ảnh” này. Vì vậy, bài học hôm nay không hề xa vời, mà nó sẽ bóc trần cách máy tính “nhào nặn” các con số để tạo ra nghệ thuật thị giác.
+
+Slide 2: MỤC TIÊU BÀI HỌC
+Người 1: Trước khi đi vào chi tiết, chúng ta cần thống nhất bốn mục tiêu cốt lõi của bài học hôm nay. Đầu tiên, các em phải hiểu được bản chất toán học thông qua việc nắm vững hàm biến đổi cơ bản. Công thức là: giá trị điểm ảnh mới bằng một hàm biến đổi áp dụng lên giá trị điểm ảnh cũ. Thứ hai, chúng ta sẽ làm chủ các biến đổi tuyến tính để tinh chỉnh độ sáng và độ tương phản của một bức ảnh. Thứ ba, các em sẽ học cách xử lý lỗi kỹ thuật rất phổ biến gọi là lỗi tràn giá trị pixel. Và cuối cùng, ta sẽ nâng cấp kỹ năng bằng các biến đổi phi tuyến như hiệu chỉnh Gamma và kéo dãn tương phản.
+Người 2: Thưa thầy, cái “lỗi tràn giá trị” có phải là hiện tượng khi mình kéo sáng bức ảnh phong cảnh lên quá tay, xong vùng bầu trời nó bị cháy sáng, trắng xóa và mất sạch chi tiết đám mây không ạ?
+Người 1: Hoàn toàn chính xác! Đó là một ví dụ thực tế cực kỳ điển hình. Lát nữa, thầy trò chúng ta sẽ “mổ xẻ” hiện tượng này dưới lăng kính toán học, để xem tại sao máy tính lại bị “mù tạm thời” ở những vùng trắng lóa đó nhé.
+
+Slide 3: BẢN CHẤT ẢNH SỐ: TỪ THỊ GIÁC ĐẾN MA TRẬN
+Người 1: Các em nhìn lên màn hình, bức ảnh bên trái là những gì đôi mắt chúng ta nhìn thấy: một người quay phim và một anh chàng đang ngồi trong studio. Nhưng máy tính thì không “nhìn” thấy hình ảnh như con người, chúng chỉ thấy những ma trận số. Ví dụ với ảnh xám mờ, nó là một ma trận hai chiều, nơi mỗi điểm ảnh hay còn gọi là pixel, chỉ là một giá trị cường độ sáng nằm trong khoảng từ không, tức là màu đen tuyệt đối, đến hai trăm năm mươi lăm, tức là màu trắng tuyệt đối. Đối với ảnh màu, nó phức tạp hơn chút khi là một ma trận ba chiều gồm ba kênh màu đỏ, xanh lá và xanh dương xếp chồng lên nhau.
+Người 2: Vậy thưa thầy, trên hình minh họa có phóng to một ô ma trận và bôi xanh con số một trăm mười hai. Con số này có ý nghĩa thực tế như thế nào trên bức ảnh kia ạ?
+Người 1: Rất tinh mắt! Nếu chiếu sang bức ảnh thực tế, điểm pixel mang giá trị một trăm mười hai đó nằm trên phần áo của người quay phim. Vì một trăm mười hai nằm ở khoảng gần giữa của dải từ không đến hai trăm năm mươi lăm, nên nó đại diện cho một màu xám vừa phải. Mọi thao tác chỉnh sửa ảnh, thực chất chính là việc phần mềm đem con số một trăm mười hai này ra để cộng, trừ, nhân, chia đấy các em ạ.
+
+
+Slide 4: PHƯƠNG TRÌNH CỐT LÕI
+Người 1: Và đây là phương trình cốt lõi chi phối toàn bộ tiết học ngày hôm nay. Mọi người chú ý lắng nghe công thức nhé: Giá trị điểm ảnh đầu ra, ký hiệu là ét, sẽ bằng một hàm biến đổi, ký hiệu là tê, áp dụng lên giá trị điểm ảnh đầu vào, ký hiệu là rờ. Các em chỉ cần nhớ nôm na là: Giá trị mới bằng một phép toán thực hiện trên giá trị cũ. Đặc điểm sống còn của phương pháp này là phép toán tác động lên từng điểm ảnh một cách hoàn toàn độc lập, vùng xử lý chỉ là một nhân một.
+Người 2: Dạ, độc lập tác động tức là khi phần mềm thay đổi giá trị của cái pixel một trăm mười hai lúc nãy, nó sẽ không quan tâm hay phụ thuộc vào các pixel hàng xóm xung quanh nó đúng không thầy? Giống như chấm bài thi thì điểm của ai người nấy nhận, không liên quan đến bạn ngồi cạnh ấy ạ?
+Người 1: Đúng là như vậy! Một sự so sánh rất sinh động. Vì nó không phải đi hỏi han các pixel xung quanh xem chúng đang mang giá trị bao nhiêu, nên thuật toán biến đổi điểm ảnh chạy cực kỳ nhanh và tốn rất ít tài nguyên máy tính.
+
+Slide 5: BIẾN ĐỔI TUYẾN TÍNH - ĐIỀU CHỈNH ĐỘ SÁNG
+Người 1: Bây giờ chúng ta sẽ lấy phương trình cốt lõi đó ra để làm vũ khí đầu tiên: Biến đổi tuyến tính để điều chỉnh độ sáng. Công thức của nó rất đơn giản, chỉ là phép cộng cơ bản: Giá trị đầu ra ét bằng giá trị đầu vào rờ cộng thêm một hằng số bê ta. Nếu hằng số bê ta lớn hơn không, ta cộng thêm giá trị vào mọi pixel, kết quả là bức ảnh sẽ sáng lên. Ngược lại, nếu bê ta nhỏ hơn không, bức ảnh sẽ tối đi. Bản chất toán học của quá trình này là sự dịch chuyển toàn bộ biểu đồ dải màu của bức ảnh. Các em nhìn hai bức ảnh con phố ban đêm trên slide, sau khi tăng sáng, toàn bộ khối đồ thị hình ngọn núi đã tịnh tiến sang phía tay phải, tức là hướng về vùng giá trị sáng hơn.
+
+Người 2: Thưa thầy, em thấy bức ảnh sau khi cộng thêm bê ta thì sáng lên và nhìn rõ các biển hiệu trên phố hơn hẳn. Nhưng giả sử em có một pixel đang ở mức khá sáng là hai trăm, mà em lại tham lam cộng thêm một hằng số bê ta cực lớn, ví dụ là một trăm. Hai trăm cộng một trăm là ba trăm. Vượt quá giới hạn hai trăm năm mươi lăm rồi thì máy tính sẽ xử lý thế nào ạ?
+Người 1: Em có một tư duy phản biện xuất sắc! Việc dữ liệu dội lên ba trăm như em vừa tính toán chính là cội nguồn của vấn đề tràn giá trị hay còn gọi là Clipping mà ta đã nhắc tới ở đầu giờ. Mời các em chuyển sang slide tiếp theo để xem hệ thống máy tính sẽ “chữa cháy” trường hợp này như thế nào nhé.
+
+Slide 6: BIẾN ĐỔI TUYẾN TÍNH - ĐIỀU CHỈNH TƯƠNG PHẢN
+Người 1: Chúng ta vừa đi qua phép cộng để chỉnh độ sáng, giờ hãy xem phép nhân làm được gì. Để điều chỉnh độ tương phản, ta dùng một biến đổi tuyến tính khác. Công thức ở đây là: Giá trị đầu ra ét bằng một hệ số an pha nhân với giá trị đầu vào rờ. Nếu hệ số an pha lớn hơn một, dải đồ thị sẽ được mở rộng ra, làm tăng độ tương phản. Ngược lại, nếu an pha nhỏ hơn một, dải đồ thị sẽ bị thu hẹp lại, làm giảm tương phản.
+Người 2: Thưa thầy, em nhìn hai hình ảnh chiếc bát trên màn hình. Ở hình a thì nó mờ nhạt, xám xịt , nhưng sang hình b thì phần màu trắng của chiếc bát lại sắc nét và nổi bật hoàn toàn trên nền tối. Đó là kết quả của việc mình nhân với an pha lớn hơn một đúng không ạ?
+Người 1: Em nắm bài rất nhanh! Khi em nhân với một số lớn hơn một, các khoảng cách giữa các điểm ảnh bị giãn ra. Kẻ đang hơi sáng sẽ bị đẩy thành rất sáng, kẻ hơi tối sẽ lùi về tối đen. Sự chênh lệch đó tạo ra cảm giác “nổi khối” và sắc nét cho bức ảnh giống như hình b vậy.
+
+Slide 7: LỖI TRÀN GIÁ TRỊ (CLIPPING)
+Người 1: Giờ thì thầy sẽ giải đáp trọn vẹn thắc mắc của em ở cuối phần trước: Chuyện gì xảy ra nếu ta cộng quá tay? Các em nhìn lên màn hình. Giả sử ta có một điểm ảnh đầu vào mang giá trị hai trăm. Ta quyết định tăng độ sáng thêm một trăm. Về mặt toán học, hai trăm cộng một trăm là ba trăm. Nhưng để chống lỗi, phần mềm sẽ dùng một hàm giới hạn: ét bằng giá trị nhỏ nhất giữa hai trăm năm mươi lăm và giá trị lớn nhất của ba trăm với không. Kết quả cuối cùng bị ép về mức trần là hai trăm năm mươi lăm, tức là màu trắng tuyệt đối.
+Người 2: Á à, em thấy mũi tên đỏ đang chỉ thẳng lên vùng trời của con phố trong ảnh. Cả một khoảng trời biến thành một mảng trắng lóa, không còn phân biệt được đâu là mây nữa.
+
+Người 1: Rất chính xác! Hiện tượng đó gọi là mất chi tiết do lỗi tràn giá trị hay còn gọi là Clipping. Mọi đám mây có độ sáng khác nhau nhưng khi vượt ngưỡng đều bị cào bằng thành màu trắng bóc. Do đó, khi kéo sáng bằng phép cộng tuyến tính, các em phải cực kỳ cẩn thận.
+
+
+Slide 8: KÉO DÃN TƯƠNG PHẢN (CONTRAST STRETCHING)
+Người 1: Để khắc phục nhược điểm mất chi tiết này, ta có một kỹ thuật nâng cấp gọi là Kéo dãn tương phản. Kỹ thuật này sử dụng biến đổi tuyến tính từng khúc. Đây là giải pháp hoàn hảo cho những bức ảnh chụp trong điều kiện mờ sương, khiến dải giá trị rất hẹp, ví dụ tất cả điểm ảnh chỉ tụ tập từ mức một trăm đến một trăm năm mươi.
+Người 2: Đồ thị trên slide nhìn giống hình một cái dốc đứng ở giữa thầy ạ. Ý tưởng hoạt động của nó theo ba bước kia là như thế nào ạ?
+Người 1: Em nhìn trục ngang là đầu vào rờ, trục dọc là đầu ra ét nhé. Thuật toán này làm ba bước: Bước một, nó “túm” lấy điểm một trăm và kéo tụt về mức không, tức là màu đen. Bước hai, nó cầm điểm một trăm năm mươi kéo vọt lên kịch trần hai trăm năm mươi lăm, tức là màu trắng. Bước ba, nó nội suy toàn bộ các giá trị nằm giữa để tạo sự chuyển tiếp mượt mà. Kết quả là bức ảnh mù mịt ban đầu bung nở ra đầy đủ chi tiết sáng tối.
+
+
+Slide 9: TẠI SAO CẦN BIẾN ĐỔI PHI TUYẾN?
+Người 1: Từ đầu tới giờ ta toàn dùng đường thẳng tuyến tính. Nhưng thực tế, chúng ta cần một thứ gọi là biến đổi phi tuyến. Bí mật nằm ở sự khác biệt giữa máy móc và con người. Màn hình hay cảm biến máy ảnh thì ghi nhận ánh sáng theo đường thẳng tuyến tính. Nhưng đôi mắt của chúng ta thì không! Theo định luật Vê bơ Phếch nơ, mắt người cảm nhận ánh sáng không hề theo đường thẳng.
+Người 2: Em hiểu rồi, trên màn hình mô phỏng con mắt người có một đường cong nhô lên ở phần cường độ thấp. Có phải điều này giải thích tại sao khi em đang ở trong phòng tối mà mở điện thoại lên thì thấy cực kỳ chói mắt không ạ?
+Người 1: Một ví dụ liên hệ quá tuyệt vời! Đúng vậy, mắt chúng ta rất nhạy cảm với sự thay đổi nhỏ ở vùng tối. Do thiết bị ghi nhận theo đường thẳng còn mắt thì nhìn theo đường cong, nên nếu ta cứ để nguyên dữ liệu thô, bức ảnh hiển thị lên sẽ trông rất giả tạo. Chúng ta bắt buộc phải dùng hàm phi tuyến để “bẻ cong” dữ liệu, sao cho bức ảnh trông thật tự nhiên với mắt người.
+
+
+Slide 10: HIỆU CHỈNH GAMMA (GAMMA CORRECTION)
+Người 1: Và công cụ phi tuyến quyền lực nhất chính là Hiệu chỉnh Gam ma. Công thức của nó là một hàm lũy thừa: Đầu ra ét bằng một hằng số xê nhân với đầu vào rờ lũy thừa bậc gam ma. Các em quan sát đồ thị: Trục ngang đầu vào rờ và trục dọc đầu ra ét chạy từ không đến một . Đường đứt nét ở giữa là gam ma bằng một, tức là giữ nguyên dạng tuyến tính.
+Người 2: Thưa thầy, vậy nếu em muốn “cứu” một bức ảnh chụp chân dung bị ngược sáng, mặt người mẫu tối thui, thì em nên dùng đường cong nào trên hình ạ?
+Người 1: Em hãy chọn đường cong màu xanh dương vòm lên phía trên. Đó là trường hợp gam ma nhỏ hơn một. Đồ thị vòm lên có nghĩa là các giá trị đầu vào ở vùng tối sẽ được “bẩy” lên một giá trị đầu ra cao hơn nhiều theo hàm logarit, giúp làm sáng ảnh. Ngược lại, nếu muốn ảnh sâu hơn, tối đi, ta dùng gam ma lớn hơn một, đồ thị sẽ võng xuống dưới giống như hàm mũ.
+
+
+Slide 11: ỨNG DỤNG THỰC TẾ CỦA GAMMA
+Người 1: Bây giờ chúng ta cùng xem ứng dụng thực tế của hiệu chỉnh Gam ma. Kỹ thuật này được dùng rất nhiều trong các lĩnh vực đặc thù như xử lý ảnh y tế ích quang, ảnh em rai, và đặc biệt là “cứu” những bức ảnh bị bạc màu. Các em nhìn hai bức ảnh khu rừng trên màn hình. Ảnh bên trái bị sương mù che phủ, trông rất nhợt nhạt và thiếu sức sống.
+Người 2: Dạ đúng rồi thầy, nó cứ mờ mờ sao ấy. Vậy để sương mù bớt đi và rừng cây hiện rõ ra, đen nhánh và có chiều sâu như ảnh bên phải, mình dùng Gam ma lớn hơn một đúng không ạ?
+Người 1: Hoàn toàn chính xác! Bằng cách dùng Gam ma lớn hơn một, ta giữ nguyên được vùng sáng của bầu trời nhưng lại kéo những vùng xám mờ của sương mù chìm xuống thành màu tối sâu thẳm, tăng độ sâu cho màu đen giúp cây cối hiện ra sắc nét. Ngược lại, nếu ảnh bị tối đen, chi tiết chìm hết trong bóng râm, ta sẽ dùng Gam ma nhỏ hơn một để làm sáng vùng tối mà vẫn giữ nguyên được vùng sáng.
+
+
+Slide 12: SO SÁNH: TUYẾN TÍNH VS. PHI TUYẾN
+Người 1: Slide tiếp theo là một bảng tổng kết cực kỳ quan trọng, so sánh trực diện hai phương pháp ta vừa học: Tuyến tính và Phi tuyến. Bên phe Tuyến tính, ta sử dụng phép toán cộng và phép nhân. Ưu điểm của nó là thuật toán đơn giản, máy tính tính toán cực kỳ nhanh.
+Người 2: Nhưng nhược điểm của nó là tác động đều lên mọi điểm ảnh, nên rất dễ gây ra cái lỗi tràn giá trị làm trắng xóa bầu trời mà thầy gọi là Cờ líp ping lúc nãy đúng không thầy?
+Người 1: Rất chuẩn! Để khắc phục, ta tìm đến phe Phi tuyến với phép toán lũy thừa như Gam ma hay hàm logarit. Dù việc tính toán có phức tạp hơn một chút, nhưng ưu điểm tuyệt vời của nó là mô phỏng được cách nhìn của mắt người, giúp chúng ta bảo toàn được chi tiết ở cả những vùng tối tăm nhất lẫn những vùng sáng chói nhất.
+
+Slide 13: TỔNG KẾT TIẾT 1
+Người 1: Vậy là chúng ta đã đi đến phần tổng kết của Tiết một. Thầy muốn các em ghi nhớ thật kỹ ba điều cốt lõi. Một: Bản chất ảnh là ma trận, mọi việc xử lý ảnh mà các em thấy thực chất chính là xử lý ma trận số. Hai: Các phép toán điểm ảnh mang tính cục bộ, chúng chỉ tác động độc lập lên từng điểm kích thước một nhân một.
+Người 2: Dạ, và điều thứ ba là ta có hai bộ công cụ thưa thầy. Công cụ Tuyến tính thì dùng để cộng độ sáng và nhân độ tương phản nhưng phải cẩn thận lỗi Cờ líp ping. Còn công cụ Phi tuyến thì có Hiệu chỉnh Gam ma và kéo dãn tương phản để giải quyết những ca khó hơn ạ.
+
+
+Slide 14: ĐỊNH HƯỚNG TIẾT 2
+Người 1: Rất tuyệt vời, em đã tóm tắt bài không sai một chữ nào! Các em hãy nhìn biểu tượng dấu chấm hỏi được ghép từ các cột biểu đồ trên màn hình, đó chính là định hướng cho Tiết hai của chúng ta. Hôm nay, ta toàn phải tự tay chọn tham số để kéo sáng, chỉnh tương phản. Vấn đề đặt ra là: Làm sao để máy tính tự động cân chỉnh độ tương phản mà không cần con người chọn tham số?
+Người 2: Ồ, tức là nó giống hệt cái nút “Tự động làm đẹp” trên ứng dụng chụp ảnh của điện thoại đó hả thầy? Mình bấm một cái là nó tự tính toán hết luôn.
+Người 1: Chính xác là như vậy! Bí mật đằng sau chiếc nút “thần thánh” đó sẽ được thầy trò ta phân tích trong tiết học tiếp theo, thông qua việc tìm hiểu Biểu đồ Hít tô gram và Kỹ thuật Cờ la he.
+
+Slide 15: TÀI LIỆU THAM KHẢO
+Người 1: Cuối cùng, để hiểu sâu hơn về bài hôm nay và chuẩn bị thật tốt cho bài sau, các em hãy về đọc thêm giáo trình chính là “Tài liệu Thị Giác Máy Tính gạch dưới vê sáu bê”. Ngoài ra, cuốn sách tham khảo trên màn hình là “Cơm pưu tơ Vi sần: A gô ri dầm en Áp li cây sần” của tác giả Ri chát Se lin xờ ki cũng là một tài liệu vô cùng giá trị.
+Người 2: Dạ vâng ạ, chúng em sẽ tìm đọc tài liệu. Cảm ơn thầy vì một buổi học rất thực tế và thú vị!

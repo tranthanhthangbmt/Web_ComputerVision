@@ -1,0 +1,79 @@
+﻿Slide 1: TRANG BÌA & GIỚI THIỆU TIẾT HỌC
+Người 1: Chào các em sinh viên lớp I T 23 M. Hôm nay, chúng ta tiếp tục chương trình môn Thị giác máy tính. Ở bài trước chúng ta đã làm quen với xử lý ảnh cơ bản rồi. Bài hôm nay là Tiết 3 của Chương 2 về Nâng cấp và khôi phục ảnh, với trọng tâm là thực hành Lab 2.1 và làm bài kiểm tra thường xuyên A1. Chủ đề cốt lõi của hôm nay là: Tối ưu hóa xử lý ảnh phi tuyến tính. 
+Người 2: Dạ em chào thầy ạ. Thầy ơi, tuần trước mình đã học về chỉnh sáng tuyến tính rồi, sao hôm nay lại phải học thêm phi tuyến tính nữa ạ? Em thấy tăng sáng bình thường bằng hàm tuyến tính là đủ nhìn rồi mà thầy? 
+Người 1: Câu hỏi rất thực tế! Tăng sáng tuyến tính giống như em vặn nút âm lượng tivi lên vậy, mọi thứ đều tăng lên đều nhau. Nhưng thực tế, ví dụ em chụp một bức ảnh ban đêm ở Quảng trường 10/3 ngay tại Buôn Ma Thuột mình, nếu tăng độ sáng đều đặn lên thì những chỗ có đèn đường sẽ bị “cháy” trắng xóa, còn chỗ trong góc khuất thì vẫn đen sì. Xử lý phi tuyến tính sẽ giúp chúng ta giải quyết đúng vấn đề đó: cứu vùng tối mà không làm hỏng vùng sáng. Lát nữa, những kỹ năng này sẽ áp dụng trực tiếp vào bài kiểm tra A1 nhé.
+
+Slide 2: LỘ TRÌNH TIẾT HỌC: TỪ TUYẾN TÍNH ĐẾN PHI TUYẾN TÍNH
+Người 1: Các em nhìn lên màn hình, đây là lộ trình tiết học hôm nay của chúng ta. Phần ôn tập biến đổi tuyến tính, cụ thể là chỉnh độ sáng và độ tương phản (Brightness và Contrast), chúng ta đã xong. Trọng tâm bài hôm nay là Gamma Correction, một kỹ thuật mô phỏng cách mắt người nhìn nhận ánh sáng. Tiếp theo là Kỹ thuật tối ưu Look-Up Table giúp tăng tốc độ xử lý lên 20 lần. Nâng cao hơn, thầy sẽ giới thiệu thuật toán C L A H E, tức là Cân bằng Histogram thích ứng. Và 20 phút cuối giờ là dành cho bài kiểm tra A1. 
+Người 2: Thầy ơi, ở phần insight trên slide có ghi là “Làm sao để chỉnh sáng ảnh tự nhiên như mắt người mà không làm treo máy tính”. Có thuật toán chỉnh sáng nào nặng đến mức làm treo cả máy tính hả thầy? 
+Người 1: Chính xác! Trong xử lý ảnh, chúng ta đang làm việc với hàng triệu điểm ảnh. Nếu viết code không khéo, không tối ưu thuật toán, máy tính sẽ phải thực hiện các phép tính khổng lồ dẫn đến giật lag, thậm chí là treo máy hoặc cháy cả ứng dụng. Tí nữa đến phần Look-Up Table, em sẽ thấy cách các kỹ sư giải quyết chuyện này cực kỳ thông minh.
+
+Slide 3: TẠI SAO TUYẾN TÍNH LÀ KHÔNG ĐỦ? (GAMMA CORRECTION) 
+Người 1: Bây giờ chúng ta đi vào trọng tâm. Tại sao biến đổi tuyến tính lại không đủ? Câu trả lời nằm ở khái niệm này: Mắt người không cảm nhận ánh sáng theo đường thẳng. Có nghĩa là, chúng ta nhạy cảm hơn với sự thay đổi ở vùng tối, hay còn gọi là shadows, so với vùng sáng là highlights. 
+Người 2: Em chưa hiểu lắm ạ. Nghĩa là trong bóng tối thì mắt mình tinh hơn, nhìn rõ hơn ngoài sáng ạ? 
+Người 1: Hiểu đơn giản thế này: Nếu em bật thêm một ngọn nến trong một căn phòng tối thui, em sẽ nhận ra sự thay đổi ngay lập tức. Nhưng nếu em bật ngọn nến đó giữa trưa nắng gắt ở Tây Nguyên, em sẽ chẳng thấy khác biệt gì cả. Vì vậy, ta cần công thức Gamma Correction. Công thức là: g của x bằng c nhân với f của x mũ gamma. Trong đó, f của x là giá trị điểm ảnh đầu vào, và gamma là tham số điều chỉnh. 
+Người 1: Các em nhìn vào đồ thị. Đường thẳng đứt nét ở giữa là đồ thị tuyến tính, y bằng x. Nếu ta chọn giá trị gamma nhỏ hơn 1, đường cong sẽ vồng lên phía trên, giúp làm sáng vùng tối. Ngược lại, nếu gamma lớn hơn 1, đường cong võng xuống phía dưới, giúp làm tối ảnh. Việc kéo dãn độ tương phản phi tuyến tính này sẽ giúp khôi phục các chi tiết đang bị ẩn trong bóng tối mà không làm ảnh hưởng đến vùng đã đủ sáng.
+
+Slide 4: VẤN ĐỀ HIỆU NĂNG: CÁI GIÁ CỦA PHÉP TOÁN DẤU PHẨY ĐỘNG 
+Người 1: Công thức hàm mũ thì rất tuyệt, nhưng mang nó đi lập trình trực tiếp thì lại sinh ra vấn đề hiệu năng. Vấn đề nằm ở các phép toán dấu phẩy động. Cách làm ngây thơ nhất, hay còn gọi là Naive approach, là chúng ta chạy vòng lặp tính toán số thực cho từng điểm ảnh một. Tức là đưa vào CPU vòng lặp tính lũy thừa: p o w mở ngoặc, pixel, phẩy, gamma, đóng ngoặc. 
+Người 2: Ủa thầy, máy tính hiện nay CPU mạnh lắm mà, chip core i7, i9 chạy vèo vèo mấy lệnh này thì tốn bao nhiêu thời gian đâu ạ? 
+Người 1: Em thử lấy máy tính ra nhân xem nhé. Một bức ảnh độ phân giải Full H D bình thường là một ngàn chín trăm hai mươi nhân với một ngàn không trăm tám mươi, tức là chúng ta có hơn hai triệu điểm ảnh đầu vào. Hơn hai triệu điểm ảnh này nhân với các phép toán dấu phẩy động phức tạp sẽ vắt kiệt C P U. Hậu quả là số khung hình trên giây F P S cực thấp, phần mềm bị lag và tiêu tốn rất nhiều tài nguyên. Vậy câu hỏi đặt ra là: Làm sao để áp dụng công thức phức tạp này cho hai triệu điểm ảnh chỉ trong một tích tắc?.
+
+Slide 5: GIẢI PHÁP TỐI ƯU: BẢNG TRA CỨU (LOOK-UP TABLE - LUT)
+Người 1: Và đây là lời giải cho câu hỏi vừa rồi: Giải pháp tối ưu mang tên Bảng tra cứu, hay Look-Up Table, viết tắt là L U T. Tư duy ở đây cực kỳ thực dụng. Giả sử ta đang xử lý ảnh 8-bit, thì mỗi điểm ảnh chỉ có thể mang một giá trị nguyên từ 0 đến 255, tức là có tổng cộng 256 giá trị tất cả. 
+Người 2: À, em hiểu ý thầy rồi! Tức là thay vì cái gì cũng bắt CPU hì hục tính toán hàm mũ lại từ đầu cho hai triệu điểm ảnh, thì mình tính trước kết quả cho 256 trường hợp, rồi lưu sẵn vào một cái bảng. Sau đó cứ đọc vào pixel nào là mình dò bảng để lấy kết quả ra luôn phải không thầy? 
+Người 1: Rất xuất sắc! Thay vì tính hai triệu lần, ta chỉ cần tính trước 256 lần thôi. Như sơ đồ bên phải trên slide, nếu giá trị pixel đầu vào là 100, máy tính chỉ việc dò xuống dòng 100 trong bảng đường cong Gamma đã tính trước, và lấy ra ngay giá trị đầu ra là 150. Trong lập trình, OpenCV hỗ trợ hàm này rất mạnh: output bằng c v 2 chấm L U T truyền vào ảnh đầu vào và bảng table. Nhờ thủ thuật này, tốc độ xử lý tăng vọt gấp 20 đến 30 lần!.
+
+
+Slide 6: THỰC HÀNH CODE: CÀI ĐẶT GAMMA VỚI LUT
+Người 1: Chúng ta cùng xem cách biến lý thuyết LUT vừa rồi thành những dòng code Python thực tế nhé. Bước một, chúng ta chuẩn bị bảng Look-Up Table. Thầy tính giá trị Gamma nghịch đảo bằng lệnh: y n v Gamma bằng 1 chấm 0 chia cho gamma. Tiếp theo, thầy tạo một mảng 256 giá trị đã tính trước. Lệnh này viết là: table bằng n p chấm array, bên trong là công thức i chia 255 chấm 0, tất cả mũ y n v Gamma, rồi nhân lại cho 255. Vòng lặp chạy for i in n p chấm arange từ 0 đến 256. 
+Người 2: Thầy ơi, cái đoạn cuối chấm astype u i n t 8 có ý nghĩa bắt buộc không ạ? Em hay quên ép kiểu dữ liệu lắm. 
+Người 1: Vô cùng quan trọng em nhé! Phải đưa về kiểu số nguyên 8-bit. Vì điểm ảnh của chúng ta chỉ chạy từ 0 đến 255 là số nguyên, nếu em để số thực (float), OpenCV sẽ báo lỗi hoặc hiển thị màn hình đen thui. Cuối cùng, bước hai, ta áp dụng bảng này vào ảnh bằng lệnh cực nhanh: result bằng c v 2 chấm L U T truyền vào ảnh gốc original image và bảng table. Hàm này đã được tối ưu hóa ở tầng thấp bằng ngôn ngữ C cộng cộng của OpenCV nên chạy “nhanh như chớp”.
+
+Slide 7: KẾT QUẢ TRỰC QUAN: TÌM “ĐIỂM NGỌT” (SWEET SPOT)
+Người 1: Các em nhìn lên màn hình, đây là kết quả của việc áp dụng Gamma. Chúng ta có ba bức ảnh ngọn hải đăng. Bức bên trái là ảnh gốc đang bị thiếu sáng nghiêm trọng, giống như em chụp ảnh ở Hồ Lắk lúc trời sập tối mà quên bật flash vậy. 
+Người 2: Em thấy bức ở giữa là đẹp nhất ạ, bầu trời vẫn giữ được mây mà hàng rào bên dưới cũng sáng rõ lên. 
+Người 1: Đúng vậy, đó chính là “Điểm ngọt” hay Sweet Spot, đạt được khi ta chọn Gamma nhỏ hơn 1 chấm 0. Bức bên phải thì Gamma lớn hơn 1 chấm 0 làm ảnh tối thui luôn. Để tìm được “điểm ngọt” này nhanh nhất, thầy khuyến nghị các em sử dụng hàm Trackbar, tức là thanh trượt trong OpenCV. Em kéo thanh trượt qua lại và ảnh sẽ thay đổi sáng tối theo thời gian thực, rất trực quan thay vì phải gõ lại số và chạy lại code.
+
+Slide 8: TỪ TOÀN CỤC ĐẾN CỤC BỘ: GIỚI THIỆU CLAHE
+Người 1: Gamma rất tốt, nhưng nó vẫn là xử lý trên toàn bộ bức ảnh. Giả sử em chụp ảnh Tượng đài Ngã Sáu, bầu trời phía trên thì nắng chói chang, nhưng phần bệ tượng dưới gốc cây lại tối om. Nếu em dùng Cân bằng Histogram toàn cục (Global Equalization), vùng tối sẽ sáng lên nhưng bầu trời bị cháy sáng trắng xóa, hay còn gọi là washed out. Hơn nữa, nhiễu hạt (noise) sẽ bị khuếch đại ở những vùng đồng nhất. 
+Người 2: Vậy có cách nào mình chỉ “kéo sáng” ở chỗ bệ tượng mà không đụng tới bầu trời không thầy? 
+Người 1: Có! Đó là lý do thuật toán C L A H E ra đời. C L A H E viết tắt của Contrast Limited Adaptive Histogram Equalization. Từ khóa ở đây là “Adaptive” - thích ứng cục bộ. Nó sẽ chia ảnh của em ra thành một cái lưới nhiều ô vuông nhỏ. Sau đó nó cân bằng sáng cho từng ô một một cách độc lập. Từ khóa thứ hai là “Contrast Limited” - giới hạn độ tương phản để chặn nhiễu, không cho mấy cái hạt sạn li ti nổi lên. Các em có thể nhìn bức ảnh cái chén trên slide, bên phải dùng CLAHE mượt mà và giữ chi tiết tốt hơn hẳn.
+
+Slide 9: TRIỂN KHAI CODE CLAHE
+Người 1: Cách viết code cho CLAHE trong OpenCV rất thanh lịch. Đầu tiên, thuật toán này thường chạy trên ảnh xám, nên ta chuyển đổi: gray bằng c v 2 chấm c v t Color truyền vào ảnh gốc và hệ màu B G R to GRAY. 
+Người 2: Thông số truyền vào hàm CLAHE có phức tạp không thầy? Em thấy trên slide có clipLimit và tileGridSize. 
+Người 1: Rất dễ nhớ. Thầy khởi tạo đối tượng bằng lệnh: clahe bằng c v 2 chấm create C L A H E. Tham số thứ nhất clipLimit bằng 2 chấm 0. Đây là ngưỡng chặn nhiễu, 2 chấm 0 là một giá trị an toàn. Nếu em thấy ảnh ra bị mờ sương, hãy tăng nó lên; nếu thấy sạn nhiễu quá thì giảm xuống. Tham số thứ hai là tileGridSize bằng mở ngoặc 8 phẩy 8 đóng ngoặc. Tức là máy tính sẽ tự động băm bức ảnh ra thành một cái lưới gồm 8 nhân 8 ô vuông để xử lý cục bộ. Cuối cùng chỉ cần gọi lệnh: final image bằng clahe chấm apply truyền vào ảnh xám.
+
+Slide 10: TỔNG KẾT KỸ THUẬT: KHI NÀO DÙNG GÌ?
+Người 1: Để tổng kết lại phần lý thuyết trước khi bước vào bài kiểm tra, thầy có một bảng so sánh ba kỹ thuật. Khi nào thì dùng kỹ thuật nào? Thứ nhất, Linear (Tuyến tính): Cơ chế là y bằng a x cộng b. Rất đơn giản, xử lý cực nhanh nhưng nhược điểm là làm mất chi tiết vùng cực sáng hoặc cực tối. Các em chỉ dùng nó để chỉnh sáng cơ bản thôi. Thứ hai, Gamma: Cơ chế là hàm Power Law kết hợp bảng L U T. Ưu điểm là mô phỏng đúng mắt người, ứng dụng tuyệt vời cho các bức ảnh bị thiếu sáng hoặc chụp ngược sáng. Nhược điểm duy nhất là phải tốn công tính bảng L U T ban đầu. Và thứ ba, C L A H E: Dùng cơ chế Adaptive Grid. Chi tiết cục bộ giữ lại cực tốt. Thuật toán này là “vũ khí tối thượng” cho ảnh y tế chụp X-quang, ảnh vệ tinh hoặc ảnh chụp trong thời tiết sương mù. Tuy nhiên, nếu cấu hình không khéo có thể sinh ra nhiễu hạt.
+
+
+Slide 11: SẴN SÀNG CHO ĐÁNH GIÁ THƯỜNG XUYÊN A1 
+Người 1: Phần lý thuyết kết thúc ở đây. Các em nhìn lên màn hình, khung cảnh báo nhấp nháy này có nghĩa là chúng ta Sẵn sàng cho đánh giá thường xuyên A1. Thầy nhắc lại thể lệ: Thời gian làm bài là đúng 20 phút. Hình thức là Live Coding trực tiếp trên Google Colab hoặc I D E của các em. Bài này chiếm trọng số 25 phần trăm tổng điểm học phần nên rất quan trọng. 
+Người 2: Dạ thầy ơi, kiểm tra thực hành mình có được xem lại code mẫu ở mấy slide trước không ạ? 
+Người 1: Được chứ, thầy cho phép các em mở tài liệu, nhưng thời gian rất gấp nên em nào hiểu bài mới làm kịp. Bây giờ tất cả hãy dọn dẹp màn hình, tắt các tab không liên quan, mở I D E lên và chuẩn bị tải file dữ liệu về máy.
+
+Slide 12: ĐỀ BÀI A1: CỨU SÁNG ẢNH ĐÊM
+Người 1: Đề bài A1 của chúng ta mang tên: Cứu sáng ảnh đêm. Input data là một file tên là night gạch dưới underexposed chấm j p g, các em tải từ Google Drive của lớp học. Nhiệm vụ của các em là khôi phục một bức ảnh chụp đêm bị mất chi tiết nghiêm trọng. Các em cứ tưởng tượng đây là một con hẻm nhỏ ở đường Lê Duẩn vào buổi tối bị cúp điện vậy, tối thui không thấy đường đi. 
+Người 2: Yêu cầu cụ thể là mình phải làm gì để “cứu” nó vậy thầy? 
+Người 1: Có hai bước. Một là dùng Gamma Correction để làm sáng ảnh một cách hợp lý, sao cho mắt người nhìn rõ được các chi tiết ẩn trong bóng tối. Hai là phần phân tích Histogram, các em phải vẽ biểu đồ để so sánh sự phân bố ánh sáng trước và sau khi xử lý. Từ đó mới chứng minh được là thuật toán của mình thực sự có tác dụng.
+
+Slide 13: YÊU CẦU KỸ THUẬT (BẮT BUỘC)
+Người 1: Chú ý kỹ slide này, đây là các yêu cầu kỹ thuật bắt buộc phải tuân thủ. Thứ nhất, mục “Must Use”: Phải sử dụng kỹ thuật bảng tra cứu Look-Up Table. Tuyệt đối không dùng vòng lặp f o r duyệt qua từng pixel nhé. Nếu em nào dùng vòng lặp, bài chạy quá 5 giây mà chưa ra kết quả là thầy trừ nửa số điểm. 
+Người 2: Dạ, em nhớ rồi, máy tính sẽ bị treo nếu mình quét qua 2 triệu điểm ảnh bằng vòng lặp. Còn phần hiển thị thì sao ạ? 
+Người 1: Về phần Visualization hiển thị: Các em phải hiển thị ảnh kết quả nằm cạnh ảnh gốc để thầy dễ so sánh. Và nhớ cái “bẫy” kinh điển của OpenCV: phải chuyển đổi hệ màu từ B G R sang R G B trước khi vẽ lên màn hình. Nếu không, con hẻm ban đêm của chúng ta sẽ biến thành màu xanh lè như phim viễn tưởng đó. Cuối cùng ở mục Analysis, bắt buộc vẽ 2 biểu đồ Histogram, một gốc và một đã xử lý, để chứng minh sự dịch chuyển của dải sáng từ vùng tối sang vùng giữa.
+
+Slide 14: TIÊU CHÍ CHẤM ĐIỂM (RUBRIC)
+Người 1: Để minh bạch, thầy công bố luôn tiêu chí chấm điểm Rubric. 20 phần trăm điểm đầu tiên là cho thao tác nạp ảnh in put, out put và xử lý màu R G B. 40 phần trăm điểm nặng nhất nằm ở việc cài đặt đúng logic thuật toán Gamma cộng với L U T. Chỗ này chú ý, 40 phần trăm này quyết định ở chỗ các em có ép về đúng kiểu dữ liệu u i n t 8 hay không. 
+Người 2: Còn lại là điểm vẽ biểu đồ với format code đúng không thầy? 
+Người 1: Chính xác. 30 phần trăm điểm nằm ở khả năng phân tích và trực quan hóa Histogram. Muốn lấy trọn 30 phần trăm này, biểu đồ phải vẽ đúng trục tọa độ, có tiêu đề rõ ràng đàng hoàng. 10 phần trăm cuối cùng là điểm thưởng cho Clean Code và có ghi chú, comment rõ ràng các bước thực hiện.
+
+Slide 15: TỔNG KẾT & NHIỆM VỤ TUẦN TỚI 
+Người 1: Hết giờ! Các em dừng tay. Tổng kết tiết học hôm nay, chúng ta đã hoàn thành xuất sắc chủ đề Xử lý Điểm ảnh (Point Processing). Bài tập về nhà là các em hãy đóng gói code bài A1 vừa làm thành file Jupyter Notebook đuôi i p y n b hoặc file P D F và nộp lên hệ thống L M S của trường. 
+Người 2: Tuần sau mình học bài gì khó hơn không thầy? 
+Người 1: Tuần tới chúng ta sẽ bước sang một chương rất thú vị: Xử lý Vùng lân cận (Neighborhood Operations). Chủ đề xoay quanh phép Tích chập, hay Convolution, và các bộ Lọc nhiễu. Từ khóa các em cần xem trước là Gaussian Blur để làm mờ ảnh, và Sobel Edge Detection để nhận diện cạnh của vật thể. 
+Người 1: Các em có thể nhìn sơ đồ trên màn hình. Thuật toán này dùng một ô cửa sổ trượt, gọi là Sliding Window , mang theo một ma trận bộ lọc Filter trượt quét qua toàn bộ bức ảnh đầu vào để tạo ra một bản đồ đặc trưng Output Feature Map. Nó giống như các em dùng kính lúp soi từng centimet trên một bức tranh vậy. 
+Người 2: Nghe giống như cách người ta tạo ra mấy cái filter làm mịn da mờ mụn trên điện thoại thầy nhỉ! 
+Người 1: Rất đúng, bản chất nó chính là như vậy! Chúng ta sẽ tự tay code những bộ lọc đó vào tuần sau. Tiết học hôm nay kết thúc, chào các em và hẹn gặp lại!
+

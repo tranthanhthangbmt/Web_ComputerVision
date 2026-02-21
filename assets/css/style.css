@@ -1,6 +1,8 @@
 :root {
-    --primary-color: #4f46e5; /* Indigo 600 */
-    --secondary-color: #818cf8; /* Indigo 400 */
+    --primary-color: #4f46e5;
+    /* Indigo 600 */
+    --secondary-color: #818cf8;
+    /* Indigo 400 */
     --bg-color: #f3f4f6;
     --text-color: #1f2937;
     --card-bg: #ffffff;
@@ -76,7 +78,8 @@ body {
 }
 
 .btn-start:hover {
-    background-color: #4338ca; /* Indigo 700 */
+    background-color: #4338ca;
+    /* Indigo 700 */
 }
 
 /* Chapter Detail & Tabs */
@@ -84,7 +87,7 @@ body {
     background: white;
     padding: 20px 0;
     margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chapter-title {
@@ -130,8 +133,13 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Notebook Table */
@@ -141,10 +149,11 @@ body {
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.notebook-table th, .notebook-table td {
+.notebook-table th,
+.notebook-table td {
     padding: 15px;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
@@ -163,8 +172,15 @@ body {
     font-weight: 600;
 }
 
-.badge.easy { background-color: #d1fae5; color: #065f46; }
-.badge.medium { background-color: #fee2e2; color: #991b1b; }
+.badge.easy {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge.medium {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
 
 .btn-colab img {
     height: 20px;
@@ -177,7 +193,7 @@ body {
     height: 800px;
     border: none;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* Footer */
@@ -186,4 +202,27 @@ body {
     padding: 40px 0;
     color: #9ca3af;
     font-size: 0.9rem;
+}
+
+/* Icon Back Button */
+.back-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bg-color);
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.back-icon-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
 }

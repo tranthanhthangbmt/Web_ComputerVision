@@ -18,19 +18,44 @@
             cursor: pointer;
             font-weight: 500;
             color: #555;
-            transition: all 0.2s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
         }
 
         .part-btn:hover {
             background: #f3f4f6;
             color: #0d6efd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .part-btn.active {
             background: #0d6efd;
             color: #fff;
             border-color: #0d6efd;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .desktop-text {
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            display: inline-block;
+            transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            vertical-align: middle;
+        }
+
+        .part-btn:hover .desktop-text,
+        .part-btn.active .desktop-text {
+            max-width: 300px;
+            opacity: 1;
+            margin-left: 4px;
+        }
+
+        .mobile-text {
+            display: none;
         }
 
         /* Info Button Style */
@@ -139,7 +164,33 @@
 
             .info-btn .btn-text {
                 display: none;
-                /* Hide text on small screens, show icon only */
+            }
+
+            .desktop-icon,
+            .desktop-text {
+                display: none !important;
+            }
+
+            .mobile-text {
+                display: inline;
+                font-weight: bold;
+            }
+
+            .part-btn {
+                padding: 8px;
+                font-size: 16px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .info-btn {
+                border-radius: 20px;
+                width: auto;
+                padding: 8px 16px;
             }
         }
 
@@ -160,9 +211,8 @@
     <!-- Header -->
     <header class="chapter-header">
         <div class="container flex justify-between items-center" style="display: flex;">
-            <a href="../index.html" class="text-gray-500 hover:text-indigo-600"
-                style="text-decoration: none; color: #6b7280;">
-                <i class="fa-solid fa-arrow-left"></i> Quay lại Dashboard
+            <a href="../index.html" class="back-icon-btn" title="Quay lại Dashboard">
+                <i class="fa-solid fa-house"></i>
             </a>
             <h1 class="chapter-title" id="chapter-title">Chương 2: Nâng cấp và khôi phục ảnh</h1>
             <div></div> <!-- Spacer -->
@@ -189,13 +239,24 @@
             <div class="mb-4 flex space-x-2"
                 style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; flex-grow: 1;">
-                    <button class="part-btn active" onclick="loadPart(1, this)">Tiết 1: Image Point Operations</button>
-                    <button class="part-btn" onclick="loadPart(2, this)">Tiết 2: Advanced Histogram Techniques</button>
-                    <button class="part-btn" onclick="loadPart(3, this)">Tiết 3: Optimized Image Enhancement</button>
-                    <button class="part-btn" onclick="loadPart(4, this)">Tiết 4: Convolution and Image
-                        Smoothing</button>
-                    <button class="part-btn" onclick="loadPart(5, this)">Tiết 5: Edges and Image Restoration</button>
-                    <button class="part-btn" onclick="loadPart(6, this)">Tiết 6: Image Restoration Lab</button>
+                    <button class="part-btn active" onclick="loadPart(1, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 1</span><span class="desktop-text">: Image
+                            Point Operations</span><span class="mobile-text">1</span></button>
+                    <button class="part-btn" onclick="loadPart(2, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 2</span><span class="desktop-text">: Advanced
+                            Histogram</span><span class="mobile-text">2</span></button>
+                    <button class="part-btn" onclick="loadPart(3, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 3</span><span class="desktop-text">: Optimized
+                            Enhancement</span><span class="mobile-text">3</span></button>
+                    <button class="part-btn" onclick="loadPart(4, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 4</span><span class="desktop-text">:
+                            Convolution & Smoothing</span><span class="mobile-text">4</span></button>
+                    <button class="part-btn" onclick="loadPart(5, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 5</span><span class="desktop-text">: Edges &
+                            Restoration</span><span class="mobile-text">5</span></button>
+                    <button class="part-btn" onclick="loadPart(6, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 6</span><span class="desktop-text">: Image
+                            Restoration Lab</span><span class="mobile-text">6</span></button>
                 </div>
                 <!-- Infographic Button -->
                 <button class="part-btn info-btn" onclick="showInfographic()"

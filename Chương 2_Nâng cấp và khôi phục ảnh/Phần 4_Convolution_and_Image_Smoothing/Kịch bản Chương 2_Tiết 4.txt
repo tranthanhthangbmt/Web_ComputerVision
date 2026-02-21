@@ -1,0 +1,75 @@
+﻿Slide 1: TRANG BÌA & GIỚI THIỆU BÀI HỌC
+Người 1: Chào các bạn sinh viên lớp Y Tê Hai Mươi Ba Mờ (IT23M). Hôm nay, chúng ta sẽ bước sang một nội dung cực kỳ thú vị của Chương hai: Nâng cấp và khôi phục ảnh. Ở Tiết bốn này, thầy trò ta sẽ cùng mổ xẻ “Bản chất của Tích chập” – hay tiếng Anh gọi là Convolution, và làm quen với các bộ lọc làm trơn ảnh.
+Người 2: Dạ em chào thầy Thắng ạ. Thầy ơi, nghe từ “Tích chập” có vẻ nặng về toán học quá. Trên slide em thấy có cái phép tính nhân ma trận gì mà không phẩy hai nhân hai trăm bốn mươi lăm, rồi cộng lại bằng hai trăm ba mươi… Môn này có đòi hỏi tính toán nhiều như đại số tuyến tính không thầy?
+Người 1: Một sự quan sát rất tinh tế! Đúng là Thị giác máy tính được xây dựng trên nền tảng toán học, nhưng các em đừng quá lo lắng. Máy tính sẽ làm phần tính toán đó cho chúng ta. Nhiệm vụ của các em là hiểu “bản chất”. Các em cứ tưởng tượng, nếu chúng ta chụp một bức ảnh bầu trời đêm ở Buôn Ma Thuột bị nhiễu hột lấm tấm, làm sao để bức ảnh mịn màng hơn mà không bị mất đi hình ảnh mặt trăng? Phép tích chập chính là “cây đũa thần” toán học giúp ta làm điều đó.
+
+Slide 2: MỤC TIÊU TIẾT HỌC
+Người 1: Trước khi đi sâu, chúng ta cùng lướt qua mục tiêu của tiết học này. Quan trọng nhất là sự chuyển đổi tư duy: các em phải bước từ việc chỉ nhìn vào một điểm ảnh duy nhất (Point Processing) sang việc quan sát cả một vùng lân cận xung quanh nó (Neighborhood Processing). Chúng ta sẽ tìm hiểu cơ chế “Cửa sổ trượt” (Sliding Window), khái niệm viền ảnh (Padding) và bước trượt (Stride). Cuối cùng là áp dụng để cài đặt hai bộ lọc phổ biến: Trung bình và Gaussian.
+Người 2: Thưa thầy, “Cửa sổ trượt” nghe giống như mình đi lau cửa kính ấy nhỉ? Cứ lau từng ô một cho đến hết.
+Người 1: So sánh rất hay ho và chính xác! Lát nữa thầy sẽ cho các em thấy thuật toán này “lau” bức ảnh của chúng ta sạch sẽ như thế nào nhé.
+
+Slide 3: TẠI SAO XỬ LÝ ĐIỂM ẢNH LÀ CHƯA ĐỦ?
+Người 1: Các em hãy nhìn vào bức ảnh cô gái đầy nhiễu hạt trên màn hình. Ở các bài trước, chúng ta dùng phép toán tuyến tính hoặc phi tuyến như Gamma hay Logarit. Nhưng giới hạn của chúng là chỉ nhìn thấy đúng một pixel tại một thời điểm. Vấn đề sinh ra ở đây là gì? Máy tính sẽ bị “mù mờ”, nó không thể phân biệt được đâu là “vết bẩn” do nhiễu hạt, đâu là “màu vật thể” thực sự vì nó hoàn toàn thiếu thông tin ngữ cảnh xung quanh.
+Người 2: Em hiểu rồi. Giống như việc mình nhìn qua một cái ống hút siêu nhỏ. Nếu em chỉ thấy một điểm màu trắng, em sẽ không biết đó là một vì sao trên trời hay chỉ là một hạt bụi dính trên ống kính.
+Người 1: Tuyệt vời! Chính xác là như vậy. Đó là lý do chúng ta có một nhu cầu cấp thiết: Cần phải xem xét mối tương quan của cái pixel đó với các pixel “hàng xóm” xung quanh để hiểu được ngữ cảnh bức ảnh.
+
+Slide 4: KERNEL - CÔNG CỤ TRÍCH XUẤT THÔNG TIN
+Người 1: Và để xét đến các “hàng xóm”, chúng ta sử dụng một công cụ có tên là Kernel, hay còn gọi là Mặt nạ (Mask) hoặc Bộ lọc (Filter). Định nghĩa đơn giản thôi: nó là một ma trận số có kích thước nhỏ, và thường là số lẻ như ma trận hai nhân ba, năm nhân năm, hay bảy nhân bảy. Vai trò của nó là chứa các trọng số quyết định cách chúng ta xử lý cái vùng lân cận đó.
+Người 2: Thầy ơi, tại sao lại phải là số lẻ như ba nhân ba hay năm nhân năm ạ? Dùng chẵn như bốn nhân bốn có được không?
+Người 1: Câu hỏi rất thông minh! Hãy nhớ lại, chúng ta đang cần tìm giá trị mới cho một pixel “trung tâm”. Một ma trận vuông số lẻ như ba nhân ba sẽ có một ô nằm chính giữa làm tâm, bao quanh là tám hàng xóm. Nếu dùng bốn nhân bốn, em sẽ không tìm được ô trung tâm duy nhất đâu. Có một quy tắc các em cần nhớ: Kernel càng lớn thì vùng ảnh hưởng càng rộng, đồng nghĩa với việc độ làm mờ sẽ càng cao.
+
+Slide 5: CƠ CHẾ CỬA SỔ TRƯỢT (SLIDING WINDOW)
+Người 1: Bây giờ, chúng ta sẽ xem Kernel này di chuyển thế nào qua cơ chế “Cửa sổ trượt”. Hãy tưởng tượng Kernel như một chiếc kính lúp hình vuông. Thuật toán sẽ đặt tâm của kính lúp này lên một tọa độ pixel (x, y) bất kỳ. Nó thực hiện tính toán tại đó, sau đó “trượt” sang pixel kế tiếp ngay bên cạnh. Nó quét liên tục từ trái qua phải, rồi lại xuống hàng và quét từ trên xuống dưới cho đến hết ảnh.
+Người 2: Việc này có vẻ sẽ tốn rất nhiều thời gian tính toán nếu bức ảnh lớn, ví dụ như ảnh 4K đúng không thầy?
+Người 1: Chắc chắn rồi. Quét từng pixel một trên bức ảnh hàng triệu pixel đòi hỏi năng lực xử lý cao. Nhưng nhờ các ngôn ngữ lập trình tối ưu như Python và thư viện OpenCV hiện nay, việc này diễn ra chỉ trong chớp mắt thôi.
+
+Slide 6: TÍCH CHẬP HOẠT ĐỘNG NHƯ THẾ NÀO?
+Người 1: Vậy thì bên trong cái “kính lúp” đó, phép toán gì đang diễn ra? Bản chất của Tích chập gồm ba bước rất nhịp nhàng. Bước một: Nhân chập. Ta lấy từng giá trị pixel của bức ảnh nhân với giá trị trọng số tương ứng nằm trong ma trận Kernel. Bước hai: Cộng tổng tất cả các kết quả phép nhân đó lại với nhau. Công thức chung là: Tổng của các tích giữa Giá trị đầu vào và Trọng số. Và bước cuối cùng là Gán: Lấy giá trị tổng vừa tính được thay thế cho cái pixel nằm ở vị trí trung tâm.
+Người 2: À, em thấy cái này quen quen. Nó giống hệt cách tính điểm trung bình môn học kỳ! Từng đầu điểm nhân với hệ số, cộng hết lại rồi chia ra, lấy kết quả cuối cùng làm điểm tổng kết.
+Người 1: Một sự liên tưởng rất đời thường và cực kỳ chính xác! Bản chất nó chính là tính trung bình có trọng số. Những “hàng xóm” nào có hệ số trong Kernel cao hơn thì sẽ tác động mạnh hơn lên điểm ảnh ở giữa.
+
+Slide 7: KIỂM SOÁT KÍCH THƯỚC ẢNH RA
+Người 1: Tuy nhiên, khi các em trượt cái Kernel này đến mép của bức ảnh, một vấn đề sẽ nảy sinh. Tâm của Kernel không thể đặt ở viền ngoài cùng được vì nó sẽ bị thiếu “hàng xóm” ở phía ngoài. Nếu cứ tính ép, bức ảnh sau khi xử lý sẽ bị bé lại. Để giải quyết, ta có kỹ thuật Padding, tức là “Đệm”. Ta sẽ thêm một lớp viền số không (0) bao quanh ảnh gốc để chống hiện tượng co ngót biên, giúp ảnh đầu ra giữ nguyên kích thước.
+Người 2: Vậy còn “Stride” - Bước trượt là gì vậy thầy? Có phải lúc nào mình cũng phải trượt từng pixel một không ạ?
+Người 1: Không bắt buộc nhé. Stride chính là khoảng cách di chuyển của Kernel. Mặc định là trượt một bước (như đi bộ). Nhưng nếu ta set Stride lớn hơn một, ví dụ bằng hai, Kernel sẽ “nhảy cóc” bỏ qua các pixel ở giữa. Kết quả là bức ảnh đầu ra sẽ bị giảm kích thước đi đáng kể. Trong các mạng Neural Network (CNN) sau này các em học, người ta hay dùng Stride nhảy cóc này để làm một việc gọi là Pooling, giúp giảm dung lượng dữ liệu đấy.
+
+
+Bạn xem qua phần 1 này nhé. Nếu phong cách diễn đạt này ổn và đúng ý bạn, tôi sẽ tiếp tục bắt tay vào soạn luôn Phần 2 (từ Slide 8 đến 14) với năng lượng tương tự! Cứ thoải mái góp ý nếu bạn muốn điều chỉnh thêm bớt gì nha.
+
+Slide 8: LỌC TRUNG BÌNH (MEAN FILTER)
+Người 1: Sau khi hiểu cơ chế “Cửa sổ trượt”, chúng ta sẽ đi vào bộ lọc đầu tiên và cũng là cơ bản nhất: Lọc Trung bình. Các em có thể gọi đây là triết lý “Dân chủ hóa” hình ảnh, nghĩa là mọi pixel hàng xóm đều có giá trị và tầm quan trọng y như nhau. Với một ma trận Kernel ba nhân ba, tất cả chín ô đều mang chung một giá trị trọng số là một phần chín.
+Người 2: Vậy cơ chế hoạt động của nó là cộng tất cả chín ô lại rồi chia đều cho chín, sau đó lấy kết quả đắp vào ô ở giữa đúng không thưa thầy?
+Người 1: Hoàn toàn chính xác! Cơ chế của nó đơn giản là thay thế pixel trung tâm bằng trung bình cộng của các hàng xóm xung quanh. Tuy nhiên, vì ai cũng “bằng vai phải lứa”, hệ quả là nó làm mượt ảnh rất tốt nhưng lại làm nhòe các cạnh, hay các đường biên của vật thể một cách rất thô bạo. Các em nhìn bông hoa hồng trên slide, nó bị mờ theo kiểu từng cục vuông vức chứ không hề mềm mại một chút nào.
+
+
+Slide 9: LỌC GAUSSIAN: LÀM MỜ CÓ “Ý THỨC”
+Người 1: Để khắc phục sự “thô bạo” của Lọc Trung bình, các nhà khoa học máy tính sử dụng Lọc Gaussian - một cách làm mờ có “ý thức” hơn. Trái ngược với triết lý “dân chủ”, Gaussian sử dụng triết lý “Trọng tâm hóa”.
+Người 2: Trọng tâm hóa nghĩa là mình ưu tiên điểm ở giữa hơn đúng không ạ? Em thấy ma trận ví dụ trên slide có số bốn ở giữa, xung quanh là các số hai và số một.
+Người 1: Đúng vậy! Nguyên lý trọng số ở đây là: pixel nào càng nằm gần tâm của Kernel thì trọng số ảnh hưởng của nó càng lớn. Ngược lại, những pixel càng xa tâm thì mức độ ảnh hưởng sẽ càng giảm dần về không. Kết quả mang lại là ảnh vẫn được giảm nhiễu rất tốt, nhưng lại giữ được độ tự nhiên cao hơn hẳn so với Lọc Trung bình.
+
+
+Slide 10: TẠI SAO GAUSSIAN ƯU VIỆT HƠN?
+Người 1: Hãy cùng làm một phép so sánh trực quan. Nếu các em chụp một bức ảnh chân dung ở Ngã Sáu Buôn Ma Thuột và muốn làm mờ bối cảnh xe cộ phía sau để tôn lên khuôn mặt. Nếu dùng Mean Filter, bối cảnh sẽ bị mờ nhân tạo và làm mất đi các chi tiết biên rất mạnh, nhìn cực kỳ giả trân.
+Người 2: À, em hiểu rồi! Còn nếu dùng Gaussian Filter thì nó giống như mình chụp bằng điện thoại xịn có chế độ chụp chân dung xóa phông phải không thầy?
+Người 1: Một ví dụ rất thực tế! Gaussian Filter mô phỏng lại chính xác độ mờ quang học tự nhiên, giống như cách mắt người hay ống kính máy ảnh hoạt động, nhờ đó nó bảo toàn cấu trúc của bức ảnh tốt hơn rất nhiều.
+
+Slide 11: TÍCH CHẬP DƯỚI GÓC NHÌN TẦN SỐ
+Người 1: Bây giờ, thầy muốn các em nâng tầm tư duy lên một chút, nhìn phép tích chập dưới góc nhìn Tần số. Trong xử lý tín hiệu, việc làm trơn ảnh thực chất chính là việc áp dụng một bộ Lọc thông thấp.
+Người 2: Thưa thầy, “Lọc thông thấp” nghe giống như khi em chỉnh âm thanh amply, vặn nút bass lên và giảm nút treble xuống để lọc bớt tiếng xèo xèo phải không ạ?
+Người 1: Cực kỳ thông minh! Sự liên tưởng đến âm thanh là rất chuẩn xác. Trong hình ảnh, “tần số thấp” là những vùng màu biến đổi rất chậm, ví dụ như bầu trời trong xanh hay làn da mịn màng. Còn “tần số cao” là những điểm biến đổi cực nhanh, đứt gãy, chính là các hạt nhiễu hoặc các cạnh sắc nét. Cơ chế của Lọc thông thấp là giữ lại cái biến đổi chậm và loại bỏ cái biến đổi nhanh. Và Lọc Gaussian chính là một bộ lọc thông thấp cực kỳ điển hình trong thị giác máy tính.
+
+
+Slide 12: TỔNG KẾT NỘI DUNG TIẾT 4
+Người 1: Chà, vậy là chúng ta đã đi qua khá nhiều kiến thức nền tảng trong Tiết 4 này. Thầy tổng kết lại nhé. Thứ nhất, chúng ta đã chuyển đổi thành công tư duy từ xử lý từng điểm ảnh đơn lẻ sang xử lý theo vùng. Thứ hai, các em đã hiểu rõ cơ chế nhân rồi cộng của phép Tích chập. Thứ ba, ta đã phân biệt được sự cào bằng của Lọc Trung bình và sự tinh tế của Lọc Gaussian. Cuối cùng là vai trò của kỹ thuật đệm Padding giúp bảo toàn kích thước bức ảnh ban đầu.
+
+
+Slide 13: NGHỊCH LÝ CỦA LÀM TRƠN
+Người 1: Dù đã học được các công cụ rất mạnh, nhưng thầy phải nói cho các em một sự thật phũ phàng: Làm trơn ảnh luôn tồn tại một nghịch lý. Vấn đề đặt ra là mục tiêu ban đầu của chúng ta là khử nhiễu, nhưng giá phải trả luôn luôn là làm mờ đi bức ảnh.
+Người 2: Giống như cái bập bênh trên slide, nếu em ấn cái “Khử nhiễu” xuống thấp thì cái đĩa “Độ nét biên” sẽ bị hất văng lên cao đúng không thầy?
+Người 1: Chính xác! Nó là một sự đánh đổi. Nếu ảnh bị làm quá mờ, máy tính sẽ hoàn toàn mất dấu biên dạng của vật thể. Máy tính sẽ không biết đâu là cái xe, đâu là con đường nữa. Câu hỏi hóc búa được đặt ra ở đây là: Làm sao để chúng ta vừa khử được nhiễu, mà lại vẫn giữ được biên vật thể sắc nét?
+
+
+Slide 14: CHUẨN BỊ CHO TIẾT 5
+Người 1: Và câu hỏi hóc búa đó sẽ là nội dung mở đầu cho Tiết 5 của chúng ta. Ở buổi sau, chúng ta sẽ làm quen với một khái niệm mới: Bộ lọc Đạo hàm, tiêu biểu như Sobel hay Laplace, để đi tìm lại các đường nét đã lỡ bị làm mờ. Đồng thời, thầy cũng sẽ giới thiệu cho các em “khắc tinh” của loại nhiễu muối tiêu - đó là Lọc Trung vị, một giải pháp phi tuyến tính giúp bảo toàn cạnh cực kỳ hiệu quả.
+Người 2: Dạ vâng, bài học hôm nay rất thú vị. Chúng em cảm ơn thầy ạ!
+Người 1: Cảm ơn các em, hẹn gặp lại các em vào buổi học sau nhé!

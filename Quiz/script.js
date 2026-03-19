@@ -34,6 +34,11 @@ const app = {
             { name: "Tiết 5: Edges and Image Restoration", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T5.csv" },
             { name: "Tiết 6: Image Restoration Lab", file: "../Chương 2_Nâng cấp và khôi phục ảnh/DB/MD_Chuong2-T6.csv" }
         ],
+        'Chuong3': [
+            { name: "Tiết 1: Tổng quan và Kỹ thuật cắt ngưỡng", file: "../Chương 3_Phân đoạn ảnh/DB/MD_Chuong3-T1.csv" },
+            { name: "Tiết 2: Phân đoạn dựa trên phân cụm", file: "../Chương 3_Phân đoạn ảnh/DB/MD_Chuong3-T2.csv" },
+            { name: "Tiết 3: Lát cắt đồ thị (Graph-Cut) và GrabCut", file: "../Chương 3_Phân đoạn ảnh/DB/MD_Chuong3-T3.csv" }
+        ],
         // Add more groups as needed
     },
 

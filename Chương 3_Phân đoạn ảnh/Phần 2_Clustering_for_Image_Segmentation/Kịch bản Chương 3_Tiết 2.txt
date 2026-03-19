@@ -1,0 +1,61 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Ở tiết học trước, chúng ta đã học cách dùng "nhát dao" cắt ngưỡng để nhị phân hóa bức ảnh. Tuy nhiên, thực tế không phải lúc nào thế giới cũng chỉ có hai màu đen và trắng. Hôm nay, chúng ta sẽ sang Tiết 2 để học một cách phân chia ảnh thông minh hơn, đó là: Phân đoạn dựa trên phân cụm.
+Người 2: Thưa thầy, nghe tên "phân cụm" em thấy giống kiến thức trong môn Trí tuệ nhân tạo hay Học máy hơn là xử lý ảnh thuần túy. Liệu mình có cần dùng đến các mô hình AI phức tạp không ạ?
+Người 1: Em nhận xét rất đúng! Chúng ta sẽ sử dụng các thuật toán "Học không giám sát" để máy tính tự động tìm ra các vùng có đặc tính giống nhau mà không cần chúng ta chỉ bảo tận tay từng pixel.
+Slide 2: MỤC TIÊU BÀI HỌC
+Người 1: Mục tiêu của chúng ta hôm nay gồm ba điểm chính: Một là hiểu nguyên lý phân cụm trong không gian màu; hai là nắm vững quy trình lặp "thần thánh" của thuật toán K-Means; và cuối cùng là biết cách dùng OpenCV để thực hiện "Lượng hóa màu sắc" cho ảnh.
+Người 2: Dạ, em thấy có nhắc đến "Lượng hóa màu sắc". Có phải là cách làm cho bức ảnh trông giống như những bức tranh cổ động, chỉ có vài mảng màu chủ đạo không thầy?
+Người 1: Chính xác! Đó là một ứng dụng rất thú vị giúp nén ảnh và làm đơn giản hóa dữ liệu đầu vào cho máy tính.
+Slide 3: PHÂN ĐOẠN DỰA TRÊN PHÂN CỤM LÀ GÌ?
+Người 1: Ý tưởng cốt lõi là nhóm các pixel có đặc tính tương đồng như màu sắc, cường độ hay kết cấu vào cùng một "cụm" (cluster). Đặc điểm quan trọng nhất là đây là phương pháp Học không giám sát (Unsupervised Learning).
+Người 2: "Không giám sát" có nghĩa là mình cứ "quăng" bức ảnh cho máy tính, rồi nó tự thấy những pixel nào màu giống nhau thì gom lại, mình không cần dán nhãn trước đâu là "cỏ", đâu là "mèo" đúng không thầy?.
+Người 1: Đúng vậy! Máy tính sẽ tự tìm ra cấu trúc nội tại của dữ liệu ảnh dựa trên các thuật toán tối ưu.
+Slide 4: GIỚI THIỆU THUẬT TOÁN K-MEANS
+Người 1: Thuật toán phổ biến nhất trong nhóm này chính là K-Means. Nó cố gắng tối thiểu hóa tổng bình phương khoảng cách từ mỗi pixel đến "tâm cụm" đại diện của nó.
+Người 2: Thưa thầy, em thấy trong tên gọi có chữ "K". Con số K này có ý nghĩa gì đặc biệt không ạ?
+Người 1: K chính là số lượng vùng (hay số lượng màu) mà em muốn phân đoạn ra. Đây là tham số bắt buộc em phải xác định trước khi bắt đầu thuật toán.
+Slide 5: QUY TRÌNH K-MEANS - BƯỚC 1: KHỞI TẠO
+Người 1: Bước đầu tiên, máy tính sẽ chọn ngẫu nhiên K điểm trong không gian màu (ví dụ không gian RGB) để làm các "tâm cụm" (centroids) ban đầu.
+Người 2: Nhưng thầy ơi, nếu mình chọn ngẫu nhiên mà chẳng may chọn vào các điểm quá gần nhau thì kết quả có bị sai lệch không ạ?
+Người 1: Có chứ! Việc khởi tạo ban đầu ảnh hưởng rất lớn đến kết quả cuối cùng. Vì vậy trong thực tế, người ta thường chạy thử nhiều lần hoặc dùng kỹ thuật khởi tạo thông minh hơn như K-Means++.
+Slide 6: QUY TRÌNH K-MEANS - BƯỚC 2: GÁN NHÃN
+Người 1: Sang bước 2, với mỗi pixel trong ảnh, chúng ta tính khoảng cách (thường là khoảng cách Euclidean) đến tất cả K tâm cụm. Pixel đó ở gần tâm nào nhất thì sẽ được gán vào cụm của tâm đó.
+Người 2: Em hiểu rồi, giống như việc các pixel đi "tìm đồng bọn" vậy. Cứ thấy "anh tâm" nào có màu sắc gần giống mình nhất thì mình đi theo anh đó.
+Người 1: Một cách ví von rất hay! Kết quả là chúng ta có K nhóm pixel tạm thời.
+Slide 7: QUY TRÌNH K-MEANS - BƯỚC 3: CẬP NHẬT TÂM CỤM
+Người 1: Sau khi mọi pixel đã có nhóm, thuật toán sẽ tính toán lại vị trí tâm cụm mới bằng cách lấy trung bình cộng tọa độ màu của tất cả pixel trong nhóm đó.
+Người 2: À, nghĩa là sau khi gom nhóm xong, "anh tâm" cũ không còn đại diện tốt nhất nữa, nên mình phải dời anh ấy vào đúng "trọng tâm" của cả nhóm mới đúng không thầy?.
+Người 1: Chính xác! Đây là bước giúp tâm cụm dần dần dịch chuyển về vùng có mật độ pixel cao nhất trong không gian màu.
+Slide 8: QUY TRÌNH K-MEANS - BƯỚC 4: LẶP LẠI VÀ HỘI TỤ
+Người 1: Chúng ta cứ lặp đi lặp lại Bước 2 và Bước 3 cho đến khi vị trí các tâm cụm không còn thay đổi đáng kể nữa, ta gọi đó là trạng thái hội tụ.
+Người 2: Vậy khi thuật toán dừng lại, mỗi pixel trong ảnh sẽ mang màu của chính cái tâm cụm mà nó thuộc về, tạo nên những mảng màu đồng nhất mà thầy nói lúc đầu phải không ạ?.
+Người 1: Đúng thế! Toàn bộ bức ảnh triệu màu ban đầu giờ chỉ còn lại đúng K màu đại diện. Đây là nền tảng để chúng ta bước sang phần ứng dụng thực chiến ở các slide tiếp theo.
+Slide 9: ỨNG DỤNG: LƯỢNG HÓA MÀU SẮC (COLOR QUANTIZATION)
+Người 1: Bây giờ, hãy xem K-Means "biến hình" bức ảnh như thế nào qua ứng dụng Lượng hóa màu sắc. Đây là quá trình giảm số lượng màu sắc riêng biệt trong một ảnh xuống còn đúng màu đại diện.
+Người 2: Việc này có giúp gì cho máy tính không thầy? Hay chỉ để tạo hiệu ứng tranh vẽ dạng "poster" cho đẹp mắt ạ?.
+Người 1: Có hai lợi ích thực tế rất lớn: Một là giảm kích thước tệp ảnh đáng kể vì dữ liệu màu đã được nén lại. Hai là nó làm đơn giản hóa dữ liệu, giúp các thuật toán nhận dạng vật thể sau đó không bị bối rối bởi những sai khác màu sắc li ti do nhiễu hoặc ánh sáng gây ra.
+Slide 10: LẬP TRÌNH K-MEANS VỚI OPENCV (CLO1)
+Người 1: Để "ra lệnh" cho máy tính thực hiện K-Means, ta sử dụng hàm cv2.kmeans trong OpenCV. Các em cần chuẩn bị dữ liệu pixel dưới dạng mảng float32 và thiết lập criteria — tức là tiêu chí để máy tính biết khi nào thì nên dừng lặp lại.
+Người 2: Em thấy có tham số attempts và flags nữa. Mình nên chọn như thế nào để tránh lỗi chọn tâm cụm ngẫu nhiên mà thầy nói ở phần trước ạ?.
+Người 1: Thường ta chọn attempts bằng 10 để máy chạy lại nhiều lần và chọn kết quả tốt nhất. Với flags, các em nên dùng cv2.KMEANS_PP_CENTERS để máy tự khởi tạo các tâm cụm một cách thông minh và cách xa nhau, giúp thuật toán hội tụ nhanh hơn.
+Slide 11: GIỚI THIỆU THUẬT TOÁN MEAN SHIFT
+Người 1: K-Means rất mạnh nhưng có một nhược điểm là ta phải "đoán" trước số cụm . Nếu các em không muốn đoán, hãy sử dụng Mean Shift. Đây là thuật toán dựa trên mật độ, nó tự động tìm các "đỉnh" có mật độ điểm dữ liệu cao nhất trong không gian màu để xác định tâm cụm.
+Người 2: Ồ, vậy là mình cứ "quăng" ảnh vào là máy tính tự biết ảnh đó nên được chia làm 3 hay 5 vùng màu chủ đạo mà không cần mình can thiệp đúng không thầy?.
+Người 1: Chính xác! Mean Shift coi sự phân bố các pixel như một địa hình đồi núi và nó sẽ tự đi tìm những ngọn núi cao nhất.
+Slide 12: CÁCH MEAN SHIFT HOẠT ĐỘNG
+Người 1: Cơ chế hoạt động của nó dựa trên một "cửa sổ trượt" (window). Tại mỗi vị trí, máy tính sẽ tính toán một vector dịch chuyển gọi là Mean Shift Vector hướng về phía có mật độ điểm dữ liệu lớn hơn. Cửa sổ này cứ dịch chuyển liên tục cho đến khi leo lên tới "đỉnh" mật độ thì dừng lại và hội tụ.
+Người 2: Em hình dung nó giống như việc mình đang đứng giữa một đám đông, cứ chỗ nào đông người hơn thì mình lách qua đó cho đến khi đứng đúng trung tâm của đám đông thì thôi thầy nhỉ?.
+Người 1: Một ví dụ liên hệ cực kỳ chính xác! Đó chính là cách máy tính tự tìm ra "trọng tâm" của một cụm dữ liệu.
+Slide 13: SO SÁNH K-MEANS VS. MEAN SHIFT
+Người 1: Hãy cùng so sánh hai "vũ khí" phân đoạn này. K-Means có ưu điểm là nhanh và hiệu quả cho ảnh lớn. Trong khi đó, Mean Shift cho kết quả chính xác và tự nhiên hơn, không phụ thuộc vào hình dạng cụm, nhưng chi phí tính toán lại rất cao nên chạy khá chậm.
+Người 2: Vậy trong thực tế, nếu em cần làm một ứng dụng thời gian thực như lọc ảnh trên camera điện thoại thì K-Means vẫn là lựa chọn thực dụng hơn thưa thầy?.
+Người 1: Đúng vậy, K-Means vẫn là lựa chọn hàng đầu cho các tác vụ cần tốc độ xử lý nhanh.
+Slide 14: PHÂN ĐOẠN TRÊN MIỀN HỖN HỢP (JOINT DOMAIN)
+Người 1: Có một vấn đề phát sinh: nếu chỉ phân cụm theo màu sắc, những vùng ở xa nhau có cùng màu sẽ bị gộp chung vào một đoạn. Giải pháp là sử dụng Miền hỗn hợp — kết hợp cả tọa độ không gian và giá trị màu thành một vector 5 chiều.
+Người 2: À, lúc này máy tính sẽ hiểu là: "Hai pixel này tuy cùng màu đỏ, nhưng một cái ở góc trên, một cái ở góc dưới thì không thể thuộc cùng một miếng vải được" đúng không thầy?.
+Người 1: Rất thông minh! Nhờ đó mà kết quả phân đoạn sẽ vừa có sự liền mạch về mặt không gian, vừa đồng nhất về màu sắc.
+Slide 15: TÓM TẮT VÀ HƯỚNG TỚI TIẾT 3
+Người 1: Tổng kết lại Tiết 2, các em cần nhớ: Phân cụm giúp nhóm các pixel tương đồng mà không cần gán nhãn trước. K-Means là quy trình lặp dựa trên số cụm do ta chọn, còn Mean Shift là thuật toán tự tìm cụm dựa trên mật độ.
+Người 2: Thưa thầy, em thấy các phương pháp này vẫn chỉ mới nhìn vào từng điểm ảnh. Ở tiết sau mình sẽ học về Graph-Cut, nghe nói đây là kỹ thuật "cắt" bức ảnh như một đồ thị để tách vật thể cực kỳ chính xác đúng không ạ?.
+Người 1: Đúng vậy em! Chúng ta sẽ chuyển đổi tư duy từ điểm ảnh sang mô hình đồ thị để máy tính "chia để trị" bức ảnh một cách chuyên nghiệp nhất. Hẹn gặp lại các em ở Tiết 3!.
+

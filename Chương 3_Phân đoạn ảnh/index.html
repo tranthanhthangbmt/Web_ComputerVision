@@ -9,6 +9,194 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style -->
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .part-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .part-btn:hover {
+            background: #f3f4f6;
+            color: #0d6efd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .part-btn.active {
+            background: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .desktop-text {
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            display: inline-block;
+            transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            vertical-align: middle;
+        }
+
+        .part-btn:hover .desktop-text,
+        .part-btn.active .desktop-text {
+            max-width: 300px;
+            opacity: 1;
+            margin-left: 4px;
+        }
+
+        .mobile-text {
+            display: none;
+        }
+
+        /* Info Button Style */
+        .info-btn {
+            background: #fff;
+            color: #8a2be2;
+            /* BlueViolet */
+            border: 1px solid #8a2be2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-btn:hover {
+            background: #8a2be2;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .info-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: inline-block;
+            max-width: 98vw;
+            max-height: 98vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation-name: zoom;
+            animation-duration: 0.4s;
+            transition: width 0.3s ease;
+            cursor: zoom-in;
+        }
+
+        .modal-content.zoomed {
+            width: 150%;
+            max-width: none;
+            max-height: none;
+            margin: 0;
+            cursor: grab;
+            transform: none;
+        }
+
+        .modal-content.zoomed:active {
+            cursor: grabbing;
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(0)
+            }
+            to {
+                transform: scale(1)
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 100000;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Mobile adjustments */
+        @media only screen and (max-width: 700px) {
+            .modal-content {
+                width: 100%;
+            }
+
+            .info-btn .btn-text {
+                display: none;
+            }
+
+            .desktop-icon,
+            .desktop-text {
+                display: none !important;
+            }
+
+            .mobile-text {
+                display: inline;
+                font-weight: bold;
+            }
+
+            .part-btn {
+                padding: 8px;
+                font-size: 16px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .info-btn {
+                border-radius: 20px;
+                width: auto;
+                padding: 8px 16px;
+            }
+        }
+
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,9 +212,9 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container" style="margin-top: 20px;">
         <!-- Tabs Nav -->
-        <div class="tabs">
+        <div class="tabs" style="display: flex; align-items: center; gap: 10px;">
             <button class="tab-btn active" onclick="openTab(event, 'theory')">
                 <i class="fa-solid fa-book mr-2"></i> Lý thuyết
             </button>
@@ -40,8 +228,32 @@
 
         <!-- Tab Content: Theory -->
         <div id="theory" class="tab-content active">
+            <!-- PART SELECTION & INFOGRAPHIC -->
+            <div class="mb-4 flex space-x-2" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; flex-grow: 1;">
+                    <button class="part-btn active" onclick="loadPart(1, this)">
+                        <span class="desktop-icon"><i class="fa-solid fa-circle-play"></i> Tiết 1</span>
+                        <span class="desktop-text">: Tổng quan & Kỹ thuật cắt ngưỡng</span>
+                        <span class="mobile-text">1</span>
+                    </button>
+                    <button class="part-btn" onclick="loadPart(2, this)">
+                        <span class="desktop-icon"><i class="fa-solid fa-circle-play"></i> Tiết 2</span>
+                        <span class="desktop-text">: Phân đoạn dựa trên phân cụm</span>
+                        <span class="mobile-text">2</span>
+                    </button>
+                    <button class="part-btn" onclick="loadPart(3, this)">
+                        <span class="desktop-icon"><i class="fa-solid fa-circle-play"></i> Tiết 3</span>
+                        <span class="desktop-text">: Lát cắt đồ thị (Graph-Cut)</span>
+                        <span class="mobile-text">3</span>
+                    </button>
+                </div>
+                <!-- Infographic Button -->
+                <button class="part-btn info-btn" onclick="showInfographic()" title="Xem Tóm tắt nội dung (Infographic)">
+                    <i class="fa-solid fa-images"></i><span class="btn-text">Infographic</span>
+                </button>
+            </div>
             <div class="bg-white p-4 rounded-xl shadow-sm" style="height: 800px;">
-                <!-- PDF Viewer -->
+                <!-- PDF Viewer / Slide Player -->
                 <iframe id="pdf-frame" width="100%" height="100%" style="border: none;"></iframe>
             </div>
         </div>
@@ -61,7 +273,26 @@
                     </thead>
                     <tbody id="notebook-list">
                         <tr>
-                            <td colspan="4" class="text-center">Đang cập nhật bài tập...</td>
+                            <td>Tuần 3</td>
+                            <td>Dữ liệu hình ảnh thực hành (Data)</td>
+                            <td><span class="badge" style="background-color: #17a2b8; color: white;">Dữ liệu</span></td>
+                            <td style="display: flex; gap: 5px;">
+                                <a href="https://github.com/tranthanhthangbmt/Web_ComputerVision/tree/main/Ch%C6%B0%C6%A1ng%203_Ph%C3%A2n%20%C4%91o%E1%BA%A1n%20%E1%BA%A3nh/Th%E1%BB%B1c%20h%C3%A0nh/data"
+                                    target="_blank" class="btn-start"
+                                    style="padding: 5px 10px; font-size: 0.8rem; background-color: #198754; border-color: #198754; color: #fff; text-decoration: none; display: inline-flex; align-items: center;"><i
+                                        class="fa-solid fa-folder-open mr-1"></i> Link Github</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tuần 3</td>
+                            <td>Bài tập thực hành: Phân đoạn ảnh</td>
+                            <td><span class="badge easy">Cơ bản</span></td>
+                            <td style="display: flex; gap: 5px;">
+                                <a href="https://colab.research.google.com/github/tranthanhthangbmt/Web_ComputerVision/blob/main/Ch%C6%B0%C6%A1ng%203_Ph%C3%A2n%20%C4%91o%E1%BA%A1n%20%E1%BA%A3nh/Th%E1%BB%B1c%20h%C3%A0nh/Chuong_3_PhanDoanAnh.ipynb"
+                                    target="_blank" class="btn-start"
+                                    style="padding: 5px 10px; font-size: 0.8rem; background-color: #f9ab00; border-color: #f9ab00; color: #fff; text-decoration: none; display: inline-flex; align-items: center;"><i
+                                        class="fa-brands fa-google mr-1"></i> Colab</a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -76,6 +307,13 @@
                 <iframe id="quiz-frame" class="quiz-frame" src=""></iframe>
             </div>
         </div>
+    </div>
+
+    <!-- INFOGRAPHIC MODAL -->
+    <div id="info-modal" class="info-modal">
+        <span class="close-modal" onclick="closeInfographic()">&times;</span>
+        <img class="modal-content" id="info-image">
+        <div id="caption"></div>
     </div>
 
     <footer class="footer">
@@ -100,14 +338,124 @@
             evt.currentTarget.className += " active";
         }
 
+        // Config specific for Chapter 3
         const config = {
-            pdfPath: 'Tai_lieu_Chuong_3.pdf',
-            quizCsv: '../../Quiz/index.html?module=MD_Chuong3.csv&name=Chương%203:%20Phân%20Đoạn%20Ảnh'
+            parts: {
+                1: 'Phần 1_Binary_Image_Segmentation/index.html',
+                2: 'Phần 2_Clustering_for_Image_Segmentation/index.html',
+                3: 'Phần 3_Graph_Cut_Segmentation/index.html'
+            },
+            quizCsv: '../Quiz/index.html?group=Chuong3'
         };
 
+        let currentPartId = 1;
+
+        function loadPart(partId, btn) {
+            currentPartId = partId;
+
+            // Update Active State
+            if (btn) {
+                document.querySelectorAll('#theory .part-btn').forEach(b => {
+                    if (!b.classList.contains('info-btn')) {
+                        b.classList.remove('active');
+                    }
+                });
+                btn.classList.add('active');
+            }
+
+            // Load Content
+            const url = config.parts[partId];
+            if (url) {
+                document.getElementById('pdf-frame').src = url;
+            } else {
+                console.error("Part not found:", partId);
+                alert("Nội dung bài học này chưa khả dụng.");
+            }
+        }
+
+        /* INFOGRAPHIC LOGIC */
+        function showInfographic() {
+            const modal = document.getElementById("info-modal");
+            const modalImg = document.getElementById("info-image");
+            const captionText = document.getElementById("caption");
+
+            const imgPath = `Infographic/Phần ${currentPartId}_.png`;
+
+            modal.style.display = "block";
+            modalImg.src = imgPath;
+            modalImg.classList.remove('zoomed');
+            captionText.innerHTML = `Infographic - Tiết ${currentPartId} <br> <span style='font-size:14px; color:#aaa'>(Nhấn vào ảnh để phóng to/thu nhỏ)</span>`;
+
+            modalImg.onerror = function () {
+                this.onerror = null;
+                this.src = "Infographic/Phần 1_.png";
+                captionText.innerHTML = `Infographic (Tiết ${currentPartId} chưa có sãn, hiển thị mặc định) <br> <span style='font-size:14px; color:#aaa'>(Nhấn vào ảnh để phóng to/thu nhỏ)</span>`;
+            };
+        }
+
+        function closeInfographic() {
+            document.getElementById("info-modal").style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById("info-modal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Drag to Scroll Logic
+        const img = document.getElementById("info-image");
+        const modal = document.getElementById("info-modal");
+        let isDown = false;
+        let startX, startY;
+        let scrollLeft, scrollTop;
+        let isDragging = false;
+
+        img.addEventListener('mousedown', (e) => {
+            if (!img.classList.contains('zoomed')) return;
+            isDown = true;
+            isDragging = false;
+            startX = e.pageX - modal.offsetLeft;
+            startY = e.pageY - modal.offsetTop;
+            scrollLeft = modal.scrollLeft;
+            scrollTop = modal.scrollTop;
+            e.preventDefault();
+        });
+
+        img.addEventListener('mouseleave', () => {
+            isDown = false;
+        });
+
+        img.addEventListener('mouseup', (e) => {
+            isDown = false;
+            if (!isDragging) {
+                e.stopPropagation();
+                img.classList.toggle("zoomed");
+            }
+        });
+
+        img.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - modal.offsetLeft;
+            const y = e.pageY - modal.offsetTop;
+            const walkX = (x - startX) * 1.5;
+            const walkY = (y - startY) * 1.5;
+
+            if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
+                isDragging = true;
+            }
+
+            modal.scrollLeft = scrollLeft - walkX;
+            modal.scrollTop = scrollTop - walkY;
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            const viewerPath = '../../pdf_viewer_template.html';
-            document.getElementById('pdf-frame').src = `${viewerPath}?file=${encodeURIComponent(config.pdfPath)}`;
+            // Load Default Part (Part 1)
+            loadPart(1, document.querySelector('#theory .part-btn.active'));
+
+            // Set Quiz src
             document.getElementById('quiz-frame').src = config.quizCsv;
         });
     </script>

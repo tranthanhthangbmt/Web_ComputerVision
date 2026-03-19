@@ -1,0 +1,61 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Sau khi đã đi qua "nhát dao" Cắt ngưỡng ở Tiết 1 và phép gom nhóm Phân cụm ở Tiết 2, hôm nay chúng ta sẽ đến với "vũ khí" tối thượng và hiện đại nhất của chương này: Tiết 3 - Lát cắt đồ thị (Graph-Cut) và chuẩn bị cho bài thực hành tổng hợp Lab 3,.
+Người 2: Thưa thầy, nghe tên "đồ thị" em lại nhớ đến môn Cấu trúc dữ liệu và Giải thuật với các thuật toán tìm đường đi ngắn nhất. Không lẽ mình lại mang những kiến thức đó vào để "cắt" ảnh ạ?.
+Người 1: Chính xác! Chúng ta sẽ biến bức ảnh thành một mạng lưới giao thông phức tạp và dùng toán học tối ưu để tìm ra con đường phân chia vật thể và nền một cách hoàn hảo nhất.
+Slide 2: MỤC TIÊU BÀI HỌC (TIẾT 3)
+Người 1: Trong tiết này, mục tiêu của các em là: Một, hiểu cách mô hình hóa phân đoạn ảnh dưới dạng bài toán tối ưu hóa trên đồ thị. Hai, nắm vững cơ chế gán trọng số và nguyên lý Lát cắt tối thiểu (Min-cut). Và cuối cùng, quan trọng nhất là làm chủ được thuật toán GrabCut trong OpenCV để thực hiện tách nền tương tác,.
+Người 2: Dạ, mục tiêu cuối cùng nghe rất hấp dẫn. Có phải nó giống như tính năng "tách nền" (Remove Background) mà mình hay thấy trong các phần mềm chỉnh sửa ảnh chuyên nghiệp không thầy?.
+Người 1: Đúng vậy, và hôm nay các em sẽ tự tay lập trình ra tính năng đó.
+Slide 3: CHUYỂN ĐỔI TƯ DUY - ẢNH LÀ MỘT ĐỒ THỊ
+Người 1: Hãy thay đổi cách nhìn. Các phương pháp trước chỉ xem xét từng pixel lẻ loi. Bây giờ, chúng ta coi bức ảnh là một đồ thị . Trong đó, mỗi pixel chính là một Đỉnh (Node), và các kết nối giữa các pixel láng giềng chính là các Cạnh (Edge),.
+Người 2: Em hiểu rồi, giống như các pixel đang "nắm tay" nhau để tạo thành một tấm lưới khổng lồ bao phủ bức ảnh phải không ạ?.
+Người 1: Một sự ví von rất chính xác! Và những "cú nắm tay" đó mạnh hay yếu sẽ quyết định đâu là ranh giới của vật thể.
+Slide 4: CÁC ĐỈNH ĐẶC BIỆT - NGUỒN (SOURCE) VÀ CỐNG (SINK)
+Người 1: Để giải quyết bài toán tách vật thể, ta thêm vào đồ thị 2 đỉnh đầu cuối đặc biệt: Đỉnh Nguồn (Source - S) đại diện cho vật thể, và Đỉnh Cống (Sink - T) đại diện cho nền,.
+Người 2: Thưa thầy, vậy là mỗi pixel bây giờ giống như một người đứng giữa, phải quyết định xem mình sẽ về "phe" vật thể (S) hay về "phe" nền (T) đúng không ạ?,.
+Người 1: Rất chuẩn! Mục tiêu của chúng ta là tìm cách "cắt" toàn bộ các kết nối sao cho mỗi pixel chỉ còn dính vào duy nhất một phe,.
+Slide 5: HỆ THỐNG CÁC CẠNH VÀ TRỌNG SỐ (WEIGHTS)
+Người 1: Sức mạnh của Graph-Cut nằm ở trọng số. Chúng ta có hai loại cạnh: Cạnh-n nối các pixel láng giềng, thể hiện sự tương đồng. Nếu hai pixel giống màu nhau, trọng số sẽ rất cao để khó bị cắt đứt. Ngược lại, nếu khác màu (có thể là biên), trọng số sẽ thấp để "nhát dao" dễ đi qua,.
+Người 2: Thế còn Cạnh-t nối pixel với S và T thì sao ạ?.
+Người 1: Cạnh-t thể hiện xác suất. Nếu một pixel có màu rất giống màu của vật thể mà người dùng đã đánh dấu, nó sẽ được nối với S bằng một sợi dây cực kỳ chắc chắn,.
+Slide 6: NGUYÊN LÝ LÁT CẮT TỐI THIỂU (MINIMUM CUT)
+Người 1: Một "lát cắt" là cách chia đồ thị thành 2 phần riêng biệt. Chi phí lát cắt là tổng trọng số các cạnh bị cắt qua. Thuật toán sẽ đi tìm Lát cắt tối thiểu (Min-cut) — tức là lát cắt có chi phí thấp nhất,.
+Người 2: À, em hiểu rồi! Vì thuật toán muốn tiết kiệm "công sức" nhất, nên nó sẽ chọn cắt qua những nơi có trọng số thấp, mà trọng số thấp lại chính là ranh giới giữa vật thể và nền. Vậy là máy tính đã tự tìm ra đường biên tối ưu cho mình rồi!,.
+Người 1: Thông minh lắm! Đó chính là lý do tại sao Graph-Cut lại tách biên mượt mà và chính xác hơn hẳn các phương pháp trước đây,.
+Slide 7: TỪ GRAPH-CUT ĐẾN THUẬT TOÁN GRABCUT
+Người 1: Mặc dù Graph-Cut rất mạnh, nhưng nó có một hạn chế là đòi hỏi người dùng phải đánh dấu rất nhiều điểm "hạt giống" (seeds) để máy tính biết đâu là vật thể, đâu là nền. Để khắc phục sự bất tiện này, thuật toán GrabCut đã ra đời.
+Người 2: Thưa thầy, em thấy trong các app chỉnh ảnh, mình chỉ cần vẽ một cái khung bao quanh con người là nó tự tách nền. Có phải đó chính là GrabCut không ạ?.
+Người 1: Đúng rồi em! GrabCut chỉ cần người dùng vẽ một khung hình chữ nhật bao quanh đối tượng. Máy tính sẽ sử dụng Mô hình hỗn hợp Gaussian (GMM) để tự động học phân bố màu sắc của nền và vật thể từ cái khung đó.
+Slide 8: QUY TRÌNH HOẠT ĐỘNG CỦA GRABCUT
+Người 1: Quy trình này diễn ra qua 5 bước: 1. Người dùng vẽ khung; 2. Máy tính gán nhãn tạm thời các pixel ngoài khung là "Nền"; 3. Học mô hình màu GMM; 4. Xây dựng đồ thị và thực hiện Lát cắt tối thiểu; và 5. Lặp lại tinh chỉnh cho đến khi kết quả ổn định.
+Người 2: Vậy là máy tính vừa "cắt" vừa "học" để nhãn dán ngày càng chính xác hơn đúng không thầy?.
+Người 1: Chính xác! Đó là một quá trình tối ưu hóa lặp để đảm bảo đường biên vật thể được tách ra mịn màng nhất.
+Slide 9: LẬP TRÌNH VỚI OPENCV (CLO1)
+Người 1: Trong OpenCV, chúng ta sử dụng hàm cv2.grabCut. Các em cần chú ý tham số mask — đây là nơi chứa kết quả phân đoạn với 4 giá trị: chắc chắn là nền, chắc chắn là vật thể, và các vùng "có thể".
+Người 2: Thưa thầy, tham số iterCount mình nên để bao nhiêu là vừa ạ?.
+Người 1: Thông thường chúng ta chọn khoảng 5 vòng lặp là đủ để thuật toán hội tụ và cho kết quả tốt mà không tốn quá nhiều thời gian tính toán.
+Slide 10: XÂY DỰNG PIPELINE PHÂN ĐOẠN HOÀN CHỈNH
+Người 1: Để có một ứng dụng thực tế, chúng ta không chỉ dùng mỗi thuật toán phân đoạn. Một quy trình (Pipeline) chuẩn gồm 3 giai đoạn: Tiền xử lý (dùng lọc Gaussian để làm mượt ảnh); Phân đoạn (áp dụng GrabCut); và Hậu xử lý (dùng các phép toán hình thái học Opening/Closing để lấp lỗ hổng hoặc xóa nhiễu li ti).
+Người 2: Em hiểu rồi, giống như mình phải "quét nhà" sạch sẽ trước khi sơn, và "lau dọn" lại sau khi sơn xong để bức tường đẹp nhất thầy nhỉ?.
+Người 1: Một liên tưởng rất thú vị và hoàn toàn chính xác!.
+Slide 11: SO SÁNH CÁC PHƯƠNG PHÁP (THẢO LUẬN NHÓM CLO4)
+Người 1: Hãy cùng nhìn lại "kho vũ khí" của chúng ta. Cắt ngưỡng thì nhanh, đơn giản nhưng dễ hỏng khi nền phức tạp. K-Means tốt để nén màu nhưng lại không quan tâm đến vị trí pixel nên kết quả dễ bị vụn. Còn GrabCut thì cực kỳ chính xác và giữ biên tốt nhưng lại tốn tài nguyên và cần con người tương tác.
+Người 2: Vậy tùy vào việc mình cần tốc độ hay cần độ thẩm mỹ mà mình sẽ chọn "vũ khí" phù hợp phải không ạ?.
+Người 1: Đúng vậy. Kỹ năng chọn đúng thuật toán cho đúng bài toán chính là điều thầy muốn các em rèn luyện trong phần thực hành sắp tới.
+Slide 12: GIỚI THIỆU BÀI THỰC HÀNH LAB 3 (CLO1)
+Người 1: Sau khi đã nắm vững lý thuyết về Graph-Cut và GrabCut, bây giờ là lúc các em bắt tay vào thực chiến với bài Lab 3. Chúng ta có 3 nhiệm vụ chính: Một là dùng Adaptive Thresholding để tách chữ từ tài liệu mờ; hai là dùng K-Means tạo hiệu ứng "posterize"; và ba là triển khai GrabCut để tách nền vật thể phức tạp.
+Người 2: Thưa thầy, ở nhiệm vụ 3, nếu em muốn tách một bông hoa có rất nhiều cánh nhỏ li ti khỏi vườn cỏ thì GrabCut có thực hiện tốt hơn các phương pháp cắt ngưỡng hay phân cụm không ạ?
+Người 1: Chắc chắn rồi em. Vì GrabCut xem xét cả mối quan hệ không gian giữa các pixel (cạnh-n), nó sẽ giữ được sự liền mạch của các cánh hoa tốt hơn nhiều so với việc chỉ nhìn vào màu sắc đơn lẻ.
+Slide 13: HƯỚNG DẪN THỰC HÀNH: PHÂN ĐOẠN VĂN BẢN NÂNG CAO
+Người 1: Có một thử thách khó trong bài Lab: Phân đoạn văn bản khi ánh sáng cực kỳ không đồng đều. Thầy gợi ý một chiến thuật "pipeline" kết hợp: Đầu tiên các em áp dụng CLAHE để đồng đều ánh sáng cục bộ, sau đó mới dùng Otsu hoặc Adaptive Threshold để tách chữ sạch nhất.
+Người 2: À, em nhớ rồi! CLAHE ở Chương 2 giúp làm nổi bật chi tiết trong vùng tối. Vậy là mình dùng nó làm bước tiền xử lý để "dọn đường" cho thuật toán phân đoạn ở Chương 3 làm việc hiệu quả hơn đúng không thầy?
+Người 1: Rất chính xác! Sự kết hợp liên chương này chính là cách các kỹ sư thị giác máy tính giải quyết các bài toán thực tế phức tạp.
+Slide 14: TIÊU CHÍ ĐÁNH GIÁ BÀI TẬP (RUBRIC)
+Người 1: Để đạt điểm cao trong bài thực hành này, các em cần chú ý vào Rubric đánh giá. Độ chính xác của kết quả tách nền chiếm 40% điểm số. Tuy nhiên, thầy đánh giá rất cao tính tối ưu của Pipeline (30%) và khả năng phân tích sự thay đổi khi điều chỉnh tham số (30%).
+Người 2: Thưa thầy, "phân tích tham số" nghĩa là em phải giải thích được tại sao chọn số cụm K này cho K-Means hay tại sao chọn số vòng lặp đó cho GrabCut đúng không ạ?
+Người 1: Đúng vậy em. Các em không chỉ nộp code chạy được, mà phải chứng minh mình hiểu bản chất của những con số mình đã chọn.
+Slide 15: TỔNG KẾT CHƯƠNG 3 VÀ DẶN DÒ
+Người 1: Vậy là chúng ta đã khép lại Chương 3. Chúng ta đi từ nhát dao Cắt ngưỡng đơn giản, qua phép gom nhóm K-Means dựa trên mật độ màu, đến mô hình Graph-Cut đầy quyền năng coi ảnh là một đồ thị.
+Người 2: Sau chương này, máy tính của em đã bắt đầu biết "chia để trị" bức ảnh rồi. Tiết sau mình sẽ học về cách nhận diện những đặc điểm riêng biệt của từng phần đó phải không thầy?
+Người 1: Chính xác! Chương 4 chúng ta sẽ học về Phát hiện và Mô tả đặc trưng như SIFT, SURF và Canny để máy tính thực sự "nhận ra" vật thể. Các em nhớ hoàn thiện báo cáo Lab 3 và nộp đúng hạn trên LMS nhé. Chào các em!
+

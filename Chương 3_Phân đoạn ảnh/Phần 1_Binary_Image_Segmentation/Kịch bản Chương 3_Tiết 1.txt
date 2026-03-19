@@ -1,0 +1,55 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Sau khi chúng ta đã làm chủ các kỹ thuật nâng cấp và khử nhiễu ở Chương 2, hôm nay thầy trò ta sẽ bước sang một cột mốc mới quan trọng hơn trong thị giác máy tính: Chương 3 - Phân đoạn ảnh. Tiết học đầu tiên này sẽ tập trung vào "Tổng quan và Kỹ thuật cắt ngưỡng",.
+Người 2: Dạ thưa thầy, ở chương trước mình đã làm cho bức ảnh đẹp hơn, nét hơn rồi. Vậy tại sao mình lại cần phải "phân đoạn" hay chia cắt bức ảnh ra làm gì nữa ạ?
+Slide 2: MỤC TIÊU TIẾT HỌC
+Người 1: Một câu hỏi rất hay! Để trả lời, chúng ta hãy nhìn vào mục tiêu hôm nay. Đầu tiên, các em cần hiểu bản chất và tầm quan trọng của phân đoạn ảnh. Thứ hai, các em phải phân biệt được hai khái niệm dễ nhầm lẫn là phân đoạn ngữ nghĩa và phân đoạn thực thể. Và cuối cùng, chúng ta sẽ học cách làm chủ kỹ thuật cắt ngưỡng—vũ khí đơn giản nhất nhưng cực kỳ lợi hại để tách vật thể khỏi nền,.
+Slide 3: PHÂN ĐOẠN ẢNH LÀ GÌ?
+Người 1: Về định nghĩa, phân đoạn ảnh là quá trình chia một ảnh số thành nhiều vùng hoặc tập hợp các pixel có ý nghĩa,. Bản chất là chúng ta đi gán cho mỗi pixel một cái "nhãn". Các pixel nào có cùng nhãn thì phải có chung đặc tính như màu sắc, cường độ hay kết cấu,.
+Người 2: Em hiểu nôm na là giống như mình đang chơi trò "tô màu theo số", mỗi vùng của con mèo sẽ được đánh dấu một số, còn cái sân cỏ phía sau sẽ được đánh dấu một số khác đúng không thầy?.
+Người 1: Chính xác! Mục tiêu cuối cùng là đơn giản hóa cách biểu diễn ảnh để máy tính dễ phân tích hơn,.
+Slide 4: TẠI SAO CẦN PHÂN ĐOẠN ẢNH?
+Người 1: Phân đoạn ảnh chính là "bước đệm" sống còn cho các tác vụ bậc cao. Hãy tưởng tượng một hệ thống xe tự lái; nếu nó không phân đoạn được đâu là con đường, đâu là người đi bộ hay vật cản, thì nó không thể ra quyết định di chuyển an toàn được,.
+Người 2: Vậy trong y tế, việc các bác sĩ dùng AI để khoanh vùng khối u trên ảnh MRI cũng chính là đang áp dụng phân đoạn ảnh phải không ạ?,.
+Người 1: Đúng vậy em. Ngoài ra nó còn ứng dụng trong nhận dạng đối tượng hay đơn giản nhất là các app quét tài liệu giúp tách văn bản ra khỏi nền giấy,.
+Slide 5: PHÂN ĐOẠN NGỮ NGHĨA VS. THỰC THỂ
+Người 1: Các em chú ý slide này vì rất dễ nhầm. Phân đoạn ngữ nghĩa (Semantic) là phân loại từng pixel vào các lớp như "bầu trời", "con đường",. Còn Phân đoạn thực thể (Instance) thì nâng cấp hơn: nó phân biệt được các cá thể riêng lẻ trong cùng một lớp. Ví dụ ảnh có 3 con chó, phân đoạn thực thể sẽ chỉ rõ đây là "chó 1", kia là "chó 2",.
+Người 2: Ồ, vậy là phân đoạn ngữ nghĩa thì coi cả đàn chó là một mảng màu duy nhất, còn phân đoạn thực thể thì biết đếm chính xác từng con một thầy nhỉ?,.
+Slide 6: QUY TRÌNH 3 GIAI ĐOẠN
+Người 1: Để thực hiện phân đoạn, chúng ta thường trải qua pipeline 3 bước: 1. Tiền xử lý (như lọc nhiễu Gaussian); 2. Áp dụng thuật toán phân đoạn chính; và 3. Hậu xử lý (thường dùng các bộ lọc hình thái học để tinh chỉnh kết quả),.
+Slide 7: GIỚI THIỆU KỸ THUẬT CẮT NGƯỠNG (THRESHOLDING)
+Người 1: Bây giờ, chúng ta sẽ đi vào kỹ thuật đầu tiên: Cắt ngưỡng. Đây là phương pháp đơn giản và trực quan nhất để tách vật thể,. Kết quả của nó luôn là một ảnh nhị phân chỉ có hai màu đen và trắng (0 và 1),.
+Người 2: Em thấy ảnh nhị phân trông rất đơn điệu, toàn đen với trắng. Nó có ích gì cho máy tính không thầy?.
+Người 1: Rất ích lợi đấy chứ! Tuy mất thông tin cường độ nhưng tệp ảnh kết quả rất nhỏ, dễ lưu trữ và nó làm nổi bật hoàn toàn hình dáng tổng thể của vật thể, cực kỳ hữu ích cho nhận dạng ký tự OCR.
+Slide 8: CÔNG THỨC TOÁN HỌC CỦA CẮT NGƯỠNG
+Người 1: Toán học đằng sau nó chỉ là một phép so sánh đơn giản: Nếu cường độ pixel lớn hơn ngưỡng , ta cho nó bằng 255 (Trắng); ngược lại thì bằng 0 (Đen),.
+Người 2: Thưa thầy, giá trị này mình lấy ở đâu ra ạ? Mình tự đoán hay máy tính tự tính cho mình?.
+Người 1: Đó chính là chìa khóa của vấn đề! Chúng ta sẽ đi tìm câu trả lời ngay sau đây.
+Slide 9: CẮT NGƯỠNG TOÀN CỤC (GLOBAL THRESHOLDING)
+Người 1: Cách cơ bản nhất là Cắt ngưỡng toàn cục, nghĩa là dùng một giá trị duy nhất cho toàn bộ ảnh,. Phương pháp này chỉ hoạt động tốt khi đối tượng và nền có độ tương phản rõ rệt.
+Người 2: Trên slide có thuật ngữ "Biểu đồ Histogram hai đỉnh" (Bimodal Histogram), cái này có liên quan gì đến việc chọn không thầy?,.
+Người 1: Có chứ! Nếu biểu đồ có hai ngọn núi rõ rệt, chúng ta chỉ việc chọn nằm ở vùng "thung lũng" giữa hai đỉnh đó là sẽ tách được vật thể đẹp nhất,.
+Slide 10: MINH HỌA CẮT NGƯỠNG TOÀN CỤC
+Người 1: Các em nhìn hình chiếc bát trên slide. Với điều kiện ánh sáng tốt và độ tương phản cao, ta chọn thủ công rất dễ dàng và ảnh nhị phân thu được cực kỳ sạch sẽ,.
+Người 2: Nhưng thầy ơi, nếu cái bát đó bị đổ bóng hoặc một nửa nằm trong vùng tối thì sao ạ? Liệu một con số duy nhất có còn "gánh" hết được cả bức ảnh không?.
+Người 1: Một phản biện rất thực tế! Đó chính là hạn chế chí mạng của ngưỡng toàn cục mà chúng ta sẽ giải quyết ở phần tiếp theo của bài học,.
+Slide 11: HẠN CHẾ CỦA CẮT NGƯỠNG TOÀN CỤC
+Người 1: Như thầy đã "nhá hàng" ở cuối phần trước, mặc dù cắt ngưỡng toàn cục rất đơn giản và nhanh chóng, nhưng nó lại có một "gót chân Achilles" cực lớn. Đó là nó sẽ thất bại hoàn toàn khi bức ảnh có chiếu sáng không đồng đều hoặc bị đổ bóng,.
+Người 2: Em thấy hình minh họa cái bát trên slide bị tối một nửa. Có phải vì vùng bóng râm có giá trị pixel quá thấp, nên nếu ta dùng một ngưỡng cố định cho cả ảnh thì vùng tối đó sẽ bị coi là nền và biến mất sạch sẽ không ạ?,.
+Người 1: Rất tinh mắt! Chính xác là như vậy. Khi độ sáng thay đổi cục bộ, một giá trị duy nhất không thể "gánh" nổi toàn bộ sự phức tạp của bức ảnh,.
+Slide 12: CẮT NGƯỠNG THÍCH ỨNG (ADAPTIVE THRESHOLDING)
+Người 1: Để "cứu vãn" những bức ảnh thiếu sáng không đều, chúng ta cần dùng đến Cắt ngưỡng thích ứng. Thay vì áp đặt một con số cứng nhắc cho toàn ảnh, ta sẽ tính toán ngưỡng riêng cho từng vùng nhỏ xung quanh mỗi pixel,,.
+Người 2: Ồ, vậy là mỗi khu vực sáng tối khác nhau sẽ có một cái "thanh xà" ngưỡng riêng phù hợp với điều kiện ánh sáng tại đúng chỗ đó phải không thầy?,.
+Người 1: Đúng vậy em. Kỹ thuật này cực kỳ hiệu quả cho các bài toán thực tế như quét tài liệu bị lóa nắng hoặc chụp ảnh vân tay nơi áp lực ngón tay không đều,.
+Slide 13: CƠ CHẾ TÍNH NGƯỠNG THÍCH ỨNG
+Người 1: Về cơ chế, ngưỡng tại mỗi pixel sẽ được tính dựa trên đặc tính thống kê của vùng lân cận có kích thước ,. Chúng ta có hai phương pháp phổ biến trong OpenCV: Phương pháp Mean (lấy trung bình cộng) và Phương pháp Gaussian (lấy trung bình có trọng số),,.
+Người 2: Thưa thầy, trên slide còn có hằng số nữa. Tại sao sau khi tính trung bình xong mình lại phải trừ đi một con số ạ?,.
+Người 1: là một tham số tinh chỉnh. Việc trừ đi giúp chúng ta kiểm soát độ "nhạy" của việc tách biên, giúp loại bỏ các nhiễu nhỏ li ti ở vùng nền, đảm bảo ảnh nhị phân thu được sạch sẽ hơn,.
+Slide 14: LẬP TRÌNH VỚI OPENCV (CLO1)
+Người 1: Bây giờ hãy xem cách chúng ta "ra lệnh" cho máy tính. Với cắt ngưỡng toàn cục, ta dùng hàm cv2.threshold,. Còn với ngưỡng thích ứng, ta gọi hàm cv2.adaptiveThreshold với các tham số như (phải là số lẻ) và hằng số ,,.
+Người 2: Em thấy trong hàm thích ứng, mình không cần truyền giá trị ngưỡng vào nữa. Có phải vì máy tính đã tự "lo" việc tính ngưỡng cho từng vùng rồi đúng không thầy?,,.
+Người 1: Chính xác! Em chỉ cần chọn kích thước vùng (ví dụ 11x11) và phương pháp tính, phần còn lại OpenCV sẽ xử lý song song cực nhanh trên ma trận cho em,.
+Slide 15: TÓM TẮT PHẦN 1 VÀ ĐỊNH HƯỚNG PHẦN 2
+Người 1: Vậy là chúng ta đã hoàn thành chặng đường đầu tiên của Chương 3. Các em hãy nhớ: Phân đoạn là chia ảnh thành các vùng ý nghĩa; Cắt ngưỡng là cách đơn giản nhất để tạo ảnh nhị phân,. Toàn cục tốt cho ảnh tương phản cao, thích ứng tốt cho ảnh chiếu sáng phức tạp,.
+Người 2: Thưa thầy, nhưng nếu ánh sáng rất đều, ảnh tương phản rõ, nhưng em vẫn không biết chọn con số nào cho "chuẩn" nhất để không mất chi tiết thì phải làm sao ạ?,.
+Người 1: Một câu hỏi rất thực tế! Đó là lúc chúng ta cần đến "vũ khí tự động" mang tên Phương pháp Otsu. Thuật toán này sẽ tự động phân tích biểu đồ Histogram để tìm ra ngưỡng tối ưu nhất mà chúng ta không cần phải đoán mò,,. Chúng ta sẽ cùng giải mã nó ngay trong tiết học tiếp theo nhé,.
+

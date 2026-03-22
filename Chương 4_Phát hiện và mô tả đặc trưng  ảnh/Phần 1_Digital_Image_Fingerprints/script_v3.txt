@@ -1,0 +1,70 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Chúng ta đã cùng nhau vượt qua Chương 2 và Chương 3 với các kỹ thuật xử lý pixel cấp thấp. Hôm nay, chúng ta sẽ chính thức bước vào một chương bản lề của môn học Thị giác máy tính: Chương 4 - Phát hiện và mô tả đặc trưng ảnh. Tiết học đầu tiên trong chuỗi 9 tiết của chương này có tựa đề "Dấu vân tay kỹ thuật số và Tại sao máy tính cần Điểm neo?".
+Người 2: Dạ thưa thầy, cụm từ "Dấu vân tay kỹ thuật số" nghe giống như trong lĩnh vực bảo mật sinh trắc học quá. Có phải máy tính cũng cần lấy vân tay của bức ảnh để nhận dạng vạn vật không ạ?
+
+Slide 2: MỤC TIÊU TIẾT HỌC
+Người 1: Sự so sánh của em rất thú vị và cũng rất chính xác với nội dung bài học! Để hiểu tại sao, chúng ta hãy nhìn vào slide Mục tiêu tiết học. Các em có thể thấy hình ảnh một cây cầu thép vững chắc mang tên "Đặc trưng" hay "Features". Cây cầu này đóng vai trò kết nối hai thế giới: bên trái là thế giới Xử lý Pixel cấp thấp ở Chương 2, 3 và bên phải là thế giới Nhận thức Đối tượng cấp cao ở Chương 5, 6.
+Chi tiết hơn, để đi qua được cây cầu này, chúng ta cần hoàn thành 4 mục tiêu được đặt trên các trụ cầu. Thứ nhất, hiểu bản chất của đặc trưng, trả lời câu hỏi tại sao ta không dùng pixel thô. Thứ hai, phân biệt được đặc trưng toàn cục và cục bộ. Thứ ba, nắm vững 3 tiêu chuẩn vàng của một đặc trưng. Và cuối cùng, chúng ta sẽ ôn tập lại nền tảng toán học của đường biên và thuật toán Canny.
+Người 2: Em hiểu rồi ạ. Vậy "Đặc trưng" chính là bước đệm, là ngôn ngữ trung gian để máy tính chuyển từ việc chỉ "nhìn thấy" các pixel sang "hiểu được" bức ảnh đang chứa đối tượng gì đúng không thầy?
+
+Slide 3: CĂN BỆNH QUÁ TẢI DỮ LIỆU CỦA MÁY TÍNH
+Người 1: Rất chuẩn xác! Để đi vào mục tiêu đầu tiên, chúng ta cùng xem xét vấn đề mà máy tính đang gặp phải: Căn bệnh quá tải dữ liệu. Trên slide là hình ảnh một chú mèo đang ngồi trên bàn, bên cạnh là một ma trận số khổng lồ. Các em biết không, một bức ảnh độ phân giải mười không tám mươi P thông thường chứa hơn hai triệu pixel, và vì ảnh có ba kênh màu nên nó tương đương với khoảng sáu triệu con số thô.
+Người 2: Sáu triệu con số cho một bức ảnh nhỏ xíu ạ? Nếu hệ thống dùng video hoặc camera thời gian thực thì lượng dữ liệu đổ về còn khủng khiếp hơn rất nhiều!
+Người 1: Đúng thế. Máy tính không thể và cũng không nên phân tích từng con số một để nhận diện ra con mèo. Nếu làm vậy, hệ thống sẽ ngay lập tức bị quá tải bởi dữ liệu thừa và nhiễu. Thay vào đó, máy tính cần một phương pháp thông minh hơn: tìm ra những "Điểm nhấn", hay highlight, mang tính đại diện cao nhất cho bức ảnh.
+
+Slide 4: ĐẶC TRƯNG: DẤU VÂN TAY KỸ THUẬT SỐ CỦA BỨC ẢNH
+Người 1: Và những "Điểm nhấn" đó chính là Đặc trưng. Các em hãy nhìn vào các hình minh họa trên slide: từ một bức ảnh toàn cảnh bàn làm việc, máy tính sẽ phóng to và trích xuất ra một góc cong của chiếc laptop, hình dáng của vết ố cà phê, hay các đường nét logo trên cuốn sổ.
+Theo định nghĩa của giáo sư Szeliski năm hai không hai mươi hai, một đặc trưng là một mẫu thông tin có ý nghĩa, mang tính định lượng, được trích xuất từ hình ảnh giúp đơn giản hóa việc biểu diễn dữ liệu phức tạp. Thay vì phải gánh sáu triệu pixel thô, máy tính chỉ cần trích xuất và ghi nhớ vài trăm điểm đặc trưng này. Chúng đóng vai trò như những "dấu vân tay độc bản" để nhận diện đối tượng.
+Người 2: À, em dễ hình dung rồi! Giống như khi em nhận ra một người bạn, em không cần quét và nhớ từng lỗ chân lông trên mặt bạn ấy, em chỉ cần nhớ bạn ấy có nốt ruồi ở má, hoặc đôi mắt một mí đặc trưng. Đó chính là cách máy tính tiết kiệm bộ nhớ và xử lý nhanh hơn!
+
+Slide 5: KIM TỰ THÁP THÔNG TIN: PHÂN CẤP ĐẶC TRƯNG
+Người 1: Ví dụ của em rất xuất sắc! Bây giờ, hãy xem slide Kim tự tháp thông tin để biết các đặc trưng này được phân cấp như thế nào từ thấp lên cao. Dưới cùng, chúng ta có nền tảng là Ma trận số thô. Trên đỉnh cao nhất là Ngữ nghĩa, ví dụ như hệ thống nhận diện được "đây là chiếc xe" hay "đây là khuôn mặt".
+Trọng tâm của Chương 4 chúng ta nằm ở ba tầng giữa của kim tự tháp. Tầng thứ hai là Đường biên, tức là các dải sáng chênh lệch. Tầng thứ ba là Góc và Điểm, tức là nơi giao nhau của các biên. Và Tầng thứ tư là Vùng đặc trưng, đại diện cho các khối có kết cấu đặc biệt.
+Người 2: Vậy nhiệm vụ chính của chương này là chúng ta đi tìm các thuật toán để gạn đục khơi trong, biến cái đáy kim tự tháp là pixel thô thành các tầng ở giữa này phải không thầy?
+Người 1: Hoàn toàn chính xác. Chúng ta sẽ chuyển hóa pixel thô thành các "điểm neo" hình học có thể định lượng bằng toán học. Đó là cơ sở vững chắc để xây dựng tầng nhận thức cao nhất. Cụ thể các đặc trưng này có sức mạnh thực chiến ra sao, thầy trò ta sẽ tìm hiểu ở phần tiếp theo.
+
+Slide 6: SỨC MẠNH THỰC CHIẾN: ĐẶC TRƯNG SINH RA ĐỂ LÀM GÌ?
+Người 1: Ở phần trước, chúng ta đã biết đặc trưng là gì. Vậy trong thực tế, chúng sinh ra để làm gì? Các em hãy nhìn vào ba bức ảnh minh họa trên slide. Bức ảnh đầu tiên là những ngọn núi được nối với nhau bằng các đường màu xanh. Bức ảnh thứ hai là một chiếc xe ô tô đang di chuyển trên đường được đóng khung vàng qua các thời điểm. Và bức ảnh thứ ba là một chiếc giày thể thao đang được đối chiếu với một kho dữ liệu hàng trăm chiếc giày khác.
+Người 2: Dạ, hình đầu tiên em thấy giống tính năng chụp toàn cảnh Panorama trên điện thoại. Hai hình còn lại có vẻ giống hệ thống camera giao thông và tìm kiếm sản phẩm trên mạng đúng không thầy?
+Người 1: Rất tinh tế! Đó chính là ba ứng dụng cốt lõi nhất. Thứ nhất là Ghép ảnh, máy tính tìm các điểm đặc trưng giống nhau giữa các ảnh rời rạc để ghép lại thành một bức ảnh rộng lớn. Thứ hai là Theo dõi đối tượng, máy tính bám sát các điểm đặc trưng của chiếc xe để biết nó đang di chuyển theo hướng nào qua từng khung hình. Và thứ ba là Tìm kiếm ảnh, dùng vân tay kỹ thuật số của một chiếc giày để truy xuất ra chính xác nó trong một cơ sở dữ liệu khổng lồ.
+
+Slide 7: 3 TRỤ CỘT CỦA MỘT ĐIỂM NEO HOÀN HẢO
+Người 1: Để làm được những việc phi thường đó, không phải điểm pixel nào cũng được chọn. Slide tiếp theo cho chúng ta thấy hình ảnh một con mắt robot công nghệ cao được đặt vững chãi trên ba trụ cột. Đây là ba tiêu chuẩn vàng của một điểm neo hoàn hảo.
+Người 2: Ba trụ cột đó là Khả năng lặp lại, Tính độc bản và Tốc độ đúng không ạ? Thầy có thể giải thích rõ hơn được không thưa thầy?
+Người 1: Chắc chắn rồi. Trụ cột màu xanh dương - Khả năng lặp lại - nghĩa là dù em chụp bức ảnh ở góc độ nào hay điều kiện ánh sáng ra sao, máy tính vẫn phải tìm lại được đúng điểm đó. Trụ cột màu cam - Tính độc bản - yêu cầu vùng xung quanh điểm đó phải có cấu trúc độc đáo, không bị nhầm lẫn với bất kỳ điểm nào khác trong cùng bức ảnh. Và trụ cột màu xanh lá cuối cùng - Tốc độ - thuật toán trích xuất phải đủ nhẹ để hệ thống có thể chạy mượt mà theo thời gian thực.
+
+Slide 8: THỬ THÁCH CỦA TỰ NHIÊN: TÍNH MẠNH MẼ (ROBUSTNESS)
+Người 1: Bây giờ, hãy xem các đặc trưng này đối mặt với thực tế ra sao ở slide Thử thách của Tự nhiên. Trên slide là hai bức ảnh chụp biển báo STOP. Ảnh phía trên bị ánh sáng mặt trời chiếu lóa lấp mất một phần chữ. Ảnh phía dưới thì bị cành cây rậm rạp che khuất một nửa. Thế nhưng, các dấu cộng màu cam đại diện cho máy tính vẫn khóa mục tiêu chuẩn xác vào các góc của biển báo.
+Người 2: Chà, bị che lấp và chói sáng như thế mà máy tính vẫn nhận ra được sao ạ?
+Người 1: Đúng vậy! Đó gọi là Tính Mạnh mẽ. Một đặc trưng tốt phải sinh tồn được qua những biến đổi khắc nghiệt của môi trường. Dù bức ảnh bị lóa sáng nặng nề hay bị vật cản che khuất, miễn là còn vài điểm đặc trưng lộ diện, máy tính vẫn có thể suy luận và nhận diện ra toàn bộ đối tượng.
+
+Slide 9: BÀI TEST TOÁN HỌC: TÍNH BẤT BIẾN (INVARIANCE)
+Người 1: Tự nhiên đã vượt qua, vậy còn phép thử của toán học thì sao? Trên slide này, các em thấy hình vẽ một chiếc xe ô tô ở ba trạng thái: kích thước bình thường, bị thu nhỏ lại, và bị xoay nghiêng đi. Hãy chú ý đến điểm đánh dấu màu cam ở đèn xe và mũi tên vector màu xanh đi kèm.
+Người 2: Em thấy dù chiếc xe có nhỏ đi hay xoay lộn ngược thì cái mũi tên màu xanh đó vẫn giữ nguyên độ lớn và hướng tương đối so với cái đèn xe thưa thầy!
+Người 1: Quan sát rất tốt! Đó chính là khái niệm Tính Bất biến. Bất kể đối tượng bị thay đổi tỷ lệ tức là phóng to thu nhỏ, hay bị xoay nghiêng, các vector mô tả đặc trưng bằng toán học vẫn phải giữ nguyên giá trị tương đối của nó. Điều này giống như việc em nhận ra một bức tranh dù nó được in trên một cái tem nhỏ xíu hay treo ngược trên tường vậy. Tính bất biến giúp hệ thống nhận diện chiếc xe từ bất kỳ góc độ nào.
+
+Slide 10: ĐƯỜNG BIÊN (EDGE): NƠI VẠN VẬT BẮT ĐẦU
+Người 1: Chúng ta đã nói rất nhiều về lý thuyết. Giờ là lúc bắt tay vào kỹ thuật nền tảng nhất ở đáy của Kim tự tháp: Đường Biên. Các em hãy nhìn vào hình ảnh một tờ giấy trắng đặt trên nền đen bóng. Bên cạnh là hai đồ thị: đồ thị phía trên biểu diễn Cường độ sáng, và đồ thị phía dưới biểu diễn Tốc độ thay đổi, tức là đạo hàm bậc nhất của cường độ sáng.
+Người 2: Em thấy ở ranh giới giữa nền đen và giấy trắng, đồ thị cường độ sáng nhảy vọt từ giá trị không lên hai trăm năm mươi lăm. Và ngay tại điểm nhảy vọt đó, đồ thị đạo hàm bên dưới xuất hiện một cái đỉnh nhọn hoắt!
+Người 1: Em đã tự mình tìm ra định nghĩa toán học của đường biên rồi đấy! Dưới góc nhìn của máy tính, nó không thấy tờ giấy, nó chỉ thấy cường độ sáng thay đổi đột ngột và mạnh mẽ nhất. Cái đỉnh nhọn của đồ thị đạo hàm đó chính là ranh giới, là mép của đường biên. Đó là cách máy tính định vị "nơi vạn vật bắt đầu" trong một bức ảnh vô hồn.
+
+Slide 11: ÔN TẬP: PIPELINE PHÉP THUẬT 4 BƯỚC CỦA CANNY
+Người 1: Bây giờ, để kết nối với những gì đã học, chúng ta cùng xem slide số 11 ôn tập về "Pipeline phép thuật 4 bước của thuật toán Canny". Trên slide là hình ảnh minh họa quá trình một bức ảnh từ dạng mờ ảo ban đầu, đi qua từng khung hình để biến thành những đường viền sắc nét, khép kín.
+Người 2: Dạ, 4 bước được liệt kê rõ ràng là: Lọc Gaussian, Gradient Sobel, Triệt tiêu phi cực đại và Phân ngưỡng kép. Thầy có thể nhắc lại ngắn gọn vai trò của từng bước được không ạ?
+Người 1: Chắc chắn rồi. Bước 1 dùng bộ lọc Gaussian để khử đi những nhiễu rác và làm mượt bức ảnh ban đầu. Bước 2 áp dụng toán tử Gradient Sobel để tìm ra cường độ và hướng của đường biên. Bước 3, triệt tiêu phi cực đại giúp làm mỏng đường viền lại cho sắc nét. Và bước 4 cuối cùng, kỹ thuật phân ngưỡng kép, hay tiếng Anh gọi là Hysteresis, đóng vai trò nối các nét đứt gãy thành một đường viền hoàn chỉnh.
+
+Slide 12: ĐIỂM MÙ: TẠI SAO ĐƯỜNG BIÊN LÀ CHƯA ĐỦ?
+Người 1: Đường biên tuyệt vời như vậy, nhưng liệu nó đã hoàn hảo chưa? Các em hãy nhìn vào slide 12. Hình ảnh trên slide là một tán cây rậm rạp chằng chịt những đường viền được vẽ màu xanh, và nó bị gạch chéo bởi một dấu X màu cam rất lớn.
+Người 2: Trông thật rối mắt! Có vẻ như máy tính đã bị "tẩu hỏa nhập ma" khi cố gắng vẽ ra đường biên của vô số chiếc lá trên cây đúng không thầy?
+Người 1: Một sự ví von rất hay! Cạnh hay Edge hoạt động cực kỳ tốt trên các vật thể nhân tạo có hình khối rõ ràng. Tuy nhiên, trong tự nhiên với các kết cấu phức tạp như tán lá hay mặt nước, đường biên lại tạo ra một lượng nhiễu khổng lồ. Một mớ các đường thẳng đứt đoạn như trên hình không mang lại đủ thông tin để máy tính nhận diện được đối tượng. Do đó, "điểm mù" ở đây là đường biên vẫn chưa đủ, chúng ta cần tìm ra những điểm neo ổn định hơn nữa.
+
+Slide 13: TỔNG KẾT TIẾT 1: ĐỊNH HÌNH DẤU VÂN TAY KỸ THUẬT SỐ
+Người 1: Trước khi khép lại bài học, chúng ta cùng nhìn lại bức tranh toàn cảnh qua sơ đồ trên slide 13. Sơ đồ này tổng hợp 4 khía cạnh cốt lõi của Đặc trưng ảnh hay Image Features.
+Người 2: Em thấy sơ đồ ghi rất rõ. Về bản chất, đặc trưng là các mẫu thông tin định lượng và mang tính độc bản được trích xuất từ ảnh. Để đánh giá điểm neo đó có hoàn hảo hay không, chúng ta dùng 3 tiêu chuẩn vàng là: khả năng lặp lại, tính độc bản và tốc độ tính toán.
+Người 1: Cảm ơn em! Về phân loại, ta có đặc trưng toàn cục giúp nhìn bao quát nhưng dễ bị nhiễu, và đặc trưng cục bộ chú trọng vào chi tiết nên có khả năng kháng che khuất tốt hơn. Cuối cùng, nền tảng cơ sở nhất của điểm neo chính là Đường biên, được xây dựng dựa trên sự thay đổi của đạo hàm mà chúng ta vừa ôn tập.
+
+Slide 14: HÉ MỞ TIẾT 2 & TIẾT 3: NÂNG CẤP ĐIỂM NEO
+Người 1: Vậy chúng ta sẽ giải quyết "điểm mù" của đường biên như thế nào? Slide 14 sẽ hé mở những thử thách tiếp theo. Hình ảnh bên trái cho thấy các đoạn viền rời rạc đang được gom lại để tạo thành một vòng tròn hoàn hảo màu xanh. Hình bên phải minh họa một hệ thống ngắm bắn màu cam đang khóa chặt mục tiêu vào một góc giao nhau của các đường nét.
+Người 2: Dạ, phần văn bản bên trái đặt ra câu hỏi làm thế nào để tự động nối các đoạn biên rời rạc thành hình học hoàn hảo, và có gợi ý chúng ta sẽ đón xem thuật toán Biến đổi Hough. Còn hình bên phải là câu hỏi làm sao lọc ra những "Góc" cực kỳ ổn định bất chấp mọi góc nhìn bằng thuật toán Harris Corner.
+Người 1: Phân tích rất chính xác! Biến đổi Hough ở Tiết 2 và bắt Góc Harris ở Tiết 3 chính là câu trả lời cho việc nâng cấp điểm neo, giúp máy tính vượt qua giới hạn của những pixel thô và đường biên đơn giản. Bài giảng của chúng ta hôm nay kết thúc ở đây. Chào các em!
+

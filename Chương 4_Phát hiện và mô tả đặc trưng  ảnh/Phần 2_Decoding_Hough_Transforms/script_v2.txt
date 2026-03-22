@@ -1,0 +1,75 @@
+﻿Slide 1: CHƯƠNG 4: BIẾN ĐỔI HOUGH - ĐỌC HIỂU HÌNH HỌC TỪ CÁC ĐIỂM BIÊN
+Người 1: Chào các em sinh viên lớp IT 23 M. Ở tiết học trước, chúng ta đã làm chủ thuật toán Canny để trích xuất ra được những đường biên cực kỳ sắc mảnh và sạch nhiễu. Hôm nay, thầy trò ta sẽ bước sang Tiết 2 của Chương 4 với một cột mốc quan trọng không kém: "Biến đổi Hough - Đọc hiểu hình học từ các điểm biên".
+Người 2: Dạ thưa thầy, ở tiết trước mình đã tìm ra được các đường biên rồi, tại sao hôm nay mình còn phải học cách "đọc hiểu" hình học nữa ạ? Máy tính vẫn chưa hiểu được bức ảnh sao thầy?
+
+Slide 2: MỤC TIÊU HỌC TẬP: TIẾT 2
+Người 1: Một câu hỏi rất đúng trọng tâm! Để hiểu lý do, chúng ta hãy nhìn vào mục tiêu của tiết học ngày hôm nay. Đầu tiên, các em sẽ nắm được nguyên lý "Ánh xạ đa chiều" – tức là cách dịch chuyển từ không gian ảnh thực tế sang một không gian tham số toán học. Thứ hai, chúng ta sẽ giải mã "Cơ chế bỏ phiếu" để xem cách máy tính tự động tìm ra phương trình đường thẳng và hình tròn thông qua ma trận tích lũy. Và cuối cùng là phần thực chiến với thư viện OpenCV, phân biệt hàm tìm đường thẳng tiêu chuẩn và hàm tìm đường xác suất để ứng dụng trực tiếp vào bài toán phát hiện làn đường xe chạy.
+
+Slide 3: SỰ HẠN CHẾ CỦA CANNY EDGE - MÁY TÍNH VẪN ĐANG "MÙ" HÌNH HỌC
+Người 1: Trở lại với thắc mắc của em. Các em hãy nhìn vào hình minh họa khối Rubik trên slide. Thuật toán Canny hoạt động rất tốt, nhưng giới hạn của nó là chỉ tìm ra được các điểm sáng, hay nói cách khác là các hạt pixel rời rạc nằm rải rác trên màn hình.
+Người 2: À, em hiểu rồi! Có nghĩa là máy tính chỉ nhìn thấy một tập hợp các chấm sáng, chứ nó hoàn toàn KHÔNG biết phương trình toán học nào kết nối các điểm đó lại thành một thực thể hình học hoàn chỉnh đúng không thầy?
+Người 1: Chính xác! Hiện tại máy tính vẫn đang "mù" hình học. Vấn đề sinh tử lúc này là: Làm sao để chúng ta gom những hạt cát rời rạc này lại và khẳng định với máy tính rằng "đây là một đường thẳng"? Để làm được điều đó, chúng ta cần một phép thuật mang tên Biến đổi Hough.
+
+Slide 4: TRIẾT LÝ CỐT LÕI - SỰ ĐẢO NGƯỢC HÌNH HỌC
+Người 1: Triết lý cốt lõi của Biến đổi Hough nằm ở "Sự đảo ngược hình học", với câu thần chú: "Điểm thành Đường, và Đường thành Điểm". Cụ thể, mỗi một pixel đơn độc trong không gian ảnh thực tế sẽ được biến đổi, hay ánh xạ, thành một đường cong dạng hình sin trong không gian tham số.
+Người 2: Nghe hơi kỳ lạ thầy ạ. Tại sao một điểm ảnh bé xíu lại biến thành cả một đường cong trong không gian toán học kia ạ?
+Người 1: Em hãy tưởng tượng thế này: một điểm ảnh trong không gian thực có thể là giao điểm của vô số đường thẳng đi qua nó. Cứ mỗi điểm trên cái đường cong ở không gian tham số kia chính là đại diện cho một đường thẳng tiềm năng đó. Lát nữa chúng ta sẽ thấy, nếu nhiều điểm trong ảnh thực cùng nằm trên một đường thẳng, thì các đường cong của chúng trong không gian tham số sẽ cắt nhau tại đúng một điểm duy nhất, và điểm đó chính là lời giải chúng ta đang tìm!
+
+Slide 5: TRỞ NGẠI CỦA HỆ TỌA ĐỘ DESCARTES (Hệ tọa độ y bằng a nhân x cộng b)
+Người 1: Bình thường khi học toán, chúng ta hay biểu diễn đường thẳng bằng hệ tọa độ Descartes với phương trình: y bằng a nhân x cộng b. Tuy nhiên, mang phương trình này vào lập trình thị giác máy tính lại là một sai lầm chết người.
+Người 2: Sai lầm gì vậy thầy? Em thấy phương trình y bằng a nhân x cộng b rất quen thuộc và dễ tính mà.
+Người 1: Hãy nghĩ xem, nếu đường thẳng trong bức ảnh là một đường thẳng đứng, song song với trục tung y, thì hệ số góc a của nó sẽ bằng bao nhiêu?
+Người 2: Dạ, nếu đường thẳng mà đứng thẳng góc thì hệ số góc a sẽ tiến tới vô cực ạ.
+Người 1: Đúng thế! Và hậu quả là máy tính sẽ bị tràn bộ nhớ ngay lập tức vì nó hoàn toàn không thể lưu trữ một giá trị vô cực trong ma trận dữ liệu được. Kết luận ở đây là, chúng ta cần một ngôn ngữ toán học mới để mô tả đường thẳng nhằm khắc phục lỗi vô cực này. Đó chính là lúc chúng ta phải nhờ đến Hệ tọa độ cực. Thầy sẽ giải thích hệ tọa độ cực biến hóa ra sao trong slide tiếp theo.
+
+Slide 6: BIẾN ĐỔI HOUGH TIÊU CHUẨN VỚI HÀM cv2.HoughLines()
+Người 1: Giờ chúng ta đã hiểu nguyên lý "bỏ phiếu" rồi. Vậy làm thế nào để đưa phép màu đó vào thực chiến lập trình? Trong thư viện OpenCV, chúng ta có hàm tiêu chuẩn là cv2.HoughLines. Hàm này sẽ nhận đầu vào là một bức ảnh nhị phân, thường chính là kết quả của thuật toán tìm biên Canny mà ta học ở tiết trước.
+Người 2: Em thấy trong hàm có các tham số rho, theta và threshold. Chúng có ý nghĩa gì vậy thầy?
+Người 1: Rất tốt! rho chính là độ phân giải về khoảng cách, thông thường ta chọn là 1 pixel. theta là độ phân giải góc, thường chọn là 1 độ, tương đương với giá trị xấp xỉ là số pi chia cho 180 radian. Cuối cùng, threshold là ngưỡng số phiếu bầu tối thiểu để máy tính công nhận đó là một đường thẳng thực sự.
+Người 2: Nghe khá dễ dùng thưa thầy. Nhưng thuật toán này có nhược điểm gì không ạ?
+Người 1: Có chứ. Nhược điểm của biến đổi Hough tiêu chuẩn là nó sẽ trả về những đường thẳng dài vô tận, vắt ngang qua toàn bộ bức ảnh mà không hề có điểm đầu hay điểm cuối vật lý.
+
+Slide 7: CẢI TIẾN TỐC ĐỘ - BIẾN ĐỔI HOUGH XÁC SUẤT (HoughLinesP)
+Người 2: Chết thật, nếu áp dụng vào bài toán vẽ vạch kẻ đường mà đường thẳng cứ kéo dài vô tận đâm sầm vào nhà dân thì sai thực tế quá thầy ạ.
+Người 1: Chính xác! Đó là lý do phiên bản tối ưu ra đời, mang tên: Biến đổi Hough xác suất, với hàm cv2.HoughLinesP. Điểm đột phá của nó là chỉ lấy mẫu ngẫu nhiên một tập hợp các điểm biên để tính toán thay vì phải quét toàn bộ như phiên bản tiêu chuẩn.
+Người 2: Có chữ "xác suất" vào là tốc độ cải thiện hẳn đúng không thầy?
+Người 1: Đúng vậy, nó xử lý nhanh hơn nhiều lần và hoàn toàn đáp ứng được cho các bài toán thời gian thực. Hơn nữa, thay vì trả về phương trình đường thẳng vô tận, nó sẽ trả về tọa độ chính xác của hai điểm đầu mút đoạn thẳng: x 1, y 1 và x 2, y 2. Việc này giải quyết triệt để vấn đề em vừa thắc mắc.
+
+Slide 8: CÁC THAM SỐ "TINH CHỈNH" CỦA HoughLinesP
+Người 1: Để hàm Hough xác suất này hoạt động hoàn hảo nhất, OpenCV cho phép chúng ta can thiệp vào hai tham số tinh chỉnh cực kỳ quyền lực. Thứ nhất là chiều dài tối thiểu của một đoạn thẳng. Nếu những đoạn tìm được quá ngắn, máy tính sẽ tự động loại bỏ để tránh nhiễu rác.
+Người 2: Em đoán tham số thứ hai là liên quan đến các vạch đứt gãy đúng không ạ? Khoảng cách tối đa giữa hai đoạn thẳng...
+Người 1: Rất nhạy bén! Đó là tham số khoảng cách tối đa cho phép giữa hai đoạn thẳng. Khi xe chạy trên đường, vạch kẻ phân làn thường là vạch đứt. Nếu chỉnh tham số này hợp lý, máy tính sẽ hiểu hai vạch đứt đó nằm trên cùng một đường thẳng và tự động "hàn gắn" chúng lại thành một dải dài duy nhất.
+
+Slide 9: PIPELINE PHÁT HIỆN LÀN ĐƯỜNG (LANE DETECTION)
+Người 1: Giờ thầy trò ta gom tất cả "vũ khí" từ đầu Chương 4 đến giờ để xây dựng một quy trình 5 bước phát hiện làn đường hoàn chỉnh. Bước 1, chuyển ảnh màu sang ảnh xám và dùng lọc Gaussian để khử nhiễu. Bước 2, dùng Canny để trích xuất biên nhị phân. Bước 3, xác định Vùng quan tâm. Bước 4, chạy thuật toán Hough xác suất để tìm các vạch kẻ. Và cuối cùng, Bước 5, vẽ các đoạn thẳng kết quả đè lên bức ảnh gốc.
+Người 2: Bước 1, 2, 4 và 5 em nắm rất rõ rồi vì mình vừa học xong. Nhưng Bước 3 "Xác định Vùng quan tâm" là sao thầy nhỉ? Tại sao mình phải thêm bước này vào giữa?
+
+Slide 10: TẦM QUAN TRỌNG CỦA VÙNG QUAN TÂM (REGION OF INTEREST - ROI)
+Người 1: Hãy tưởng tượng em đang xem ảnh từ camera hành trình. Bức ảnh chứa quá nhiều thứ: bầu trời, nhà cửa, biển báo, rào chắn.... Nếu em đưa tất cả các điểm biên này cho thuật toán Hough "bỏ phiếu", máy tính sẽ tìm ra hàng trăm đường thẳng gây nhiễu và chạy rất chậm.
+Người 2: À, em hiểu ý thầy rồi! Tức là mình phải "che mắt" máy tính lại, bắt nó chỉ được nhìn xuống khu vực mặt đường ngay phía trước mũi xe thôi đúng không ạ?
+Người 1: Trọn vẹn 10 điểm! Chúng ta sẽ tạo ra một chiếc mặt nạ ảo, thường là một hình đa giác như hình tam giác hoặc hình thang bao phủ đúng mặt đường. Sau đó, áp dụng phép toán logic "và" (bitwise and) giữa ảnh biên Canny và cái mặt nạ này. Kết quả là mọi nhiễu nhương xung quanh bị xóa đen hết, thuật toán Hough chỉ việc đếm phiếu cho các vạch kẻ đường, giúp đẩy tốc độ CPU lên mức tối đa.
+
+Slide 11: VƯỢT RA NGOÀI ĐƯỜNG THẲNG - PHÁT HIỆN HÌNH TRÒN (HOUGH CIRCLES)
+Người 1: Việc tìm đường thẳng đã xong, giờ chúng ta nâng cấp lên một hình học phức tạp hơn: Hình tròn. Khác với đường thẳng, phương trình toán học để định nghĩa một hình tròn yêu cầu tới 3 tham số. Cụ thể là: mở ngoặc x trừ x c đóng ngoặc bình phương, cộng mở ngoặc y trừ y c đóng ngoặc bình phương, bằng r bình phương.
+Người 2: Ồ, có tới 3 tham số là tọa độ tâm x c, y c và bán kính r. Vậy thì cái không gian tham số để mình "bỏ phiếu" sẽ phải là không gian 3 chiều phải không thầy?
+Người 1: Em suy luận rất chính xác! Không gian tham số không còn là mặt phẳng 2D nữa mà trở thành một khối ma trận tích lũy 3 chiều. Tuy nhiên, việc quét trong không gian 3D đòi hỏi bộ nhớ khổng lồ và tốc độ rất chậm. Vì thế, khi thực chiến với OpenCV, hàm cv2.HoughCircles đã được tối ưu hóa bằng phương pháp Gradient gốc (Hough Gradient Method). Thay vì bỏ phiếu mù quáng cho mọi bán kính, thuật toán tận dụng hướng đạo hàm tại điểm biên để tìm thẳng ra giao điểm là tâm hình tròn, giảm thiểu cực lớn gánh nặng tính toán.
+
+Slide 12: ỨNG DỤNG SỐ 1 - "ĐÔI MẮT" CỦA GIAO THÔNG THÔNG MINH
+Người 1: Giờ thầy trò ta cùng nhìn lại thành quả của ứng dụng đầu tiên: Giao thông thông minh. Từ bức ảnh camera hành trình gốc, thuật toán Canny ở bước 2 chỉ cho ra những đường biên rất nhiễu và đứt đoạn.
+Người 2: Nhưng sau bước 3, khi đi qua thuật toán HoughLinesP, các vạch kẻ đứt đoạn mờ nhạt đó đã được tự động nối lại thành hai dải làn đường hoàn chỉnh màu xanh và màu đỏ kìa thầy!
+Người 1: Đó chính là tính mạnh mẽ, hay còn gọi là Robustness của biến đổi Hough. Dù mặt đường bị lóa sáng nắng gắt hay vạch kẻ bị che khuất một phần bởi các phương tiện khác, thuật toán vẫn có khả năng kết nối các bằng chứng đứt gãy thành một thực thể đường thẳng chuẩn xác.
+
+Slide 13: ỨNG DỤNG SỐ 2 - TỰ ĐỘNG HÓA Y TẾ VÀ CÔNG NGHIỆP
+Người 1: Không chỉ dừng lại ở giao thông, Hough còn "cân" được cả y tế và công nghiệp. Các em nhìn lên slide, nó có thể tự động khoanh vùng đếm các tế bào máu dù chúng đang bị xếp chồng chéo lên nhau, hoặc định vị cực kỳ chuẩn xác các lỗ khoan li ti trên một bản mạch điện tử PCB.
+Người 2: Bình thường đếm tế bào thì em nghĩ chỉ cần đếm các điểm ảnh (pixel) màu xám là được, tại sao mình phải dùng đến thuật toán Hough tìm hình tròn chi cho phức tạp ạ?
+Người 1: Vì trong thế giới thực, hình dạng vật thể thường xuyên bị che khuất một phần (gọi là occlusions) hoặc bức ảnh chứa một lượng lớn nhiễu hạt (noise). Những bài toán đếm pixel thông thường sẽ hoàn toàn thất bại trong hoàn cảnh đó, nhưng biến đổi Hough nhờ cơ chế "bỏ phiếu" đa số nên vẫn hoạt động xuất sắc.
+
+Slide 14: TỔNG KẾT TIẾT 2 - BỘ BA KHÁI NIỆM CỐT LÕI
+Người 1: Để khép lại tiết học ngày hôm nay, các em không cần nhớ code quá chi tiết, nhưng phải khắc cốt ghi tâm "Bộ ba khái niệm cốt lõi". Thứ nhất là "Ánh xạ đảo ngược": chuyển các điểm rời rạc trên không gian ảnh thành những đường cong liên tục trong không gian tham số.
+Người 2: Thứ hai là "Cơ chế bỏ phiếu": sử dụng ma trận tích lũy để máy tính tự động đếm phiếu tìm ra đỉnh cực đại, thay vì phải giải hệ phương trình phức tạp.
+Người 1: Quá chuẩn! Và thứ ba chính là "Ứng dụng hình học": vận dụng hai điều trên để máy tính đọc hiểu được đường thẳng, đoạn thẳng và hình tròn bất chấp sự can thiệp làm đứt gãy của nhiễu ảnh.
+
+Slide 15: BƯỚC TIẾP THEO - ĐUỔI THEO SỰ CHUYỂN ĐỘNG
+Người 1: Chúng ta đã hoàn thành mục tiêu tìm "Đường" và "Tròn" trong một bức ảnh tĩnh. Nhưng hãy suy nghĩ rộng ra: Nếu đối tượng liên tục thay đổi góc nhìn trong một video thì sao?
+Người 2: Em nghĩ là nếu camera quay ở góc nghiêng, thì hình dáng của vật thể sẽ bị méo đi, hình tròn có thể sẽ biến thành hình bầu dục đúng không thầy?
+Người 1: Một tư duy tuyệt vời! Đường thẳng và hình tròn sẽ bị biến dạng hình học khi ta thay đổi góc nhìn, khiến thuật toán Hough bắt đầu gặp khó khăn. Vì vậy, để đuổi theo sự chuyển động một cách bền vững, chúng ta cần tìm những "Điểm Đặc Biệt" ổn định hơn, và đó chính là các "Góc" (Corners). Các em hãy chuẩn bị tâm thế cho Tiết 3, chúng ta sẽ truy tìm các điểm Góc này bằng hai thuật toán lừng danh: Harris và Shi-Tomasi nhé! Chào các em.

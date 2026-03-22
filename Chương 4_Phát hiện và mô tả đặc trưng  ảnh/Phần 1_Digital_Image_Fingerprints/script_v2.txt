@@ -1,0 +1,73 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Sau khi chúng ta đã đi qua các bước xử lý ảnh cơ bản và phân đoạn ảnh ở những chương trước, hôm nay thầy trò ta sẽ bước sang Chương 4 của môn học Thị giác máy tính với chủ đề vô cùng thú vị: "Phát hiện và mô tả đặc trưng ảnh". Trong tiết học đầu tiên này, chúng ta sẽ cùng tìm hiểu khái niệm "Dấu vân tay kỹ thuật số và Tại sao máy tính cần Điểm neo?".
+Người 2: Dạ thưa thầy, ở các chương trước mình đã học cách lọc nhiễu và phân đoạn các vùng ảnh rồi. Vậy việc đi tìm "Điểm neo" hay "Dấu vân tay" này đóng vai trò gì cho các bước tiếp theo ạ?
+
+Slide 2: MỤC TIÊU TIẾT HỌC
+Người 1: Một câu hỏi chuyển ý rất hay! Các em hãy nhìn vào hình ảnh chiếc cầu trên slide. Chương 4 này chính là "chiếc cầu nối" vững chắc đưa chúng ta từ giai đoạn Xử lý Pixel cấp thấp của Chương 2 và 3, vượt qua dòng sông dữ liệu để tiến tới giai đoạn Nhận thức Đối tượng cấp cao ở Chương 5 và 6. Để đi qua chiếc cầu này, hôm nay chúng ta có 4 mục tiêu: Một là hiểu bản chất đặc trưng và lý do không dùng pixel thô; Hai là phân biệt đặc trưng toàn cục và cục bộ; Ba là nắm vững ba tiêu chuẩn vàng của một đặc trưng; và Bốn là ôn tập lại đường biên cùng thuật toán Canny.
+Người 2: Em thấy chiếc cầu này được xây dựng bởi rất nhiều trụ cột. Chắc hẳn việc đi thẳng từ pixel thô lên nhận thức đối tượng là điều bất khả thi đúng không thầy?
+
+Slide 3: CĂN BỆNH QUÁ TẢI DỮ LIỆU CỦA MÁY TÍNH
+Người 1: Chính xác! Nguyên nhân nằm ở "căn bệnh quá tải dữ liệu" mà các em có thể thấy trên slide này. Giả sử chúng ta có một bức ảnh chụp con mèo với độ phân giải tiêu chuẩn 1080p. Bức ảnh này chứa tới hơn hai triệu pixel. Với ảnh màu, mỗi pixel có ba kênh màu, nghĩa là máy tính phải đối mặt với sáu triệu con số thô chỉ cho một bức hình duy nhất.
+Người 2: Sáu triệu con số! Nếu máy tính phải duyệt qua từng con số một để biết đó là con mèo hay cái bàn thì chắc chắn sẽ rất chậm và dễ bị nhiễu làm cho rối trí phải không ạ?
+Người 1: Đúng vậy, máy tính không thể và không nên phân tích từng con số thô đó. Khối lượng dữ liệu thừa là quá lớn. Thay vào đó, nó cần tìm ra những "Điểm nhấn" mang tính đại diện nhất của bức ảnh để xử lý.
+
+Slide 4: ĐẶC TRƯNG (FEATURE): DẤU VÂN TAY KỸ THUẬT SỐ CỦA BỨC ẢNH
+Người 1: Những "điểm nhấn" đó chính là các "Đặc trưng" của bức ảnh. Các em nhìn các ví dụ rải rác trên bàn làm việc ở slide: góc viền cong của chiếc laptop, vết ố cà phê tròn trên giấy, hay hoa văn dập nổi trên bìa sổ. Về mặt định nghĩa, một đặc trưng là một mẩu thông tin có ý nghĩa, mang tính định lượng được trích xuất từ hình ảnh, nhằm giúp chúng ta đơn giản hóa việc biểu diễn một khối dữ liệu ảnh cực kỳ phức tạp.
+Người 2: À, em hiểu rồi! Ý thầy là thay vì phải nhớ và xử lý cả sáu triệu pixel thô kia, máy tính lúc này chỉ cần ghi nhớ vài trăm điểm đặc trưng—giống như những "dấu vân tay độc bản" này—là đã đủ để nhận diện hình dáng của vạn vật trong ảnh rồi đúng không ạ?
+Người 1: Hoàn toàn chính xác! Đó là một sự tối ưu hóa tuyệt vời về mặt tính toán.
+
+Slide 5: KIM TỰ THÁP THÔNG TIN: PHÂN CẤP ĐẶC TRƯNG
+Người 1: Và để phân loại các dấu vân tay đó, chúng ta có một Kim tự tháp thông tin biểu diễn sự phân cấp của đặc trưng từ thấp lên cao. Ở tầng đáy cùng, ta có Ma trận số thô của các pixel. Đi lên một bậc, ta bắt đầu trích xuất được Đường biên, tức là các dải sáng chênh lệch. Tầng tiếp theo là nơi giao nhau của các biên tạo thành Góc và Điểm. Lên cao hơn nữa là các Vùng đặc trưng có kết cấu đặc biệt, và đỉnh kim tự tháp là Ngữ nghĩa—ví dụ máy tính nhận diện được đó là chiếc xe hay khuôn mặt người.
+Người 2: Vậy trong toàn bộ Chương 4 này, chúng ta sẽ tập trung vào phần nào của kim tự tháp thưa thầy?
+Người 1: Trọng tâm của chúng ta trong toàn bộ Chương 4 sẽ nằm ở ba khối giữa của kim tự tháp này. Nhiệm vụ của chúng ta là học cách chuyển hóa các pixel thô ở đáy thành các điểm neo hình học, có thể đo lường và định lượng được một cách chính xác.
+
+Slide 6: BƯỚC 1 - KHỬ NHIỄU BẰNG BỘ LỌC GAUSSIAN
+Người 1: Thuật toán Canny là một quy trình gồm 4 giai đoạn liên kết chặt chẽ. Chúng ta bắt đầu với Bước 1: Khử nhiễu. Tại sao phải khử nhiễu? Vì bản chất của việc tìm đường biên là đi tính đạo hàm, mà phép toán đạo hàm lại cực kỳ nhạy cảm với những sự thay đổi cường độ sáng đột ngột.
+Người 2: Ý thầy là nếu ảnh có hạt nhiễu nhỏ li ti, máy tính có thể lầm tưởng đó là một đường biên sắc nét đúng không ạ?
+Người 1: Hoàn toàn chính xác! Ngay cả một điểm nhiễu bé xíu cũng tạo ra đạo hàm rất lớn khiến máy tính bị "đánh lừa". Giải pháp tối ưu nhất đã được Canny chứng minh là áp dụng bộ lọc Gaussian để làm mượt ảnh trước khi tính toán. Tham số kích thước ma trận lọc, hay còn gọi là Kernel, thường được dùng là ma trận năm nhân năm.
+
+Slide 7: BƯỚC 2 - TÍNH TOÁN GRADIENT (ĐỘ DỐC)
+Người 1: Sau khi ảnh đã "sạch sẽ", ta bước sang Giai đoạn 2: Tính toán độ dốc Gradient. Mục tiêu lúc này là tìm ra những vùng mà cường độ sáng thay đổi mạnh nhất cùng với hướng của sự thay đổi đó. Ở đây, chúng ta lại nhờ đến "người bạn cũ" là bộ lọc Sobel.
+Người 2: Em nhớ rồi, bộ lọc Sobel sẽ tính đạo hàm theo hai hướng. Ta có thành phần đạo hàm G x dùng để phát hiện các đường biên dọc, và thành phần đạo hàm G y dùng để phát hiện đường biên ngang phải không thầy?
+Người 1: Rất nhớ bài! Tại mỗi pixel, ta thu được hai con số đại diện cho sự thay đổi theo trục hoành và trục tung. Từ hai con số này, ta sẽ tổng hợp lại để có được thông tin hoàn chỉnh nhất.
+
+Slide 8: ĐỘ LỚN VÀ HƯỚNG CỦA GRADIENT
+Người 1: Từ hai giá trị G x và G y, chúng ta tính được hai thông số sống còn: Độ lớn Gradient và Hướng Gradient. Về mặt toán học, độ lớn Gradient cho ta biết độ "mạnh" của đường biên. Nó được tính theo định lý Pythagore, cụ thể là bằng căn bậc hai của tổng bình phương đạo hàm G x và đạo hàm G y.
+Người 2: Vậy còn hướng của đường biên thì tính thế nào ạ?
+Người 1: Hướng Gradient, thường ký hiệu là góc Theta, được tính bằng hàm arctan của tỷ số giữa đạo hàm G y chia cho đạo hàm G x. Một lưu ý cực kỳ quan trọng: Hướng Gradient này luôn luôn vuông góc với hướng của đường biên thực tế đang chạy qua pixel đó. Nó chính là "chìa khóa" quan trọng nhất để chúng ta làm mỏng đường biên ở các bước sau.
+
+Slide 9: PHÂN TÍCH KẾT QUẢ SAU GIAI ĐOẠN 2
+Người 1: Các em hãy nhìn vào hình ảnh minh họa trên slide để xem kết quả sau Giai đoạn 2. Lúc này, các đường biên đã nổi lên rất rõ rệt và sáng rực trên nền đen.
+Người 2: Trông có vẻ khá nét rồi, nhưng em để ý kỹ thì thấy các dải sáng này vẫn còn rất "dày", nó chiếm độ rộng đến vài pixel chứ không phải là một đường chỉ mỏng dính thưa thầy.
+Người 1: Nhận xét rất tinh tế! Đó chính là hạn chế còn tồn tại. Những đường biên dày cộp này không hề đáp ứng được tiêu chí "Định vị tốt" và "Phản ứng đơn lẻ" của Canny. Nhiệm vụ hóc búa đặt ra bây giờ là: Làm thế nào để "gọt dũa" những vệt sáng dày này xuống chỉ còn đúng một pixel duy nhất mà không làm đứt đoạn hình ảnh?
+
+Slide 10: LẬP TRÌNH GIAI ĐOẠN ĐẦU VỚI OPENCV
+Người 1: Trước khi đi tìm lời giải cho câu hỏi đó, thầy muốn lưu ý một chút về mặt lập trình thực chiến. Trong thư viện OpenCV, máy tính đã ngầm định làm giúp chúng ta hai bước đầu tiên này bằng hàm Canny rất gọn gàng: "cv2 chấm Canny" truyền vào ảnh gốc, ngưỡng thấp và ngưỡng cao. Mọi thứ bên trong đã được tối ưu hóa bằng ngôn ngữ C cộng cộng.
+Người 2: Tuyệt quá, vậy là mình không phải tự viết lại các công thức toán học căn bậc hai hay arctan kia nữa. Nhưng em có cần lưu ý gì về kiểu dữ liệu khi xử lý ảnh không ạ?
+Người 1: Có đấy! Một cái bẫy rất dễ mắc phải là lỗi kiểu dữ liệu. Khi tính toán đạo hàm từ vùng sáng sang vùng tối, giá trị của pixel có thể bị âm. Nếu em dùng kiểu số nguyên 8-bit thông thường thì các giá trị âm này sẽ bị cắt bỏ về 0. Do đó, phải luôn dùng kiểu dữ liệu số thực 64-bit, tức là "cv2 chấm CV 64 F", cho các ma trận trung gian để tránh làm mất dữ liệu của đường biên.
+
+Slide 11: BƯỚC 3 - ỨC CHẾ PHI CỰC ĐẠI (NON-MAXIMUM SUPPRESSION - NMS)
+Người 1: Chào mừng các em quay lại. Ở phần trước, chúng ta đang đối mặt với một vấn đề: các đường biên sau khi tính toán đạo hàm bị quá dày. Bước thứ ba của Canny, mang tên "Ức chế phi cực đại", sinh ra chính là để giải quyết triệt để chuyện này. Mục tiêu của nó là gọt mỏng mọi đường biên xuống chỉ còn đúng độ rộng một pixel.
+Người 2: Nghe tên thuật ngữ hơi phức tạp thầy nhỉ. Thuật toán này làm cách nào để "ức chế" các pixel thừa ạ?
+Người 1: Rất trực quan thôi em. Máy tính sẽ dùng thông tin về "hướng" của gradient mà ta vừa tính ở Bước 2. Nó sẽ quét dọc theo hướng vuông góc với đường biên. Tại mỗi điểm ảnh, máy tính đối chiếu độ sáng của nó với hai điểm ảnh lân cận. Nếu nó là điểm sáng nhất—tức là đỉnh cực đại cục bộ—thì nó được giữ lại. Nếu không, nó sẽ bị "ức chế" và gán giá trị về 0, biến thành nền đen. Nhờ thế, ta chỉ thu được phần vệt sáng cốt lõi nhất.
+
+Slide 12: BƯỚC 4 - PHÂN NGƯỠNG KÉP (HYSTERESIS THRESHOLDING)
+Người 1: Xong bước 3, đường biên đã mỏng rồi, nhưng lại nảy sinh một nhược điểm mới: các đường nét có thể bị đứt đoạn hoặc còn lẫn những đốm nhiễu nhỏ. Để "chữa bệnh" này, ta dùng Bước 4: Phân ngưỡng kép. Thay vì dùng một giá trị duy nhất, Canny sử dụng tới hai mốc: Ngưỡng thấp T L và Ngưỡng cao T H.
+Người 2: Dùng hai ngưỡng thì máy tính sẽ phân loại các điểm sáng này như thế nào thưa thầy?
+Người 1: Nó sẽ chia dữ liệu làm ba nhóm rõ ràng. Những điểm có độ lớn gradient vượt qua Ngưỡng cao, ta dán nhãn là "biên chắc chắn" và tự động giữ lại. Những điểm nằm dưới Ngưỡng thấp, ta coi là "rác" và loại bỏ ngay. Phần thú vị nhất là những điểm nằm lơ lửng giữa hai ngưỡng này, gọi là "biên yếu". Số phận của chúng phụ thuộc vào sự liên kết: nếu biên yếu nằm nối tiếp với một điểm "biên chắc chắn", nó sẽ được cứu vớt; nếu nó đứng chơ vơ, nó sẽ bị xóa sổ.
+
+Slide 13: SỨC MẠNH CỦA SỰ LIÊN KẾT BIÊN
+Người 1: Slide này minh họa sức mạnh thực sự của bước phân ngưỡng kép. Nó hoạt động như một loại keo dính thông minh, tự động kết nối các nét đứt gãy thành một đường liền mạch, đồng thời tẩy sạch những hạt nhiễu cô lập. Tuy nhiên, trong thực chiến, các em phải rất cẩn thận khi điều chỉnh hai tham số này.
+Người 2: Việc tinh chỉnh hai ngưỡng này sẽ ảnh hưởng trực tiếp đến kết quả ra sao ạ?
+Người 1: Rất ảnh hưởng! Nếu em đặt Ngưỡng cao ở mức quá lớn, hệ thống sẽ quá khắt khe, chỉ bắt được những đường nét thô, lớn của vật thể và bỏ qua các chi tiết nhỏ. Ngược lại, nếu em kéo Ngưỡng thấp xuống quá nhỏ, các nét đứt sẽ dễ dàng được nối lại nhưng đồng thời "rác" và nhiễu cũng ùa vào bức ảnh. Nhiệm vụ của chúng ta là tìm ra điểm cân bằng.
+
+Slide 14: SO SÁNH TRỰC DIỆN: SOBEL VS. CANNY
+Người 1: Để thấy được bước tiến vĩ đại của Canny, các em hãy nhìn bảng so sánh trực diện với Sobel cơ bản. Về độ mảnh, Sobel cho nét dày cộp, còn Canny là nét mỏng sắc sảo đúng một pixel. Về độ sạch, Sobel dễ bị nhiễu do nhạy cảm, Canny lại rất sạch nhờ trải qua bước lọc Gaussian. Về tính liên tục, Sobel hay đứt đoạn, Canny lại liền mạch nhờ phân ngưỡng kép.
+Người 2: Em có cảm giác thuật toán Canny giống như việc lấy bộ lọc Sobel làm cốt lõi, rồi trang bị thêm khiên bảo vệ ở bước đầu và vũ khí sắc bén ở bước cuối để khắc phục hoàn toàn điểm yếu của Sobel phải không ạ?
+Người 1: Một sự đúc kết rất tuyệt vời! Chính nhờ sự tối ưu toàn diện đó, thuật toán Canny mang lại độ định vị cực kỳ chính xác và được giới học thuật tôn vinh là "Tiêu chuẩn vàng" cho các tác vụ trích xuất hình dáng.
+
+Slide 15: TỔNG KẾT TIẾT 1 VÀ ĐỊNH HƯỚNG TIẾT 2
+Người 1: Vậy là chúng ta đã đi đến cuối Tiết học thứ nhất. Chốt lại, các em cần ghi nhớ: Biên là nơi cường độ sáng thay đổi một cách đột ngột. Đường ống 4 bước của Canny gồm: Khử nhiễu, Tính Gradient, Ức chế phi cực đại và Phân ngưỡng kép. Ứng dụng thực tế của nó vô cùng rộng lớn, từ tiền xử lý nhận dạng chữ viết OCR cho đến hệ thống mắt thần của xe tự lái.
+Người 2: Dạ, đến bước này thì chúng ta đã tách được các hình khối sắc sảo trên nền đen rồi. Vậy bước tiếp theo, làm sao để máy tính biết đó là cái xe hay con người ạ?
+Người 1: Một câu hỏi hướng tới tương lai! Chúng ta đã có những đường biên rất sạch, nhưng dưới con mắt của máy tính, chúng vẫn chỉ là các điểm sáng pixel rời rạc. Máy tính chưa hề biết phương trình toán học để gọi đó là "đường thẳng" hay "hình tròn". Trong Tiết học thứ 2, thầy trò ta sẽ giải quyết bài toán đó bằng một kỹ thuật kinh điển mang tên: Biến đổi Hough. Hẹn gặp lại các em ở bài học tiếp theo!
+

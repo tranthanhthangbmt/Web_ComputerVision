@@ -1,0 +1,68 @@
+﻿Slide 1: CHƯƠNG 4: BIẾN ĐỔI HOUGH - ĐỌC HIỂU HÌNH HỌC TỪ CÁC ĐIỂM BIÊN
+Người 1: Chào các em sinh viên lớp IT23M. Sau khi chúng ta đã nắm vững các kỹ thuật phát hiện biên ở tiết học trước, hôm nay thầy trò ta sẽ bước sang Tiết 2 của Chương 4 với một chủ đề vô cùng thú vị: "Biến đổi Hough - Đọc hiểu hình học từ các điểm biên".
+Người 2: Dạ thưa thầy, ở tiết trước mình đã tìm được các đường viền của vật thể rồi, vậy tại sao mình lại cần phải "đọc hiểu hình học" nữa ạ? Chẳng phải có đường viền là máy tính đã nhận diện được hình dáng rồi sao thầy?
+
+Slide 2: MỤC TIÊU HỌC TẬP: TIẾT 2
+Người 1: Một câu hỏi rất hay! Để trả lời, chúng ta hãy nhìn vào ba mục tiêu của tiết học hôm nay. Đầu tiên, các em sẽ hiểu được nguyên lý "Ánh xạ đa chiều", tức là cách dịch chuyển từ không gian ảnh thực tế sang một không gian tham số toán học. Thứ hai, chúng ta sẽ giải mã "Cơ chế bỏ phiếu", tìm hiểu xem máy tính làm cách nào để tự động tìm ra phương trình đường thẳng và hình tròn thông qua ma trận tích lũy. Và cuối cùng là phần thực chiến với thư viện OpenCV, nơi chúng ta phân biệt hai hàm là hàm Hough Lines và hàm Hough Lines P (xác suất) để ứng dụng trực tiếp vào bài toán phát hiện làn đường.
+
+Slide 3: SỰ HẠN CHẾ CỦA CANNY EDGE: MÁY TÍNH VẪN ĐANG 'MÙ' HÌNH HỌC
+Người 1: Trở lại với thắc mắc của em lúc nãy. Trên slide này, các em có thể thấy sự hạn chế của thuật toán Canny Edge. Dù nó tìm ra biên rất tốt, nhưng thực chất thuật toán phát hiện biên chỉ tìm ra các điểm sáng, hay còn gọi là các pixel rời rạc. Máy tính lúc này hoàn toàn không biết phương trình toán học nào kết nối các điểm này thành một thực thể hình học thống nhất. Nói cách khác, máy tính vẫn đang "mù" hình học.
+Người 2: À, em hiểu rồi! Tức là máy tính giống như đang nhìn thấy một đống hạt cát xếp thành hàng, nhưng không có một "sợi dây" nào để xâu chuỗi chúng lại thành một đường thẳng đúng không thầy? Vậy làm sao để gom các hạt cát rời rạc này lại ạ?
+
+Slide 4: TRIẾT LÝ CỐT LÕI: SỰ ĐẢO NGƯỢC HÌNH HỌC
+Người 1: Tuyệt vời, em đã nắm được mấu chốt! Để xâu chuỗi chúng lại, chúng ta cần đến Biến đổi Hough, với triết lý cốt lõi là "Sự đảo ngược hình học". Ở đây, chúng ta sẽ thực hiện một bước nhảy vọt: chuyển từ "Không gian ảnh" sang "Không gian tham số". Nguyên lý rất đặc biệt: "Điểm sẽ biến thành Đường, và Đường sẽ biến thành Điểm". Một pixel đơn độc trong thế giới thực, thực chất lại là hiện thân của hàng ngàn đường thẳng tiềm năng đi qua nó trong không gian toán học.
+Người 2: Nghe có vẻ hơi ảo diệu thầy nhỉ. Nhưng nếu chỉ muốn biểu diễn một đường thẳng, tại sao mình không dùng luôn phương trình đường thẳng y bằng a nhân x cộng b mà mình đã học ở phổ thông cho đơn giản ạ?
+
+Slide 5: TRỞ NGẠI CỦA HỆ TỌA ĐỘ DESCARTES (y = ax + b)
+Người 1: Đó là một phản xạ tự nhiên của những người học toán! Tuy nhiên, hệ tọa độ Đề Cát với phương trình y bằng a nhân x cộng b lại có một trở ngại chí mạng đối với máy tính. Các em hãy tưởng tượng trên đồ thị x y có một đường thẳng đứng song song với trục y. Lúc này hệ số góc a của nó sẽ tiến tới vô cực.
+Người 2: Em nhớ rồi, đó là lỗi chia cho số không! Vậy nếu đưa vào máy tính thì hệ thống sẽ bị lỗi đúng không thầy?
+Người 1: Hoàn toàn chính xác! Hậu quả là máy tính sẽ bị tràn bộ nhớ, vì nó không thể nào lưu trữ được một giá trị vô cực trong ma trận dữ liệu của mình. Kết luận được rút ra ở đây là: Chúng ta bắt buộc phải cần một ngôn ngữ toán học mới để mô tả đường thẳng một cách an toàn hơn. Ngôn ngữ đó là gì, chúng ta sẽ cùng "vén màn" ở phần tiếp theo!
+
+Slide 6: GIẢI PHÁP HOÀN HẢO: HỆ TỌA ĐỘ CỰC (POLAR COORDINATES)
+Người 1: Để giải quyết bài toán lỗi chia cho số không của hệ tọa độ Đề Cát, các nhà khoa học đã tìm ra một giải pháp hoàn hảo: chuyển sang hệ tọa độ cực. Thay vì dùng hệ số góc a và b, chúng ta sẽ mô tả đường thẳng bằng một phương trình mới: rô bằng x nhân cos của góc tê-ta, cộng với y nhân sin của góc tê-ta.
+Người 2: Dạ, hai tham số rô và tê-ta này có ý nghĩa hình học như thế nào vậy thầy?
+Người 1: Rất trực quan em ạ. Rô chính là khoảng cách, hay cụ thể hơn là độ dài đoạn thẳng vuông góc hạ từ gốc tọa độ xuống đường thẳng đó. Còn tê-ta là góc tạo bởi đoạn vuông góc đó và trục ngang x. Ưu điểm tuyệt đối ở đây là: mọi đường thẳng dù dựng đứng đến đâu đi chăng nữa, thì khoảng cách rô và góc tê-ta của nó luôn luôn là một con số hữu hạn. Chúng ta đã triệt tiêu hoàn toàn được lỗi hệ thống!
+
+Slide 7: PHÉP MÀU CỦA SỰ GIAO NHAU (THE INTERSECTION MAGIC)
+Người 1: Bây giờ, hãy xem điều kỳ diệu xảy ra. Trên slide, thầy có 3 điểm ảnh hay 3 pixel thẳng hàng trong không gian thực. Khi thầy đưa từng điểm này qua phương trình hệ tọa độ cực, mỗi điểm ảnh sẽ tạo ra một đường cong dạng sóng trong không gian Hough, hay còn gọi là không gian tham số.
+Người 2: Ồ, em thấy 3 đường cong này cắt nhau tại đúng một điểm duy nhất trên đồ thị!
+Người 1: Đúng vậy! Sự hội tụ này chính là "phép màu". Điểm giao cắt duy nhất đó chứa chính xác một cặp giá trị rô và tê-ta. Cặp giá trị này định nghĩa nên đúng cái đường thẳng đi qua 3 pixel ban đầu của chúng ta trong không gian ảnh thực tế.
+
+Slide 8: MÁY TÍNH LƯU TRỮ THẾ NÀO? MA TRẬN TÍCH LŨY (ACCUMULATOR ARRAY)
+Người 2: Nhưng thưa thầy, trên một bức ảnh thực tế có hàng vạn pixel biên, làm sao máy tính tìm được điểm giao nhau của hàng vạn đường cong đó ạ? Liệu nó có phải vẽ ra hết không?
+Người 1: Máy tính không vẽ, mà nó dùng một thủ thuật lưu trữ rất thông minh gọi là Ma trận tích lũy. Nó lập ra một "bảng kiểm phiếu" dạng lưới 2 chiều, một chiều là rô, chiều kia là tê-ta. Mỗi khi một đường cong ảo lướt qua một ô trong lưới, ô đó sẽ được cộng thêm 1 giá trị.
+Người 2: À, em hiểu rồi! Tức là ô nào được nhiều đường cong đi qua nhất thì điểm số sẽ cao vọt lên, tạo thành một cái đỉnh giống như biểu đồ cột 3D trên hình đúng không thầy?
+Người 1: Hoàn toàn chính xác! Ô có giá trị cao nhất đó được gọi là Đỉnh Cực Đại, và tọa độ của nó chính là phương trình đường thẳng có thật chứa nhiều điểm ảnh nhất trên bức ảnh của chúng ta.
+
+Slide 9: TOÀN CẢNH CƠ CHẾ BỎ PHIẾU (THE VOTING MECHANISM)
+Người 1: Để đúc kết lại, các em hãy nhìn vào sơ đồ toàn cảnh của cơ chế bỏ phiếu này. Đầu vào của chúng ta là các điểm ảnh biên rời rạc. Sau đó, chúng được biến đổi bằng phương trình hệ tọa độ cực.
+Người 2: Mỗi pixel lúc này giống như một cử tri, và một cử tri sẽ bỏ 1 phiếu bầu cho vô số các đường thẳng tiềm năng đi qua nó phải không thầy?
+Người 1: Cách ví von rất hay! Các lá phiếu này được gom vào Ma trận tích lũy. Cuối cùng, đường thẳng nào "đắc cử" với số phiếu cao nhất sẽ được máy tính công nhận là một đường thẳng có thật và xuất ra ở đầu ra.
+
+Slide 10: LỰA CHỌN VŨ KHÍ: HOUGH TOÀN CỤC VS. HOUGH XÁC SUẤT
+Người 1: Khi lập trình với OpenCV, các em sẽ có 2 "vũ khí" để lựa chọn. Thứ nhất là hàm cv2.HoughLines tiêu chuẩn. Đầu ra của hàm này là mảng các cặp rô và tê-ta, tạo thành những đường thẳng dài vô tận không có điểm đầu điểm cuối. Nó chạy khá chậm vì phải tính toán trên toàn bộ không gian, nhưng lại tìm các cấu trúc lớn bao quát như đường chân trời rất tốt.
+Người 2: Vậy còn hàm cv2.HoughLinesP thì sao ạ? Chữ "P" chắc là Xác suất (Probabilistic) đúng không thầy?
+Người 1: Chuẩn! Hàm này chỉ lấy mẫu xác suất ngẫu nhiên một số điểm ảnh, nên tốc độ cực kỳ nhanh. Hơn nữa, đầu ra của nó trực quan hơn rất nhiều: đó là mảng tọa độ x1, y1 và x2, y2, giới hạn rõ ràng điểm đầu và điểm cuối của từng đoạn thẳng.
+Người 2: Tuyệt quá, vậy nếu giải quyết các bài toán thời gian thực đòi hỏi độ chính xác cục bộ cao như phát hiện làn đường hay vạch kẻ đường cho xe tự lái, thì tụi em bắt buộc phải dùng hàm Hough Xác Suất này rồi!
+Người 1: Đúng thế! Các em áp dụng thực tiễn rất tốt.
+
+Slide 11: VƯỢT RA NGOÀI ĐƯỜNG THẲNG: PHÁT HIỆN HÌNH TRÒN (HOUGH CIRCLES)
+Người 1: Không chỉ dừng lại ở đường thẳng, Biến đổi Hough còn có thể được nâng cấp để phát hiện các hình khối phức tạp hơn, tiêu biểu là hình tròn. Tuy nhiên, thay vì chỉ có hai tham số là rô và tê-ta, một hình tròn đòi hỏi tới ba tham số toán học để định nghĩa: đó là tọa độ tâm bao gồm x c, y c và bán kính r.
+Người 2: Nếu có tới ba tham số thì ma trận tích lũy của mình không còn là mặt phẳng 2D nữa mà sẽ phình to thành một khối không gian 3 chiều đúng không thầy?. Như vậy thì máy tính tính toán chắc sẽ nặng nề lắm ạ.
+Người 1: Em phát hiện ra vấn đề rất nhanh! Ma trận không gian tham số lúc này trở thành một khối tích lũy 3D. Để giải quyết gánh nặng tính toán này khi lập trình thực chiến, OpenCV cung cấp cho chúng ta hàm cv2.HoughCircles. Hàm này không tính toán bão hòa mà được tối ưu hóa bằng phương pháp Gradient gốc (Hough Gradient Method), giúp thuật toán chạy mượt mà và tiết kiệm tài nguyên hơn rất nhiều.
+
+Slide 12: ỨNG DỤNG #2: TỰ ĐỘNG HÓA Y TẾ & CÔNG NGHIỆP
+Người 1: Sự ưu việt của Hough Circles được thể hiện rất rõ trong các bài toán tự động hóa. Trên slide, thầy đưa ra hai ví dụ thực tế. Trong y tế, nó giúp đếm các tế bào máu bị chồng lấp lên nhau. Còn trong công nghiệp, nó giúp định vị các lỗ khoan trên bản mạch điện tử PCB.
+Người 2: Dạ thưa thầy, tại sao mình không dùng các thuật toán đếm số lượng pixel thông thường cho những bài toán này ạ?
+Người 1: Lý do là trong môi trường thực tế, các tế bào thường bị che khuất một phần (hay còn gọi là occlusions) và hình ảnh chụp qua kính hiển vi chứa một lượng lớn nhiễu hạt (noise). Các thuật toán đếm pixel thông thường sẽ hoàn toàn thất bại trước sự lộn xộn này. Ngược lại, Biến đổi Hough vẫn hoạt động xuất sắc vì nó chỉ cần một phần cung tròn là đã đủ điểm bầu phiếu để suy ra cả một hình tròn hoàn chỉnh rồi.
+
+Slide 13: TỔNG KẾT TIẾT 2: BỘ BA KHÁI NIỆM CỐT LÕI
+Người 1: Để khép lại bài học hôm nay, chúng ta cùng nhìn lại bộ ba khái niệm cốt lõi của Biến đổi Hough. Đầu tiên là "Ánh xạ Đảo ngược", tức là khả năng chuyển điểm rời rạc trên không gian ảnh thành đường cong liên tục trong không gian tham số. Thứ hai là "Cơ chế Bỏ phiếu", sử dụng ma trận tích lũy để tìm ra đỉnh cực đại thay vì phải đi giải các phương trình toán học phức tạp.
+Người 2: Và thứ ba là "Ứng dụng Hình học" đúng không ạ? Tức là thuật toán giúp máy tính đọc hiểu được đường thẳng, đoạn thẳng và hình tròn bất chấp sự can thiệp mạnh mẽ của nhiễu trong ảnh.
+Người 1: Chuẩn xác! Thầy rất vui vì các em đã nắm bắt trọng tâm bài học cực kỳ tốt.
+
+Slide 14: BƯỚC TIẾP THEO: ĐUỔI THEO SỰ CHUYỂN ĐỘNG
+Người 1: Tuy nhiên, khoa học máy tính không bao giờ đứng yên. Biến đổi Hough rất mạnh, nhưng chúng ta mới chỉ đang biết cách tìm "Đường" và "Tròn" trong một bức ảnh tĩnh.
+Người 2: Nếu đối tượng liên tục thay đổi góc nhìn trong một video thì sao thầy? Em nghĩ đường thẳng hay hình tròn lúc đó sẽ bị biến dạng hình học khi xe chạy hoặc camera quay ạ.
+Người 1: Đó chính là một bài toán khó mà các kỹ sư thị giác máy tính phải đối mặt! Để giải quyết nó, chúng ta không thể dựa vào đường biên được nữa. Hãy chuẩn bị tâm trí cho Tiết 3 của Chương 4, chúng ta sẽ cùng nhau đi truy tìm các "Điểm Đặc Biệt", hay cụ thể là các "Góc", bằng thuật toán Harris và Shi-Tomasi. Hẹn gặp lại các em vào buổi học tuần sau!
+

@@ -1,0 +1,79 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT 23 M. Chào mừng các em quay trở lại với môn Thị giác máy tính. Ở hai tiết học trước của Chương 4, chúng ta đã biết cách tìm đường biên bằng Canny và tìm các hình học cơ bản bằng biến đổi Hough. Hôm nay, ở Tiết 3 này, thầy trò ta sẽ cùng chinh phục một đặc trưng mạnh mẽ hơn nữa: "Phát hiện đặc trưng góc với thuật toán Harris và Shi-Tomasi".
+Người 2: Dạ thưa thầy, đường biên thì em hiểu rồi, nhưng tại sao mình lại phải đi tìm "góc" nữa ạ? Cạnh và góc khác nhau nhiều không thầy?
+
+Slide 2: MỤC TIÊU BÀI HỌC (TIẾT 3)
+Người 1: Đó là một câu hỏi rất hay, và nó cũng chính là mục tiêu đầu tiên của bài học hôm nay. Hôm nay các em sẽ hiểu được tại sao "Góc" lại ưu việt hơn "Biên" hay các vùng phẳng. Thứ hai, chúng ta sẽ đi giải mã khái niệm toán học cốt lõi gọi là "Ma trận cấu trúc", hay còn gọi là ma trận tự tương quan. Kế tiếp, các em sẽ học cách dùng các "trị riêng" của ma trận này để phân loại vùng ảnh.
+Người 2: Nghe đến "ma trận" với "trị riêng" là em thấy mang đậm tính chất Đại số tuyến tính rồi. Cuối cùng mình có lập trình không thưa thầy?
+Người 1: Chắc chắn rồi! Mục tiêu cuối cùng là các em sẽ dùng thành thạo hàm tìm góc có sẵn trong thư viện OpenCV để thực hành trực tiếp trên một bức ảnh bàn cờ. Đừng lo về toán, thầy sẽ giải thích nó một cách cực kỳ trực quan.
+
+Slide 3: TẠI SAO GÓC (CORNER) LẠI QUAN TRỌNG?
+Người 1: Chúng ta đi vào câu hỏi của em lúc nãy. Về định nghĩa, góc chính là điểm giao nhau của hai hoặc nhiều đường biên. Tại đó, cường độ sáng của bức ảnh thay đổi rất lớn dù em nhìn theo bất kỳ hướng nào.
+Người 2: Ưu điểm của nó là gì mà lại được gọi là "ưu việt" vậy thầy?
+Người 1: Nó có hai ưu điểm vượt trội. Thứ nhất là tính định vị cực cao. Với một đường biên thẳng, em trượt dọc theo nó thì điểm nào cũng giống điểm nào, không xác định được vị trí chính xác. Nhưng với một góc, nó là một điểm duy nhất trong không gian hai chiều. Thứ hai, nó rất ổn định, hầu như không bị biến dạng khi có nhiễu, thay đổi ánh sáng hay góc nhìn camera.
+Người 2: Ồ, em hiểu rồi. Vậy nên nó giống như những điểm "neo" chắc chắn để máy tính dùng làm mốc so sánh các bức ảnh với nhau, ví dụ như chụp ảnh Panorama trên điện thoại đúng không thầy?.
+Người 1: Rất chính xác! Nó là bước đệm thiết yếu cho ghép ảnh, so khớp ảnh và theo dõi chuyển động.
+
+Slide 4: Ý TƯỞNG CỐT LÕI: SỰ THAY ĐỔI CƯỜNG ĐỘ TRONG CỬA SỔ QUÉT
+Người 1: Vậy làm sao để máy tính tự động tìm ra các góc này? Hãy tưởng tượng em cầm một cái khung cửa sổ nhỏ và trượt nó khắp bức ảnh. Sẽ có 3 trường hợp xảy ra. Thứ nhất, nếu rê cửa sổ vào một vùng phẳng, ví dụ như bầu trời trong xanh, thì em kéo cửa sổ đi hướng nào cường độ sáng cũng không đổi.
+Người 2: Trường hợp thứ hai là vùng có đường biên đúng không ạ? Nếu trượt cửa sổ dọc theo đường viền thì độ sáng không đổi, nhưng kéo vuông góc cắt ngang qua đường viền thì độ sáng sẽ thay đổi mạnh.
+Người 1: Tuyệt vời. Và trường hợp thứ ba, nếu em đặt cửa sổ ngay tại một cái góc. Lúc này, dù em nhích cửa sổ đi theo bất kỳ hướng nào, lên xuống trái phải hay chéo, thì tổng cường độ sáng trong cửa sổ cũng sẽ thay đổi cực kỳ đột ngột. Mục tiêu toán học của chúng ta là viết ra một hàm tính toán để máy tính tự động reo lên: "A, trượt hướng nào độ sáng cũng thay đổi, đây chắc chắn là góc!".
+
+Slide 5: MA TRẬN CẤU TRÚC (STRUCTURE TENSOR) - TRÁI TIM CỦA THUẬT TOÁN
+Người 1: Để làm được điều đó, thuật toán Harris sử dụng một "trái tim" mang tên Ma trận cấu trúc, ký hiệu là mờ lớn. Thay vì nhìn vào ảnh gốc, thuật toán sẽ nhìn vào ma trận các đạo hàm. Ma trận này là tổng các giá trị đạo hàm theo hướng x bình phương, đạo hàm theo hướng y bình phương, và tích của đạo hàm x nhân với đạo hàm y.
+Người 2: Thưa thầy, đạo hàm theo x và y này có phải chính là kết quả của bộ lọc Sobel mà mình đã học ở bài trước dùng để tìm đường biên không ạ?
+Người 1: Em nhớ bài rất tốt! Đúng vậy, chúng ta dùng Sobel để tính sự thay đổi cường độ. Sau đó, tất cả các giá trị đạo hàm này trong một vùng lân cận sẽ được nhân với một trọng số đúp-lê-vê (w). Trọng số này thường là một bộ lọc Gaussian giúp làm mượt và giảm nhiễu.
+Người 2: Nhìn vào cấu trúc này em thấy hơi rối rắm. Tóm lại ma trận mờ lớn này mang ý nghĩa gì thưa thầy?
+Người 1: Em chỉ cần hiểu bản chất cốt lõi thế này: Ma trận này chính là một bản tóm tắt hoàn hảo. Nó gom toàn bộ thông tin về các hướng thay đổi của độ sáng trong một vùng nhỏ xung quanh điểm ảnh, và đóng gói lại thành một ma trận vuông hai nhân hai cực kỳ gọn gàng. Từ ma trận này, chúng ta sẽ "phán" được điểm đó là phẳng, là cạnh, hay là góc.
+
+Slide 6: PHÂN LOẠI VÙNG ẢNH DỰA TRÊN TRỊ RIÊNG (EIGENVALUES)
+Người 1: Ở phần trước, chúng ta đã có Ma trận cấu trúc M. Từ ma trận này, máy tính sẽ tính toán ra hai đại lượng toán học gọi là các "trị riêng", ta gọi chúng là lam-đa 1 và lam-đa 2. Ý nghĩa hình học của chúng chính là đại diện cho mức độ thay đổi ánh sáng theo hai hướng chính.
+Người 2: À, vậy là mình sẽ dùng hai cái trị riêng lam-đa này để phân loại xem vùng đó là gì đúng không thầy?
+Người 1: Hoàn toàn chính xác! Nếu cả lam-đa 1 và lam-đa 2 đều nhỏ, nghĩa là cường độ sáng hầu như không đổi, ta có một vùng phẳng. Nếu một trị riêng rất lớn còn trị riêng kia nhỏ, chứng tỏ độ sáng chỉ thay đổi mạnh theo một hướng duy nhất, đó chính là một đường biên. Và điều chúng ta tìm kiếm: nếu cả lam-đa 1 và lam-đa 2 đều lớn và xấp xỉ nhau, cường độ thay đổi mạnh theo mọi hướng, máy tính sẽ kết luận đó là một góc.
+
+Slide 7: HÀM PHẢN HỒI GÓC HARRIS (CORNER RESPONSE SCORE - R)
+Người 1: Tuy nhiên, trong thực tế, việc bắt máy tính phải giải phương trình để tìm ra chính xác các trị riêng lam-đa cho hàng triệu điểm ảnh là quá tốn kém tài nguyên. Vì vậy, thuật toán Harris đã đưa ra một giải pháp cực kỳ thông minh: Sử dụng Hàm phản hồi góc, ký hiệu là R.
+Người 2: Tức là mình tính gián tiếp thông qua một công thức khác để tăng tốc độ xử lý hả thầy? Công thức đó trông như thế nào ạ?
+Người 1: Đúng vậy! Hàm R được tính bằng định thức của ma trận M trừ đi một hằng số k nhân với bình phương vết của ma trận M. Về mặt toán học, định thức chính là tích của lam-đa 1 nhân lam-đa 2, còn vết của ma trận chỉ đơn giản là tổng của lam-đa 1 cộng lam-đa 2. Hằng số thực nghiệm k thường được chọn nằm trong khoảng từ 0.04 đến 0.06. Bằng cách này, ta chỉ cần dùng các phép tính ma trận cơ bản, cực kỳ nhanh!
+
+Slide 8: Ý NGHĨA CÁC GIÁ TRỊ CỦA ĐIỂM PHẢN HỒI R
+Người 1: Sau khi tính được điểm R, mọi chuyện trở nên rất dễ dàng. Nếu trị tuyệt đối của R nhỏ, đó là vùng phẳng. Nếu R có giá trị âm, vùng đó chứa đường biên. Còn nếu R là một số dương lớn, thì chúc mừng, chúng ta đã tìm thấy một điểm góc!
+Người 2: Nhưng thầy ơi, nếu cái góc nó hơi mờ hoặc to, thì nó có thể tạo ra một cụm các điểm ảnh liền nhau đều có R dương lớn. Vậy máy tính có bị nhận nhầm thành nhiều góc ở cùng một chỗ không ạ?
+Người 1: Em phân tích rất sắc bén. Đó là lý do chúng ta có bước hậu xử lý. Máy tính sẽ áp dụng kỹ thuật "Ức chế phi cực đại", kết hợp với việc cắt ngưỡng, để lọc ra những vị trí có điểm R cao nhất, sắc nét nhất, từ đó tránh được các phản hồi giả hoặc bị trùng lặp.
+
+Slide 9: CẢI TIẾN SHI-TOMASI (GOOD FEATURES TO TRACK)
+Người 1: Thuật toán Harris ra đời năm 1988 và hoạt động rất tuyệt vời. Tuy nhiên, đến năm 1994, hai nhà nghiên cứu Jianbo Shi và Carlo Tomasi đã đề xuất một cải tiến, làm cho hàm phản hồi R thậm chí còn đơn giản và hiệu quả hơn trong việc theo dõi đối tượng.
+Người 2: Họ đã làm cách nào để đơn giản hóa một công thức vốn đã được tối ưu như của Harris vậy thầy?
+Người 1: Thay vì dùng công thức định thức và vết ma trận phức tạp, Shi và Tomasi định nghĩa điểm R mới chỉ đơn giản bằng giá trị nhỏ nhất giữa hai trị riêng: R bằng Min của lam-đa 1 và lam-đa 2. Nguyên lý của họ là: Một điểm chỉ được coi là "góc tốt" khi và chỉ khi cả hai trị riêng của nó đều lớn hơn một ngưỡng tối thiểu nào đó. Kết quả là các góc tìm được ổn định hơn và phân bố đều hơn trên bức ảnh so với phương pháp của Harris.
+
+Slide 10: SO SÁNH HARRIS VÀ SHI-TOMASI
+Người 1: Slide này tổng hợp lại sự khác biệt giữa hai phương pháp. Harris dùng hàm phản hồi khá phức tạp và phụ thuộc vào việc chọn hằng số k, thường dùng cho các bài toán phát hiện góc cơ bản. Trong khi đó, Shi-Tomasi trực quan hơn, ổn định hơn và được ưu tiên tuyệt đối cho các tác vụ theo dõi đặc trưng chuyển động trong video.
+Người 2: Quá rõ ràng rồi ạ. Vậy khi thực hành lập trình với OpenCV thì mình gọi hàm như thế nào thưa thầy?
+Người 1: OpenCV hỗ trợ sẵn cả hai vũ khí này. Với Harris, các em dùng hàm cv2.cornerHarris(). Còn với Shi-Tomasi, tên hàm đã nói lên tất cả: cv2.goodFeaturesToTrack(), tạm dịch là "những đặc trưng tốt để theo dõi". Ở phần thực hành tiếp theo, chúng ta sẽ bắt tay vào viết code với các hàm này.
+
+Slide 11: LẬP TRÌNH HARRIS CORNER VỚI OPENCV
+Người 1: Chuyển sang phần thực hành, chúng ta sẽ bắt đầu với thuật toán Harris. Trong thư viện OpenCV, các em sử dụng hàm có tên là xi-vi-hai chấm co-nơ-Harris (cv2.cornerHarris). Hàm này nhận vào 4 tham số chính. Đầu tiên là suộc (src), tức là ảnh đầu vào, nhớ là phải chuyển sang ảnh xám và ép kiểu dữ liệu sang số thực float-ba-mươi-hai (float32) nhé. Thứ hai là bờ-lóc-size (blockSize), đây chính là kích thước cái cửa sổ lân cận để tính ma trận mà thầy nói lúc nãy. Thứ ba là ca-size (ksize), là kích thước Kernel của bộ lọc Sobel để tính đạo hàm. Và cuối cùng là hằng số ca (k) quen thuộc của Harris.
+Người 2: Hàm này chạy xong là nó trả về thẳng tọa độ X, Y của các góc cho mình luôn đúng không thầy?
+Người 1: Chưa đâu em. Nó chỉ trả về một ma trận chứa các điểm phản hồi R thôi. Nhiệm vụ của các em là phải tự đặt ra một ngưỡng, hay còn gọi là Threshold, để lọc xem R phải lớn cỡ nào thì mới được công nhận là góc. Sau đó các em mới dùng code để đánh dấu đè lên ảnh gốc.
+
+Slide 12: LẬP TRÌNH SHI-TOMASI (GOOD FEATURES TO TRACK)
+Người 1: Nhưng với Shi-Tomasi thì câu chuyện lại nhàn hơn rất nhiều. Em dùng hàm xi-vi-hai chấm gút-phi-chờ-tu-trắc (cv2.goodFeaturesToTrack()). OpenCV sẽ "bao trọn gói" từ việc tính toán, sắp xếp điểm R từ cao xuống thấp và tự động lọc luôn cho em.
+Người 2: Nghe tiện lợi quá ạ. Vậy mình phải truyền những tham số gì cho hàm này thầy nhỉ?
+Người 1: Em chỉ cần nói cho máy tính biết mong muốn của em. Tham số đầu tiên vẫn là ảnh. Thứ hai là max-corners, em muốn lấy tối đa bao nhiêu góc tốt nhất? Ví dụ 100 góc. Thứ ba là quality-level, mức chất lượng tối thiểu, ví dụ không phẩy không một (0.01) nghĩa là chỉ giữ lại những góc có phản hồi bằng ít nhất 1 phần trăm so với góc mạnh nhất. Cuối cùng là min-distance, quy định khoảng cách an toàn tối thiểu giữa các góc, để tránh trường hợp các điểm bị tụm lại một cục lộn xộn.
+
+Slide 13: TRỰC QUAN HÓA KẾT QUẢ TRÊN BÀN CỜ (CHESSBOARD)
+Người 1: Và đây là kết quả khi chúng ta chạy thử hai hàm này trên một bức ảnh bàn cờ. Ở bài tập này, mẹo nhỏ khi code là các em hãy kết hợp với hàm vẽ đường tròn cv2.circle() để khoanh vùng các vị trí tọa độ góc vừa tìm được cho dễ nhìn nhé.
+Người 2: Nhìn vào hình trên 
+Slide em thấy ngay sự khác biệt. Harris tìm ra các giao điểm đen trắng rất tốt nhưng đôi chỗ điểm vẽ ra vẫn hơi bị lem nhem. Còn bên Shi-Tomasi thì các điểm tròn xoe, rất sạch sẽ và rải đều tăm tắp trên bàn cờ luôn.
+Người 1: Em quan sát rất chuẩn. Đó chính là minh chứng thực tế cho thấy tại sao Shi-Tomasi lại được ưu ái làm các "điểm neo" lý tưởng để theo dõi đối tượng đấy.
+
+Slide 14: TẠI SAO GÓC LÀ NỀN TẢNG CHO THỊ GIÁC MÁY TÍNH?
+Người 1: Chúng ta sắp kết thúc bài học, hãy cùng nhìn lại bức tranh lớn. Tại sao chúng ta lại mất công đi tìm những cái góc nhỏ bé này? Bởi vì nó chứa thông tin cực kỳ cô đọng về cấu trúc vật thể, là nền tảng cho 3 ứng dụng khổng lồ. Một là theo dõi đối tượng trong video, vì góc là những điểm hiếm hoi không bị thay đổi vị trí qua các khung hình. Hai là ghép ảnh Panorama, máy tính sẽ tìm các góc tương ứng giống nhau giữa hai bức ảnh để tính ra ma trận biến đổi phối cảnh, rồi dán chúng lại một cách liền mạch.
+Người 2: Nghe giống như cách điện thoại thông minh chụp ảnh toàn cảnh quét ngang phải không ạ. Vậy còn ứng dụng thứ 3 là gì thưa thầy?
+Người 1: Đó là Tái tạo 3D, hay còn gọi là SfM. Từ những điểm đặc trưng góc khớp nhau trên nhiều bức ảnh phẳng 2D chụp ở các góc độ khác nhau, máy tính có thể dựng ngược lại thành một mô hình không gian 3 chiều.
+
+Slide 15: TỔNG KẾT BUỔI 1 VÀ CHUẨN BỊ BUỔI 2
+Người 1: Vậy là chúng ta đã đi hết 3 tiết của Buổi 1, Chương 4. Các em đã có trong tay bộ 3 công cụ sắc bén: Thuật toán Canny để trích xuất đường biên mảnh và sạch; Biến đổi Hough để gom các điểm rời rạc thành đường thẳng, hình tròn; và cuối cùng là Harris, Shi-Tomasi để tìm ra các điểm góc ổn định nhất.
+Người 2: Thưa thầy, với bộ 3 công cụ này là mình xử lý được hết các bài toán hình học rồi đúng không ạ? Có trường hợp nào "vũ khí" góc của mình bị vô hiệu hóa không thầy?
+Người 1: Một câu hỏi xuất sắc để khép lại bài học! Điểm yếu tử huyệt của Góc Harris và Shi-Tomasi là nó sẽ "thất bại" nếu đối tượng bị phóng to hay thu nhỏ, tức là nó không có tính bất biến với tỷ lệ. Buổi tới, thầy trò ta sẽ cùng giải quyết bài toán hóc búa này với bộ đôi SIFT và SURF - những bộ mô tả "siêu cấp" không ngại bất cứ sự thay đổi nào về tỷ lệ hay góc nhìn. Bài học hôm nay đến đây là kết thúc, hẹn gặp lại các em!
+

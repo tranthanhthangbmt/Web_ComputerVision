@@ -1,0 +1,77 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Ở chương trước, chúng ta đã nắm vững các khái niệm về phân đoạn ảnh. Hôm nay, thầy trò ta sẽ bước sang một chương mới: Chương 4 - Phát hiện và mô tả đặc trưng ảnh. Trong tiết học đầu tiên này, chúng ta sẽ tập trung vào kỹ thuật Phát hiện biên nâng cao với thuật toán Canny.
+Người 2: Thưa thầy, trước đây khi học các bộ lọc đạo hàm cơ bản như Sobel, em thấy mình đã có thể tìm được đường biên rồi mà ạ. Tại sao bây giờ lại cần học thêm thuật toán Canny nữa hả thầy?
+
+Slide 2: MỤC TIÊU TIẾT HỌC
+Người 1: Một câu hỏi rất thực tế! Đó cũng chính là điều chúng ta sẽ giải quyết trong mục tiêu bài học hôm nay. Đầu tiên, các em cần hiểu tại sao đường biên (Edge) lại là một đặc trưng cực kỳ quan trọng. Thứ hai, ta sẽ cùng mổ xẻ những hạn chế của bộ lọc Sobel để thấy tại sao Canny lại cần thiết, thông qua quy trình 4 giai đoạn tối ưu của nó. Về mặt kỹ năng, cuối buổi các em sẽ dùng thành thạo hàm cv2.Canny() và biết cách chọn tham số ngưỡng cho chuẩn xác.
+
+Slide 3: ĐẶC TRƯNG ẢNH LÀ GÌ?
+Người 1: Trước khi đi sâu, ta cần thống nhất "Đặc trưng ảnh" là gì. Nó chính là những mẩu thông tin có ý nghĩa và mang tính định lượng được trích xuất ra, giúp đơn giản hóa việc biểu diễn dữ liệu ảnh phức tạp của máy tính. Chúng ta có các loại cơ bản như: Điểm (Points), Góc (Corners), và quan trọng nhất hôm nay là Đường biên (Edges) - nơi cường độ sáng thay đổi đột ngột.
+Người 2: Em hiểu nôm na là thay vì máy tính phải phân tích hàng triệu pixel thừa thãi như nguyên một mảng tường trống, thì mình chỉ cần đưa cho nó phần "viền" của đồ vật thôi để giảm lượng dữ liệu, đúng không ạ?
+Người 1: Rất chính xác! Việc tìm ra biên sẽ giúp làm nổi bật cấu trúc hình học của đối tượng, từ đó các tác vụ nhận dạng phía sau sẽ chạy nhẹ nhàng và hiệu quả hơn rất nhiều.
+
+Slide 4: ÔN TẬP BỘ LỌC SOBEL VÀ HẠN CHẾ
+Người 1: Giờ quay lại với Sobel mà em vừa nhắc. Sobel dùng phép toán đạo hàm bậc nhất ( và ) để tìm các cạnh cơ bản rất nhanh và đơn giản. Nhưng hạn chế chí mạng của nó là gì?
+Người 2: Có phải là hôm trước em chạy thử Sobel, đường nét của vật thể nó bị nhòe ra, rộng mất mấy pixel, lại còn có lốm đốm nhiễu nữa đúng không thầy?
+Người 1: Em quan sát rất tốt! Đó chính là hai nhược điểm lớn nhất: Biên rất dày (không sắc mảnh) và cực kỳ nhạy cảm với nhiễu (các điểm nhiễu li ti bị nhận nhầm là biên). Vậy bài toán đặt ra là: Làm sao để "gọt" được đường biên chỉ rộng đúng 1 pixel và sạch sẽ hoàn toàn nhiễu?
+
+Slide 5: GIỚI THIỆU THUẬT TOÁN CANNY (1986)
+Người 1: Để giải quyết bài toán đó, nhà khoa học John F. Canny đã đề xuất một thuật toán vào năm 1986, và cho đến tận bây giờ nó vẫn được coi là "Tiêu chuẩn vàng" trong phát hiện biên.
+Người 2: Để đạt được "Tiêu chuẩn vàng" thì thuật toán này chắc phải giải quyết được những tiêu chí khắt khe lắm thầy nhỉ?
+Người 1: Đúng vậy em. Canny đã đặt ra 3 mục tiêu tối ưu cực kỳ chặt chẽ: Thứ nhất là Phát hiện tốt (không bỏ sót biên thực, ít phản ứng với nhiễu); Thứ hai là Định vị tốt (biên vẽ ra phải nằm sát vị trí thực tế); và Thứ ba là Phản ứng đơn lẻ (mỗi cạnh chỉ tạo ra một nét vẽ duy nhất, giúp làm mỏng biên). Để đạt được 3 mục tiêu này, Canny đã thiết kế một quy trình 4 giai đoạn toán học liên kết với nhau.
+﻿
+Slide 6: BƯỚC 1 - KHỬ NHIỄU BẰNG BỘ LỌC GAUSSIAN
+Người 1: Chúng ta bắt đầu với Giai đoạn 1. Như thầy đã phân tích, việc dùng đạo hàm để tìm biên cực kỳ nhạy cảm với sự thay đổi cường độ sáng đột ngột. Nếu không xử lý trước, ngay cả một điểm nhiễu li ti cũng có thể tạo ra giá trị đạo hàm lớn, khiến máy tính nhận diện nhầm đó là đường biên.
+Người 2: Vậy giải pháp là mình phải làm mượt bức ảnh trước để "che" đi mấy hạt nhiễu đó, giống như cách mình dùng bộ lọc Gaussian ở chương trước đúng không thầy?
+Người 1: Rất chuẩn xác! Canny đã chứng minh toán học rằng bộ lọc Gaussian là công cụ tối ưu nhất vì nó giữ được sự cân bằng tuyệt vời giữa việc khử nhiễu và bảo toàn cấu trúc đường nét. Các em lưu ý khi thực hành, kích thước Kernel (cửa sổ trượt) phổ biến thường dùng là ma trận sẽ ảnh hưởng trực tiếp đến độ nhạy của bộ phát hiện biên.
+
+Slide 7: BƯỚC 2 - TÍNH TOÁN GRADIENT (ĐỘ DỐC)
+Người 1: Sau khi ảnh đã sạch nhiễu, ta sang Bước 2 với mục tiêu là tìm những vùng có sự thay đổi cường độ sáng mạnh nhất. Ở bước này, Canny lại "mượn" chính bộ lọc Sobel mà chúng ta vừa ôn tập lúc nãy.
+Người 2: Ơ, mình vừa chê Sobel làm biên bị dày mà thầy? Sao bây giờ thuật toán Canny lại vẫn dùng nó ạ?
+Người 1: Bình tĩnh nào! Ta chỉ mượn Sobel để lấy "nguyên liệu thô" thôi. Cụ thể, ta dùng bộ lọc Sobel để tính đạo hàm theo hai hướng: để phát hiện biên dọc và để phát hiện biên ngang. Kết quả là tại mỗi pixel, ta sẽ thu được hai thành phần đạo hàm tương ứng với trục hoành và trục tung.
+
+Slide 8: ĐỘ LỚN VÀ HƯỚNG CỦA GRADIENT
+Người 1: Có hai thành phần và rồi, ta sẽ tổng hợp chúng lại để tính hai thông số cốt lõi. Thứ nhất là "Độ lớn Gradient" () - tính bằng định lý Pythagore: . Nó cho ta biết độ "mạnh" của đường biên. Thứ hai là "Hướng Gradient" () - tính bằng hàm .
+Người 2: "Hướng Gradient" này có phải chính là hướng của đường biên luôn không thầy? Ví dụ đường biên nằm ngang thì hướng gradient cũng nằm ngang?
+Người 1: Không phải em nhé! Đây là một điểm rất dễ nhầm lẫn. Hướng Gradient là góc của đường pháp tuyến, tức là luôn vuông góc với đường biên thực tế. Các em hãy nhớ kỹ thông tin này, vì nó chính là "chìa khóa" cho Giai đoạn 3 (Ức chế phi cực đại) mà ta sẽ học ngay sau đây.
+
+Slide 9: PHÂN TÍCH KẾT QUẢ SAU GIAI ĐOẠN 2
+Người 1: Bây giờ các em nhìn lên màn hình, so sánh ảnh gốc và ảnh độ lớn Gradient Sobel ta vừa tính xong. Các em quan sát thấy hiện tượng gì?
+Người 2: Em thấy các đường nét của vật thể đã nổi lên rõ rệt trên nền đen rồi ạ. Nhưng mà... nó vẫn dày cộp nhiều pixel y như hạn chế ban đầu mình phân tích thầy ạ.
+Người 1: Chính xác! Vì ta mới chỉ dừng ở bước lấy đạo hàm, nên các đường biên lúc này vẫn còn rất dày. Nó vẫn chưa hề đáp ứng được tiêu chí "Định vị tốt" và "Phản ứng đơn lẻ" mà Canny đã đặt ra. Câu hỏi lớn bây giờ là: Làm thế nào để "gọt" những đường biên dày này chỉ còn đúng 1 pixel mà vẫn giữ được độ sắc nét?.
+
+Slide 10: LẬP TRÌNH GIAI ĐOẠN ĐẦU VỚI OPENCV
+Người 1: Thầy sẽ giải đáp câu hỏi đó ở phần tiếp theo, nhưng trước mắt thầy muốn giới thiệu nhanh về cách lập trình. Trong OpenCV, các em không cần phải tự code tay từng bước phức tạp, mà chỉ cần gọi hàm cv2.Canny(image, low_threshold, high_threshold).
+Người 2: Nghĩa là thư viện đã ngầm tự động chạy Bước 1 (Gaussian Blur) và Bước 2 (Sobel) ở bên dưới luôn hả thầy?
+Người 1: Đúng vậy em, nó đã được tối ưu hóa sẵn bên trong mã nguồn C++. Tuy nhiên, nếu các em lập trình để kiểm tra từng bước nhỏ, hãy cực kỳ cẩn thận với lỗi kiểu dữ liệu. Khi tính đạo hàm đi từ vùng sáng sang tối, giá trị có thể mang dấu Âm. Nếu lưu bằng chuẩn ảnh bình thường sẽ bị mất dữ liệu. Nhớ phải dùng kiểu cv2.CV_64F để chứa các ma trận trung gian nhằm bảo toàn dữ liệu biên nhé.
+
+Slide 11: BƯỚC 3 - ỨC CHẾ PHI CỰC ĐẠI (NON-MAXIMUM SUPPRESSION - NMS)
+Người 1: Bây giờ, để giải quyết vấn đề "biên dày" ở cuối Bước 2, ta sẽ tiến hành "gọt" nó xuống đúng 1 pixel thông qua kỹ thuật Ức chế phi cực đại (NMS).
+Người 2: Nghe tên có vẻ phức tạp quá thầy ạ. "Phi cực đại" nghĩa là sao ạ?
+Người 1: Em cứ hiểu đơn giản là "Cái gì không phải lớn nhất thì bỏ đi". Thuật toán sẽ quét qua toàn bộ bức ảnh. Tại mỗi pixel, máy tính sẽ nhìn sang hai pixel hàng xóm nằm dọc theo "Hướng Gradient" mà ta đã tính ở bước trước. Nếu độ lớn gradient của pixel hiện tại không phải là cực đại (lớn nhất) so với hai hàng xóm đó, nó sẽ bị "ức chế", tức là bị loại bỏ và gán thẳng về giá trị 0.
+Người 2: À, em hiểu rồi! Nghĩa là trên một cái vạch biên rộng 3-4 pixel, nó chỉ giữ lại đúng cái pixel sáng nhất nằm ở "đỉnh" thôi, còn mấy pixel mờ mờ hai bên sườn sẽ bị xóa sạch. Thế là ta có đường biên mỏng dính 1 pixel!
+Người 1: Rất thông minh! Đó chính xác là cách NMS hoạt động để giúp Canny đạt được mục tiêu "Phản ứng đơn lẻ".
+
+Slide 12: BƯỚC 4 - PHÂN NGƯỠNG KÉP (HYSTERESIS THRESHOLDING)
+Người 1: Dù đã có đường biên 1 pixel, nhưng sau Bước 3 ta vẫn đối mặt với một vấn đề: lốm đốm nhiễu tạo ra biên giả, và các nét vẽ biên thật lại bị đứt quãng. Để dọn dẹp triệt để, Canny dùng đến Phân ngưỡng kép. Thay vì 1 ngưỡng như cắt ngưỡng thông thường, ta dùng 2 giá trị: Ngưỡng Cao () và Ngưỡng Thấp ().
+Người 2: Tại sao lại cần đến hai ngưỡng hả thầy? Nó phân loại điểm ảnh như thế nào ạ?
+Người 1: Nó phân thành 3 nhóm rõ ràng. Pixel nào có độ lớn Gradient > thì chắc chắn là biên (Sure-edge), ta giữ lại. Pixel nào có độ lớn < thì chắc chắn không phải biên, ta vứt bỏ ngay.
+Người 2: Vậy còn bọn nằm kẹp giữa và thì sao thầy? Bỏ thì thương mà vương thì tội ạ?
+Người 1: Một sự ví von rất chuẩn! Bọn kẹp giữa được gọi là "Biên yếu" (Weak-edge). Số phận của chúng phụ thuộc vào sự liên kết: Chỉ khi nào một pixel biên yếu có liên kết trực tiếp với một pixel "Chắc chắn là biên" (Sure-edge), nó mới được giữ lại. Còn nếu nó đứng chơ vơ một mình thì sẽ bị xóa bỏ.
+
+Slide 13: SỨC MẠNH CỦA SỰ LIÊN KẾT BIÊN
+Người 1: Cơ chế "cứu vớt" biên yếu đó tạo ra sức mạnh cực lớn: Kỹ thuật này giúp kết nối các đoạn đứt gãy thành một nét liền mạch mà vẫn không bị vơ vét nhầm nhiễu.
+Người 2: Thưa thầy, lúc thực hành code hàm OpenCV thì hai thông số và này mình tự chỉnh tay ạ? Nếu em chỉnh sai thì sao?
+Người 1: Nếu em đặt Ngưỡng cao quá lớn, em sẽ đánh mất nhiều chi tiết, máy tính chỉ bắt được các đường nét chính của vật thể. Ngược lại, nếu hạ Ngưỡng thấp xuống quá nhỏ, các nét đứt sẽ được nối liền rất tốt, nhưng "rác" và nhiễu cũng theo đó mà bắt đầu xuất hiện nhiều hơn. Việc tinh chỉnh này đòi hỏi các em phải quan sát và thử nghiệm trên từng bức ảnh.
+
+Slide 14: SO SÁNH TRỰC DIỆN: SOBEL VS. CANNY
+Người 1: Giờ ta nhìn lại tổng thể. So với Sobel, thuật toán Canny vượt trội hoàn toàn. Sobel cho biên dày, dễ bị đứt đoạn và nhạy với nhiễu. Còn Canny thì sao?
+Người 2: Canny cho đường biên mỏng đúng 1 pixel, cực kỳ sạch nhiễu nhờ đã qua lọc Gaussian, lại còn liên tục và định vị vị trí siêu chuẩn xác nữa thầy nhỉ!
+Người 1: Hoàn toàn chính xác! Đó là lý do Canny được suy tôn là "Tiêu chuẩn vàng" cho các tác vụ cần trích xuất hình dáng vật thể một cách chính xác.
+
+Slide 15: TỔNG KẾT TIẾT 1 VÀ ĐỊNH HƯỚNG TIẾT 2
+Người 1: Tổng kết lại, hôm nay chúng ta đã đi qua pipeline 4 bước của Canny: Khử nhiễu, Tính Gradient, NMS và Phân ngưỡng kép. Kết quả trích xuất biên này là tiền đề sống còn cho nhận dạng ký tự (OCR) hay xe tự lái.
+Người 2: Em thấy thu được đường viền vật thể sắc nét thế này là xong rồi chứ ạ. Máy tính nhìn vào là nhận ra đồ vật luôn rồi chứ thầy?
+Người 1: Chưa đâu em! Với kết quả này, máy tính mới chỉ nhìn thấy một tập hợp các điểm ảnh (pixel) màu trắng rời rạc. Nó hoàn toàn không biết cấu trúc đó là "một đường thẳng" hay "một hình tròn".
+Người 2: Ồ, vậy làm sao để dạy máy tính "đọc hiểu" được các hình học đó từ những chấm trắng này ạ?
+Người 1: Đó chính là câu hỏi hấp dẫn mà chúng ta sẽ giải quyết trong Tiết 2 với kỹ thuật "Biến đổi Hough". Tiết học của chúng ta tạm dừng tại đây, các em về nhà nhớ mở máy lên code thử hàm cv2.Canny() với các mức ngưỡng khác nhau nhé! Chào các em!

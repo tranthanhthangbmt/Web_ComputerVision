@@ -1,0 +1,85 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT hai ba mờ (IT23M). Chào mừng các em đến với Tiết 3 của Chương 4 trong môn học Thị giác máy tính. Chủ đề của chúng ta hôm nay mang tên: "Phát hiện và mô tả đặc trưng ảnh", và mục tiêu chính là giải mã Đặc trưng Góc, tiếng Anh gọi là Corner Detection. Hôm nay, thầy trò ta sẽ cùng đi sâu vào hai thuật toán kinh điển là Harris và Shi-Tomasi.
+Người 2: Dạ thưa thầy, ở các tiết trước mình đã học kỹ về đường biên rồi. Vậy đặc trưng góc này có gì quan trọng hơn mà mình phải dành riêng một tiết để "giải mã" nó ạ?
+
+Slide 2: MỤC TIÊU HỆ THỐNG
+Người 1: Một câu hỏi dẫn dắt rất hay. Trước khi đi tìm câu trả lời, chúng ta hãy cùng xem mục tiêu hệ thống của bài học này. Đầu tiên, về kiến thức cốt lõi, các em sẽ cần thấu hiểu bản chất toán học của việc rà quét góc thông qua một cấu trúc gọi là Ma trận Hiệp phương sai.
+Người 1: Thứ hai, để các em không bị ngợp bởi toán học, chúng ta sẽ xây dựng trực giác không gian. Ta sẽ chuyển đổi những con số vô hồn như "trị riêng" thành các hình ảnh dễ hiểu như hình quả trứng và trái bóng. Cuối cùng, về kỹ năng thực chiến, các em sẽ áp dụng thư viện OpenCV, cụ thể là các hàm như xê-vê-hai chấm co-nờ-ha-rít (cv2.cornerHarris) và xê-vê-hai chấm gút-phi-chờ-tu-trắc (cv2.goodFeaturesToTrack) để tự tay bắt dính các đặc trưng này.
+Người 2: Nghe phần biến toán học thành hình ảnh quả trứng với trái bóng tò mò quá thầy ạ! Nhưng quay lại thắc mắc của em lúc nãy, rốt cuộc tại sao mình lại cần tìm góc thay vì chỉ dùng đường biên hả thầy?
+
+Slide 3: TẠI SAO ĐƯỜNG BIÊN LÀ CHƯA ĐỦ?
+Người 1: Các em hãy nhìn vào hình minh họa trên slide. Nếu chúng ta chỉ bám vào đường biên, hệ thống máy tính sẽ gặp phải một điểm mù gọi là "Hiện tượng trượt" (Aperture Problem). Tín hiệu ở đường biên không hề thay đổi khi em di chuyển dọc theo nó. Vì cạnh chỉ cung cấp thông tin theo một chiều duy nhất, nó sẽ gây nhầm lẫn cực lớn cho các hệ thống theo dõi đối tượng.
+Người 2: À, em hiểu rồi! Tức là nếu mình yêu cầu camera bám sát vào một cái mép bàn thẳng tắp, khi camera di chuyển dọc theo mép bàn đó, máy tính sẽ không nhận ra là nó đang dịch chuyển vì khúc nào trông cũng giống hệt khúc nào đúng không thầy?
+Người 1: Rất chính xác! Đó là lý do ta cần đến "Góc". Góc hoạt động như một "Điểm Neo" (Anchor Point). Mọi sự xê dịch khỏi góc, dù là lên xuống hay sang trái phải, đều tạo ra biến động mạnh về mặt hình ảnh. Tóm lại, góc là điểm neo ổn định nhất vì mọi hướng di chuyển đều làm thay đổi tín hiệu thị giác.
+
+Slide 4: TRỰC GIÁC CỐT LÕI - QUY TẮC CỬA SỔ TRƯỢT
+Người 1: Bây giờ, để các em hình dung rõ hơn, ta dùng trực giác cốt lõi mang tên "Quy tắc Cửa sổ trượt". Hãy tưởng tượng em có một ô vuông nhỏ xíu quét qua bức ảnh. Khi ô vuông này trượt đi, sẽ có ba trường hợp xảy ra. Trường hợp thứ nhất: tại "vùng phẳng", tức là vùng đồng màu, việc dịch chuyển cửa sổ không tạo ra bất kỳ sự thay đổi nào.
+Người 1: Trường hợp thứ hai là tại "cạnh". Như ta vừa nói, dịch chuyển dọc theo cạnh thì không đổi, nhưng dịch chuyển cắt ngang qua cạnh thì tín hiệu sẽ thay đổi lớn. Vậy trường hợp thứ ba là gì?
+Người 2: Dạ, chắc chắn là vùng góc rồi ạ! Ở vị trí góc thì dịch chuyển cửa sổ đi mọi hướng đều sẽ gây ra biến động dữ dội phải không thầy?
+Người 1: Tuyệt vời! Chính vì thế, chúng ta có một đúc kết quan trọng ở đây: Cỗ máy tìm góc của máy tính thực chất cực kỳ đơn giản. Nó chỉ là một cỗ máy đi tìm kiếm sự "biến động vạn hướng".
+
+Slide 5: TOÁN HỌC HÓA SỰ BIẾN ĐỘNG
+Người 1: Trực giác là như vậy, nhưng để lập trình, ta phải "toán học hóa" sự biến động này. Các em nhìn vào công thức trên slide. Đây là công thức tính Tổng sai số, ký hiệu là E của u và v. Nó đại diện cho sự thay đổi cường độ sáng khi ta dịch chuyển cửa sổ đi một khoảng u và v.
+Người 2: Thầy ơi, công thức này nếu đọc bằng lời cho dễ nhớ thì sẽ như thế nào ạ? Em thấy có vòng lặp tổng, hàm w và phép trừ bình phương.
+Người 1: Rất đơn giản, em đọc như thế này: E của u và v bằng tổng của hàm cửa sổ w của x và y, nhân với bình phương của hiệu số giữa I mới và I cũ. Trong đó, "I mới" là cường độ sáng của bức ảnh sau khi bị dịch chuyển một khoảng, tức là I của x cộng u, y cộng v. Còn "I cũ" chính là cường độ sáng của ảnh gốc ban đầu, ký hiệu là I của x và y.
+Người 1: Hàm cửa sổ w ở đây thường dùng bộ lọc Gaussian hoặc các ô vuông để giới hạn vùng mà ta quét qua. Em có nhận ra insight sâu xa của công thức này không?
+Người 2: Em nghĩ bản chất của nó chỉ là lấy ảnh lúc sau trừ đi ảnh lúc trước rồi bình phương lên để xem có khác biệt gì không thôi, chứ máy tính đâu có mắt để tự nhìn như con người đâu ạ.
+Người 1: Hoàn toàn chính xác! Máy tính không nhìn, nó chỉ trừ hai ma trận cho nhau và bình phương sự khác biệt. Ở chỗ nào mà kết quả E này lớn với mọi giá trị u và v, thì máy tính sẽ kết luận: "À, đây chính là một cái góc!".
+
+Slide 6: TRÁI TIM CỦA HARRIS: MA TRẬN STRUCTURE TENSOR
+Người 1: Ở phần trước, ta đã biết máy tính phải dịch chuyển cửa sổ đi mọi hướng để tìm sự biến động. Tuy nhiên, làm như vậy ở từng điểm ảnh một sẽ tốn vô vàn tài nguyên tính toán. Vì vậy, thuật toán Harris sử dụng một "trái tim" toán học mang tên Ma trận Cấu trúc, hay Structure Tensor.
+Người 1: Thay vì dịch chuyển cửa sổ thật, máy tính sẽ dùng Đạo hàm Sobel để lấy Gradient ngang (gọi là y xờ - Ix) và Gradient dọc (gọi là y dài - Iy). Sau đó, thông qua phép Khai triển Taylor cục bộ, toàn bộ thông tin hình học của điểm ảnh đó được nén gọn gàng vào một ma trận M kích thước 2 nhân 2.
+Người 2: Ma trận M này chứa những con số nào vậy thầy?
+Người 1: Ma trận M chứa ba thành phần chính: I x bình phương, tích của I x nhân I y, và I y bình phương. Insight ở đây là: Khai triển Taylor giúp ta không cần trượt cửa sổ một cách thủ công, mà vẫn thu được trọn vẹn đặc tính hình học cục bộ tại điểm đó.
+
+Slide 7: HÌNH HỌC CỦA TRỊ RIÊNG: QUẢ TRỨNG VÀ TRÁI BÓNG
+Người 1: Toán học của ma trận rất khô khan, nên chúng ta hãy chuyển nó sang ngôn ngữ hình học để dễ hiểu hơn. Từ Ma trận M, người ta tính ra được hai giá trị đặc biệt gọi là "Trị riêng", ký hiệu là lam-đa một (λ1) và lam-đa hai (λ2).
+Người 1: Các em hãy tưởng tượng sự phân bố Gradient của điểm ảnh tạo thành một hình Ellipse. Khi đó, lam-đa 1 và lam-đa 2 chính là độ dài hai bán trục của hình Ellipse này.
+Người 2: Ồ, vậy nếu em có một trị riêng rất lớn và một trị riêng cực kỳ nhỏ, thì hình Ellipse nó sẽ bị kéo dẹt ra giống như một "Quả trứng" đúng không thầy?
+Người 1: Rất thông minh! Hình "Quả trứng" với một trục dài và một trục ngắn báo hiệu cho máy tính biết đó là một CẠNH (Edge), vì tín hiệu chỉ biến động mạnh theo một chiều. Vậy nếu cả hai trị riêng đều lớn và dài xấp xỉ bằng nhau thì sao?
+Người 2: Lúc đó "Quả trứng" sẽ phình to ra và biến thành một "Trái bóng" tròn xoe ạ! Tròn xoe tức là biến động theo hướng nào cũng như nhau, vậy đây chắc chắn là GÓC (Corner) rồi!
+Người 1: Hoàn toàn chính xác! Khi quả trứng biến thành trái bóng, ta đã tìm thấy Góc.
+
+Slide 8: BẢNG CHẨN ĐOÁN ĐẶC TRƯNG KHÔNG GIAN
+Người 1: Dựa trên trực giác về quả trứng và trái bóng, các nhà khoa học đã vẽ ra một "Bảng chẩn đoán" trong không gian 2 chiều của lam-đa 1 và lam-đa 2.
+Người 1: Mọi điểm ảnh đều sẽ rơi vào 1 trong 3 vùng sinh thái của đồ thị này. Nếu cả hai lam-đa đều xấp xỉ bằng không, đó là Vùng Phẳng (Flat). Nếu một lam-đa lớn, một lam-đa nhỏ, đó là vùng Cạnh (Edge) màu xanh dương.
+Người 2: Và vùng màu đỏ trên cùng bên phải, nơi cả hai lam-đa đều cùng mang giá trị lớn, chính là "lãnh địa" của Góc (Corner) phải không thầy?
+Người 1: Đúng vậy. Nhìn vào đồ thị này, máy tính có thể phân loại ngay lập tức đâu là nền, đâu là biên, và đâu là điểm neo cần tìm.
+
+Slide 9: HÀM PHẢN HỒI HARRIS: ĐƯỜNG TẮT KỸ THUẬT
+Người 1: Trực giác là hoàn hảo, nhưng trong thực tế lập trình, việc giải phương trình để tìm ra chính xác con số lam-đa 1 và lam-đa 2 đòi hỏi phép khai căn bậc hai. Với hàng triệu pixel, việc khai căn sẽ làm hệ thống chạy rất chậm.
+Người 2: Vậy tác giả Harris đã làm thế nào để lách qua rào cản tốc độ này ạ?
+Người 1: Ông ấy đã tìm ra một "đường tắt kỹ thuật" cực kỳ thông minh nhờ ứng dụng Định lý Vi-ét. Harris tạo ra một Hàm phản hồi, ký hiệu là R. Công thức đọc là: R bằng Định thức của ma trận M trừ đi k nhân với bình phương Vết của ma trận M.
+Người 1: Theo Vi-ét, Định thức (det) chính là phép nhân lam-đa 1 nhân lam-đa 2. Còn Vết (trace) chính là phép cộng lam-đa 1 cộng lam-đa 2. Nhờ công thức này, máy tính chỉ cần dùng phép nhân và phép cộng trực tiếp trên các phần tử của ma trận M mà không cần khai căn. Tham số k ở đây là một hằng số độ nhạy do người dùng tự chọn, thường nằm trong khoảng không phẩy không bốn (0.04) đến không phẩy không sáu (0.06).
+
+Slide 10: CÚ LỘT XÁC SHI-TOMASI: ĐƠN GIẢN LÀ TỐI THƯỢNG
+Người 2: Em thấy thuật toán Harris rất hay, nhưng cái tham số k kia có vẻ hơi rườm rà vì mình phải tự đoán và thử nghiệm để chọn ra giá trị tốt nhất đúng không thầy? Lỡ chọn sai k thì hệ thống nhận diện nhầm mất.
+Người 1: Đó chính là một câu hỏi mang tầm vóc của một nhà nghiên cứu! Sự phụ thuộc vào hằng số k chính là điểm yếu của Harris. Và vài năm sau, hai nhà khoa học Shi và Tomasi đã xuất hiện để "lột xác" thuật toán này với triết lý: Đơn giản là Tối thượng.
+Người 1: Họ đã thẳng tay vứt bỏ công thức tính R phức tạp chứa hằng số k của Harris. Thay vào đó, hàm Response của Shi-Tomasi chỉ đơn giản là: R bằng giá trị nhỏ nhất giữa lam-đa 1 và lam-đa 2 (R = min(λ1, λ2)).
+Người 2: Ơ, sao lại chỉ lấy giá trị nhỏ nhất ạ? Như vậy có bỏ sót thông tin của cái lam-đa lớn hơn không thầy?
+Người 1: Insight ở đây cực kỳ sắc bén: Để trở thành một cái Góc (hay hình trái bóng), thì cả hai lam-đa đều phải lớn. Do đó, ta chỉ cần xét "kẻ yếu nhất" tức là trị riêng nhỏ nhất. Nếu "kẻ yếu nhất" (min) mà vẫn vượt qua được một ngưỡng an toàn ta đặt ra, thì chắc chắn cả hai đều lớn, và đó đích thị là một Góc sắc nét. Đơn giản, không cần đoán hằng số, nhưng độ ổn định lại vượt trội hoàn toàn!
+
+Slide 11: THỰC CHIẾN OPENCV #1: BẮT GÓC VỚI HARRIS
+Người 1: Chào mừng các em quay trở lại. Sau khi đã thấu hiểu tường tận nguyên lý toán học, bây giờ chúng ta sẽ xắn tay áo lên và bước vào phần "Thực chiến". Để bắt góc bằng thuật toán Harris, trong OpenCV chúng ta sử dụng hàm xê-vê-hai chấm co-nờ-ha-rít (cv2.cornerHarris).
+Người 2: Thưa thầy, trong hàm này em thấy có truyền vào các tham số như blockSize, ksize, và k. Chúng có ý nghĩa cụ thể là gì ạ?
+Người 1: Rất tinh mắt! blockSize chính là kích thước của cửa sổ trượt, ví dụ bằng 2 tức là ma trận 2 nhân 2 pixel. Bề mặt vật thể càng lớn thì các em càng phải chỉnh block này to lên. ksize là kích thước lõi lọc Sobel dùng để tính đạo hàm theo hướng x và y. Cuối cùng, tham số k chính là hằng số độ nhạy thực nghiệm của thuật toán Harris, thường ta để bằng không phẩy không bốn (0.04).
+Người 2: Dạ em hiểu rồi. Còn cái dòng "Pro-Tip" cảnh báo màu đỏ ở dưới cùng là sao hả thầy?
+Người 1: Đó là một kinh nghiệm xương máu khi code. Hàm này rất "khó tính" với định dạng dữ liệu đầu vào. Các em luôn nhớ phải chuyển ảnh sang hệ màu Xám (Grayscale) và bắt buộc phải ép kiểu dữ liệu về dạng số thực ba mươi hai bit (float32) trước khi đưa vào hàm nhé.
+
+Slide 12: THỰC CHIẾN OPENCV #2: KỸ THUẬT SHI-TOMASI
+Người 1: Tiếp theo, để sử dụng thuật toán Shi-Tomasi ưu việt hơn, OpenCV cung cấp cho ta một hàm có cái tên rất "kêu": xê-vê-hai chấm gút-phi-chờ-tu-trắc (cv2.goodFeaturesToTrack).
+Người 2: Ồ, tên hàm dịch ra tiếng Việt là "những đặc trưng tốt để theo dõi" luôn. Các tham số của nó nhìn cũng rất trực quan thầy ạ. Em đoán maxCorners=25 nghĩa là máy tính chỉ lấy 25 góc tốt nhất trong ảnh đúng không thầy?
+Người 1: Hoàn toàn chính xác! Nó sẽ chỉ lấy 25 điểm xịn nhất và loại bỏ đi các góc yếu. Tiếp đến, qualityLevel=0.01 là mức chất lượng tối thiểu. Máy tính sẽ tìm ra điểm hoàn hảo nhất ảnh, và các điểm khác muốn được giữ lại thì điểm số tối thiểu phải bằng 1% so với điểm hoàn hảo đó.
+Người 2: Vậy còn tham số minDistance bằng 10 thì để làm gì ạ?
+Người 1: Đó là "bán kính lãnh thổ độc quyền" em ạ. Tham số này đảm bảo rằng trong phạm vi bán kính 10 pixel xung quanh một góc đã chọn, sẽ không có một góc nào khác được phép tồn tại. Việc này giúp hệ thống tránh bị lỗi nhận diện các góc mọc sát nhau thành từng chùm, gây nhiễu dữ liệu.
+
+Slide 13: GÓT CHÂN ACHILLES CỦA GÓC (SCALE PROBLEM)
+Người 1: Thuật toán Harris và Shi-Tomasi rất tuyệt vời, nhưng không có gì là hoàn hảo. Chúng có một "Gót chân Achilles" cực kỳ nguy hiểm mang tên: Vấn đề Tỉ lệ (Scale Problem). Các em hãy nhìn vào hình minh họa. Ở khoảng cách bình thường, cửa sổ trượt ôm trọn một cái góc và máy tính nhận diện thành công.
+Người 2: Nhưng khi phóng to ảnh lên gấp 10 lần (10x), cái góc đó cũng bị phình to ra. Lúc này, kích thước cửa sổ trượt vẫn giữ nguyên nên nó chỉ nằm lọt thỏm trên một đường thẳng của cạnh thôi phải không thầy?
+Người 1: Tư duy của em rất nhạy bén! Đó chính là Nghịch lý của sự phóng to. Khi đối tượng thay đổi tỉ lệ, một góc hoàn hảo ở khoảng cách xa sẽ biến thành một đường thẳng (cạnh) khi tiến lại gần camera. Thuật toán Harris hay Shi-Tomasi sẽ hoàn toàn bất lực và nhận diện nhầm trong trường hợp này.
+
+Slide 14: TỔNG KẾT TIẾT 3 & HÉ MỞ TƯƠNG LAI
+Người 1: Vậy là tiết học hôm nay của chúng ta đã đi đến hồi kết. Tóm tắt lại, ở Level 1, ta dùng Sobel để tìm Cạnh. Lên Level 2, ta dùng Harris và Shi-Tomasi để tìm Góc—với bản chất là sự biến thiên Gradient vạn hướng. Đặc biệt, cú lột xác hàm lấy giá trị nhỏ nhất min của trị riêng lam-đa 1 và lam-đa 2 trong Shi-Tomasi là bản nâng cấp hoàn hảo của Harris.
+Người 2: Nhưng thầy ơi, cái "Gót chân Achilles" kia làm em băn khoăn quá. Nếu góc bị phá vỡ khi ta phóng to thu nhỏ ảnh, vậy làm thế nào máy tính có thể nhận diện khuôn mặt người ở bất kể xa gần được ạ? Vậy Level 3 sẽ là gì thưa thầy?
+Người 1: Một câu hỏi khép lại xuất sắc! Đó chính là câu hỏi đã làm đau đầu các nhà khoa học máy tính trong suốt nhiều năm. Để giải quyết nó, ta cần tiến lên Level 3: Sự Bất biến Tỉ lệ (Scale Invariance).
+Người 1: Các em hãy về nhà chuẩn bị tâm trí, bởi vì trong Tiết 4 sắp tới, chúng ta sẽ đón nhận một ma thuật thực sự của thị giác máy tính: Thuật toán SIFT và SURF! Tiết học hôm nay đến đây là kết thúc, chào các em!

@@ -1,0 +1,88 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Trong các tiết học trước của môn Thị giác máy tính, chúng ta đã làm quen với việc phát hiện đường biên và các góc cạnh. Hôm nay, thầy trò ta sẽ bước vào Tiết 5 của Chương 4, khám phá một thuật toán được mệnh danh là "Tiêu chuẩn vàng" trong mô tả đặc trưng ảnh: Thuật toán SIFT.
+Người 2: Dạ thưa thầy, em thấy tên thuật toán là SIFT. Nó là viết tắt của từ gì và tại sao lại được gọi là "tiêu chuẩn vàng" vậy ạ?
+Người 1: SIFT là viết tắt của "Scale-Invariant Feature Transform", dịch ra tiếng Việt là "Biến đổi đặc trưng bất biến với tỷ lệ". Nó được gọi là tiêu chuẩn vàng vì độ chính xác và khả năng nhận diện vật thể cực kỳ mạnh mẽ, bất chấp vật thể đó bị phóng to, thu nhỏ, hay xoay nghiêng. Chúng ta sẽ cùng giải mã sức mạnh này ngay bây giờ.
+ 
+Slide 2: MỤC TIÊU BÀI HỌC
+Người 1: Trước khi đi sâu, chúng ta cùng lướt qua mục tiêu của tiết học hôm nay. Về mặt kiến thức, các em cần hiểu khái niệm "Bất biến với tỷ lệ" là gì, và cơ chế toán học đằng sau Kim tự tháp Gaussian cùng phép trừ DoG. Về quy trình, chúng ta sẽ nắm vững đường ống 4 giai đoạn cốt lõi của SIFT.
+Người 2: Vậy còn về kỹ năng thực hành thì sao thưa thầy? Trong các bài trước mình đã học đặc trưng góc rồi, hôm nay có gì khác biệt ạ?
+Người 1: Câu hỏi rất hay! Kỹ năng quan trọng nhất hôm nay là các em phải phân biệt được sự khác nhau giữa một "Đặc trưng điểm đơn thuần" như Góc, và một "Bộ mô tả đặc trưng" định lượng. Thầy lấy ví dụ: Thuật toán tìm góc giống như việc em chỉ ra "Đây là ngã tư đường", còn Bộ mô tả của SIFT sẽ cung cấp cho em "Tọa độ GPS chính xác, có bao nhiêu cái cây, vỉa hè màu gì tại ngã tư đó". Nó chi tiết và độc bản hơn rất nhiều!
+ 
+Slide 3: TẠI SAO CẦN SIFT? (VẤN ĐỀ CỦA TỶ LỆ ẢNH)
+Người 1: Các em hãy nhìn vào hình minh họa trên slide. Ở bài trước, ta học thuật toán góc Harris, nó hoạt động rất tốt ở tỷ lệ cố định. Nhưng điều gì sẽ xảy ra nếu ta phóng to bức ảnh đó lên gấp nhiều lần?
+Người 2: Á chà... trên hình cho thấy khi phóng to lên, cái góc nhọn ban đầu tự nhiên bị doãi ra, trông giống hệt như một đường thẳng thưa thầy. Vậy là thuật toán Harris sẽ bị "mù" và bỏ qua cái góc này đúng không ạ?
+Người 1: Chính xác! Đó là sự thất bại khi đối tượng bị thay đổi tỷ lệ. Để giải quyết vấn đề này, năm 2004, nhà nghiên cứu David Lowe đã đề xuất SIFT. Thay vì chỉ tìm một điểm sáng rời rạc, SIFT trích xuất đặc trưng mang theo ba thông tin sống còn: Vị trí tọa độ x và y, Tỷ lệ của điểm đó, và Hướng của nó.
+Người 2: Nghĩa là SIFT không chỉ biết "điểm đó nằm ở đâu", mà còn biết nó "to nhỏ cỡ nào" và "đang xoay về hướng nào" đúng không thầy?
+Người 1: Đúng vậy. Nhờ sức mạnh lõi này, SIFT đạt được tính bất biến với tỷ lệ, góc nhìn và cả ánh sáng. Lấy ví dụ thực tế: Em chụp logo của một cốc cà phê. Dù em để cốc cà phê đó ở tít đằng xa, xoay nó lộn ngược, hay chụp trong bóng râm, SIFT vẫn nhận ra đó là cùng một cái logo nhờ 3 thông tin sống còn này.
+ 
+Slide 4: SIFT PIPELINE - QUY TRÌNH 4 GIAI ĐOẠN
+Người 1: Để tạo ra được bộ mô tả thần thánh đó, SIFT không làm trong một bước mà trải qua một dây chuyền sản xuất gồm 4 giai đoạn. Giai đoạn 1 là Phát hiện cực trị trong Không gian tỷ lệ. Giai đoạn 2 là Định vị Keypoint chính xác. Giai đoạn 3 là Gán hướng chính. Và cuối cùng, Giai đoạn 4 là Tạo bộ mô tả dưới dạng một vector số gồm 128 chiều.
+Người 2: Nghe giống như một quy trình tuyển chọn hoa hậu thầy nhỉ. Qua mỗi vòng lại tinh lọc và trang bị thêm "vũ khí" cho các điểm ảnh?
+Người 1: Sự so sánh rất thú vị! Đúng vậy, hàng chục ngàn điểm ảnh thô sẽ đi qua giai đoạn 1 và 2 để bị loại trừ những điểm kém chất lượng. Những điểm "tinh anh" sống sót sẽ được trao cho một "chiếc la bàn" ở giai đoạn 3, và cuối cùng được cấp một "thẻ căn cước" dài 128 con số ở giai đoạn 4 để không bao giờ bị nhầm lẫn với ai khác. Giờ chúng ta sẽ mổ xẻ ngay Giai đoạn 1.
+ 
+Slide 5: [BƯỚC 1] PHÁT HIỆN CỰC TRỊ TRONG KHÔNG GIAN TỶ LỆ
+Người 1: Mục tiêu của bước này là tìm ra các điểm ổn định ở mọi quy mô, từ nhỏ xíu đến to đùng. Để làm được điều này, SIFT sử dụng công cụ toán học đầu tiên là "Kim tự tháp Gaussian". Hiểu đơn giản là máy tính sẽ tạo ra nhiều phiên bản của cùng một bức ảnh: từ rõ nét ban đầu, sau đó làm mờ dần và thu nhỏ kích thước lại qua nhiều tầng khác nhau.
+Người 2: Khoan đã thầy ơi, mình đang muốn tìm chi tiết sắc nét, tại sao lại phải cố tình làm mờ bức ảnh đi ạ?
+Người 1: Đó là một thủ thuật thị giác rất hay. Em thử nheo mắt lại nhìn một cái cây xem. Khi làm mờ, những chiếc lá nhỏ lẻ tẻ sẽ biến mất, chỉ giữ lại những cấu trúc ổn định nhất như thân cây hay cành lớn. Máy tính cũng làm vậy để tìm ra các cấu trúc bất biến. Tiếp theo, SIFT dùng phép trừ DoG, tức là lấy hai bức ảnh Gaussian kề nhau trừ đi nhau, để làm nổi bật lên các vùng cấu trúc cạnh và góc.
+Người 2: Vậy sau khi có tập hợp các bức ảnh đã trừ đi nhau đó, máy tính tìm điểm đặc trưng như thế nào ạ? Công thức toán học có phức tạp không thầy?
+Người 1: Không hề phức tạp, thuật toán dùng một cơ chế dò tìm cực kỳ trực quan thay vì giải phương trình. Nó quét trong không gian 3 chiều: bao gồm tọa độ mặt phẳng ảnh và trục tỷ lệ độ mờ. Nó sẽ xét một điểm ảnh hiện tại, và so sánh với 26 điểm hàng xóm xung quanh nó.
+Người 2: Tại sao lại là con số 26 thưa thầy? Bình thường em thấy trên mặt phẳng chỉ có 8 điểm xung quanh thôi mà?
+Người 1: Đúng là trên cùng một bức ảnh thì có 8 điểm xung quanh. Nhưng vì ta đang quét không gian 3D, máy tính sẽ lấy thêm 9 điểm ở bức ảnh mờ hơn tầng trên, và 9 điểm ở bức ảnh nét hơn tầng dưới. Tổng cộng là 8 cộng 9 cộng 9 bằng 26 điểm. Nếu điểm hiện tại lớn nhất hoặc nhỏ nhất so với cả 26 điểm hàng xóm này, nó chính thức được chọn làm Cực trị.
+  
+Slide 6: [BƯỚC 2] ĐỊNH VỊ KEYPOINT CHÍNH XÁC
+Người 1: Chào mừng các em quay lại với đường ống SIFT. Ở Bước 1, thông qua Kim tự tháp Gaussian, chúng ta đã gom được một rổ khổng lồ các điểm được gọi là "ứng cử viên cực trị". Tuy nhiên, chất lượng của chúng rất thượng vàng hạ cám. Bước 2 chính là một chiếc phễu lọc khắc nghiệt để loại bỏ những điểm nhiễu và không ổn định. Các em hãy nhìn vào hình minh họa ngôi nhà trên slide. Ban đầu chúng ta có tới 832 điểm khởi tạo.
+Người 2: Chà, một bức ảnh nhỏ mà có tới hơn 800 điểm. Vậy chiếc phễu lọc này hoạt động dựa trên tiêu chí nào để loại bớt điểm vậy thầy?
+Người 1: Máy tính sẽ áp dụng hai tiêu chí thanh lọc rất khắt khe. Tiêu chí 1: Loại bỏ các điểm có độ tương phản thấp, nghĩa là những điểm nằm trên vùng quá nhạt nhòa, dễ bị nhiễu do ánh sáng. Trải qua tiêu chí này, ta rớt xuống còn 729 điểm. Tiêu chí 2 mới là lúc loại nhiều nhất: Máy tính sẽ vứt bỏ tất cả các điểm nằm trên đường cạnh.
+Người 2: Ơ kìa thầy, ở các chương trước mình học thì đường biên, đường cạnh mang rất nhiều thông tin hình dáng cơ mà. Tại sao thuật toán SIFT lại "hắt hủi" các điểm nằm trên cạnh ạ?
+Người 1: Đó là vì "hiệu ứng trượt" hay còn gọi là vấn đề khẩu độ. Nếu em có một điểm nằm trên một đường thẳng tắp, khi em trượt điểm đó dọc theo đường thẳng, tín hiệu hình ảnh trông không có gì thay đổi cả. Máy tính sẽ bị bối rối không biết tọa độ chính xác là ở đâu trên cái rìa đó. SIFT sử dụng tỷ lệ của các độ cong chính để tính toán và thẳng tay loại bỏ các điểm này. Kết quả, từ 832 điểm ban đầu, ta chỉ giữ lại 536 điểm sắc nét nhất, ổn định nhất.
+ 
+Slide 7: [BƯỚC 3] GÁN HƯỚNG (ORIENTATION ASSIGNMENT)
+Người 1: Sở hữu 536 điểm tinh anh trong tay, chúng ta bước sang Giai đoạn 3. Mục tiêu tối thượng của bước này là trang bị cho mỗi điểm đặc trưng tính năng "Bất biến với phép xoay". Ý tưởng lõi ở đây cực kỳ thông minh: Thay vì dùng hệ trục tọa độ gốc x và y của toàn bức ảnh, thuật toán sẽ cấp cho mỗi keypoint một hướng "kim chỉ nam" độc lập của riêng nó.
+Người 2: Thầy giải thích rõ hơn về cái "kim chỉ nam" này được không ạ? Em chưa hình dung được nó giúp ích gì khi ảnh bị lộn ngược.
+Người 1: Thầy lấy một ví dụ thực tế thế này. Giả sử em bị bịt mắt và thả xuống một khu rừng. Nếu em cứ nhớ theo kiểu "cái cây ở bên phải, tảng đá ở bên trái", thì chỉ cần em xoay người đi một vòng là em mất phương hướng ngay. Nhưng nếu em có một chiếc la bàn, em chốt "Hướng Bắc ở đằng kia", và em nhớ "Cái cây nằm lệch hướng Bắc 30 độ", thì dù em lộn nhào hay xoay mòng mòng, em vẫn xác định được đúng cái cây đó. Thuật toán SIFT cũng làm y hệt vậy! Nó tìm ra một hướng chủ đạo của điểm ảnh, và sau này mọi tính toán hình học xung quanh điểm đó đều phải xoay theo cái hướng chủ đạo này. Do đó, bức ảnh có xoay 360 độ thì đặc trưng vẫn không hề thay đổi.
+ 
+Slide 8: [BƯỚC 3] THUẬT TOÁN XÁC ĐỊNH HƯỚNG CHÍNH
+Người 2: Thuật toán quá thông minh! Nhưng làm sao máy tính biết được đâu là "Hướng Bắc" của cái điểm ảnh nhỏ xíu đó thưa thầy?
+Người 1: Quá trình tìm "Hướng Bắc" diễn ra qua 4 thao tác nhỏ. Đầu tiên, máy tính xét một khu vực hình tròn bao quanh điểm keypoint. Thứ hai, nó đi đo độ lớn và hướng thay đổi cường độ sáng, hay còn gọi là gradient, cho mọi pixel nhỏ xíu nằm trong vùng đó.
+Người 2: Đo xong một đống thông tin như vậy thì máy tính gom lại bằng cách nào ạ?
+Người 1: Đây là lúc dùng đến công cụ thống kê: Biểu đồ Histogram. Máy tính chia vòng tròn 360 độ thành 36 cái cột, hay còn gọi là bin, mỗi cột đại diện cho 10 độ. Mỗi pixel trong vùng sẽ bỏ một phiếu bầu vào cái cột tương ứng với hướng gradient của nó,. Điểm thú vị là phiếu bầu này nặng hay nhẹ phụ thuộc vào độ lớn của gradient và một hàm trọng số Gaussian,. Cuối cùng, thao tác thứ tư: Cột nào trên biểu đồ cao nhất, hướng đó chính thức được phong làm Hướng chính của Keypoint,.
+ 
+Slide 9: [BƯỚC 3] THẺ CĂN CƯỚC CỦA KEYPOINT SIFT
+Người 1: Kết thúc Giai đoạn 3, mỗi điểm ảnh tinh anh của chúng ta chính thức được cấp một tấm "Thẻ căn cước" định danh độc bản. Nó không còn là một điểm vô danh nữa.
+Người 2: Vậy trên tấm thẻ căn cước đó ghi những thông tin gì thưa thầy?
+Người 1: Có 3 thông tin sống còn. Thứ nhất là Vị trí tọa độ x và y chính xác trên ảnh. Thứ hai là Tỷ lệ sigma, cho biết nó tồn tại ổn định ở độ phân giải phóng to hay thu nhỏ cỡ nào. Và thứ ba, chính là Hướng chính góc theta, cái "la bàn" chống lại phép xoay mà chúng ta vừa tính xong.
+Người 2: Vị trí, tỷ lệ và hướng. Đã có đủ 3 thông tin này rồi thì ta có thể mang đi so sánh để tìm vật thể được chưa ạ?
+Người 1: Vẫn chưa đủ em ạ! Ba thông tin này mới chỉ lập nên một hệ quy chiếu không gian hoàn hảo. Để máy tính so khớp được "điểm này" với "điểm kia", ta cần một bản mô tả chi tiết xem xung quanh cái điểm đó cấu trúc hình dáng ra sao. Đó chính là nhiệm vụ của bước cuối cùng.
+ 
+Slide 10: [BƯỚC 4] TẠO BỘ MÔ TẢ ĐẶC TRƯNG (DESCRIPTOR)
+Người 1: Giai đoạn 4, Giai đoạn quan trọng nhất: Chế tạo bộ mô tả Descriptor để máy tính có thể so sánh định lượng. Các em quan sát vòng tròn trên slide. Máy tính sẽ lấy một vùng ảnh vuông vức có kích thước 16 nhân 16 pixel xung quanh keypoint. Xin lưu ý, vùng ảnh này đã được bẻ xoay góc lại cho khớp với hướng kim chỉ nam ở Bước 3.
+Người 2: Vùng 16 nhân 16 là có tới 256 pixel. Máy tính sẽ biến đổi chúng thành một vector số như thế nào ạ? Chẳng lẽ lấy hết 256 giá trị?
+Người 1: Không, lấy giá trị thô sẽ rất dễ bị sai lệch do nhiễu. David Lowe đã có một cách mã hóa tuyệt đỉnh,. Vùng 16 nhân 16 đó được chia nhỏ lưới ra thành 16 ô vuông con, mỗi ô vuông con có kích thước là 4 nhân 4 pixel,. Trong mỗi ô con 4 nhân 4 này, máy tính lại lập một biểu đồ histogram với 8 hướng gradient cơ bản,.
+Người 2: À, em nhẩm tính thử: Ta có 16 ô vuông con, mỗi ô lại sinh ra 8 con số hướng. Vậy 16 nhân 8 là... 128!
+Người 1: Chính xác tuyệt đối! Thuật toán ghép tất cả lại tạo thành một vector dài đúng 128 chiều,. 128 con số này đóng vai trò như chuỗi ADN định danh độc nhất vô nhị cho cái điểm đó. Đó chính là lý do vì sao SIFT được gọi là "Tiêu chuẩn vàng", nó cung cấp một định dạng cực kỳ mạnh mẽ để máy tính có thể nhận ra vật thể ở bất cứ đâu,.
+  
+Slide 11: [BƯỚC 4] GIẢI MÃ VECTOR 128 CHIỀU
+Người 1: Chúng ta tiếp tục mổ xẻ Bước 4 trên slide 11. Ở cuối slide trước, thầy có nói thuật toán chia vùng ảnh xung quanh điểm đặc trưng thành mười sáu ô nhỏ. Phương trình thiết kế của SIFT rất thú vị: trong mỗi ô vuông bốn nhân bốn đó, thuật toán tính toán một biểu đồ gồm tám hướng gradient cơ bản. Em hãy làm phép nhân đơn giản: mười sáu ô nhỏ nhân với tám hướng, ta được bao nhiêu?
+Người 2: Dạ, mười sáu nhân tám là một trăm hai mươi tám. Vậy đây chính là nguồn gốc của con số một trăm hai mươi tám chiều thưa thầy?. Trông nó giống như một chuỗi gen mã hóa thông tin của vật thể vậy.
+Người 1: Sự so sánh rất hình tượng! Đúng vậy, vector một trăm hai mươi tám chiều này đóng vai trò như chuỗi ADN của điểm đặc trưng, nó nắm bắt mọi chi tiết về sự phân bố cạnh cục bộ. Nhờ tấm "bản đồ gen" quá chi tiết này, máy tính có thể phân biệt các điểm với nhau cực kỳ rõ ràng, khiến tỷ lệ nhầm lẫn khi so khớp gần như giảm xuống bằng không.
+ 
+Slide 12: [XỬ LÝ HẬU KỲ]: BẤT BIẾN VỚI CHIẾU SÁNG
+Người 1: Tuy nhiên, ngay cả ADN cũng có thể bị sai lệch nếu môi trường thay đổi quá khắc nghiệt. Ở slide 12, ta giải quyết vấn đề ánh sáng: Việc thay đổi độ sáng hoặc độ tương phản của camera có thể làm hỏng các giá trị trong vector vừa tạo ra.
+Người 2: Thưa thầy, ví dụ như em chụp logo cốc cà phê ngoài nắng gắt, xong chụp lại trong bóng râm thì các con số trong vector sẽ bị chênh lệch ạ?
+Người 1: Hoàn toàn chính xác. Để khắc phục, SIFT trải qua một quy trình hậu kỳ gồm ba thao tác. Thao tác thứ nhất là Chuẩn hóa lần một, đưa vector về độ dài đơn vị. Việc này giống như em đồng bộ lại thang đo, giúp triệt tiêu hoàn toàn ảnh hưởng của ánh sáng khi nó thay đổi theo một tỷ lệ tuyến tính đồng đều trên toàn ảnh.
+Người 2: Thế nhỡ chụp ảnh có đánh đèn flash bị chói lóa tại một điểm thì sao thầy? Chuẩn hóa có cứu được không ạ?
+Người 1: Đó là lý do ta cần thao tác thứ hai: Cắt ngưỡng hay còn gọi là Clipping. Thuật toán sẽ giới hạn mọi giá trị trong vector ở mức tối đa là không phẩy hai, nhằm chống lại hiệu ứng lóa sáng cục bộ hoặc thay đổi phi tuyến đó. Sau khi cắt gọt xong, máy tính thực hiện thao tác thứ ba là Chuẩn hóa lần hai, trả lại một vector đạt trạng thái ổn định tối đa, sẵn sàng mang đi hệ thống so khớp.
+ 
+Slide 13: TẠI SAO SIFT LÀ TIÊU CHUẨN VÀNG?
+Người 1: Giờ thì ở slide 13, chúng ta có thể tự hào tổng kết lại lý do SIFT được mệnh danh là "Tiêu chuẩn vàng". Sức mạnh của nó được định hình bởi ba trụ cột. Trụ cột thứ nhất là Bất biến tỷ lệ, đạt được nhờ Kim tự tháp Gaussian và phép trừ DoG ở Bước 1. Trụ cột thứ hai là gì, em có nhớ không?
+Người 2: Dạ, trụ cột thứ hai là Bất biến với phép xoay, đạt được nhờ việc gán hướng chính cục bộ ở Bước 3. Và trụ cột thứ ba chính là Bất biến Chiếu sáng nhờ bước Chuẩn hóa Vector một trăm hai mươi tám chiều ở hậu kỳ mà ta vừa học xong ạ.
+Người 1: Tuyệt vời, em nắm bài rất vững! Nhờ ba lớp áo giáp này, SIFT có độ mạnh vượt trội, chống chịu cực tốt với hình ảnh bị nhiễu, biến dạng hình học nhẹ, hoặc khi thay đổi góc nhìn chéo. Ứng dụng thực tế của SIFT là vô tận: từ việc so khớp các biển báo giao thông trong tìm kiếm vật thể, đóng vai trò làm khung xương cho việc ghép ảnh toàn cảnh Panorama, cho đến tái tạo không gian ba chiều.
+ 
+Slide 14: TỔNG KẾT TIẾT 5 VÀ ĐỊNH HƯỚNG TIẾT 6
+Người 1: Chúng ta đi đến slide tổng kết của tiết học hôm nay. Đúc kết lại, quy trình SIFT đi từ việc tạo Không gian tỷ lệ, đến Định vị, Gán hướng, và cuối cùng là sinh ra Vector một trăm hai mươi tám chiều. Thành tựu lớn nhất của David Lowe là tạo ra một bộ mô tả cực kỳ ổn định và mang tính độc bản cao nhất thế giới tại thời điểm đó.
+Người 2: Nhưng thưa thầy, nãy giờ nghe quy trình tính toán em thấy nó rất cồng kềnh. Từ việc xây kim tự tháp, tính đạo hàm, đến tạo biểu đồ không gian. Liệu máy tính xử lý có mất nhiều thời gian không ạ?
+Người 1: Em có tư duy của một kỹ sư tối ưu hóa rất tốt! Em đã nhìn ra được "Điểm nghẽn" chí mạng của SIFT. Hạn chế duy nhất của nó chính là chi phí tính toán khổng lồ. Nó rất tốn dung lượng RAM và sức mạnh CPU do phải xử lý vector dài và thực hiện các phép tích chập Gaussian liên tục.
+Người 2: Chà, vậy nếu ứng dụng cho Xe tự lái hoặc Robot yêu cầu phản xạ ngay lập tức trong thời gian thực thì SIFT chắc chắn sẽ bị đuối sức đúng không thầy?.
+Người 1: Chính xác! Bài toán thực tế đặt ra là: Làm sao giữ được độ chính xác tuyệt vời của SIFT nhưng phải đạt tốc độ thời gian thực cho xe tự lái?. Lời giải sẽ nằm ở Tiết học sau, khi chúng ta khám phá thuật toán SURF — người anh em siêu tốc của SIFT — cùng với bí mật toán học mang tên "Ảnh tích phân".
+Người 1: Cảm ơn các em, chúng ta kết thúc bài học Chương 4 - Phần 5 tại đây. Hẹn gặp lại các em ở tiết sau!
+

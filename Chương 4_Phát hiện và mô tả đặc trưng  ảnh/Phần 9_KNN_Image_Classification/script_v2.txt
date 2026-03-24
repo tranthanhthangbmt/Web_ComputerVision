@@ -1,0 +1,95 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp I T 23 M. Chào mừng các em đến với tiết học thứ 9, cũng là tiết học khép lại Chương 4 và mở ra một cánh cửa hoàn toàn mới: Chương 5 - Phân Lớp Ảnh. Chủ đề của chúng ta hôm nay là "Phân lớp ảnh có giám sát và Thuật toán K-Hàng xóm gần nhất", hay còn gọi tắt là K N N.
+Người 2: Dạ thưa thầy Thắng, mấy tuần nay lớp mình toàn học về cách tìm "điểm neo", tìm "góc", rồi trích xuất vector đặc trưng các kiểu. Vậy việc chuyển sang "phân lớp ảnh" ở chương này mang ý nghĩa gì ạ?
+Người 1: Một câu hỏi chuyển ý rất hay! Các em cứ tưởng tượng, ở Chương 4, chúng ta đã dạy máy tính cách bóc tách nguyên liệu: ví dụ trích xuất ra một bộ xương gồm cẳng chân, thân mình bằng H O G. Nhưng máy tính vẫn chưa biết cái "bộ xương" đó là con người hay là cái cột điện. Phân lớp ảnh chính là bộ não tiếp nhận các nguyên liệu đặc trưng đó, và đưa ra quyết định cuối cùng: "À, đây chính là con người!".
+ 
+Slide 2: MỤC TIÊU BÀI HỌC
+Người 1: Trước khi đi sâu, chúng ta cùng xem xét ba mục tiêu cốt lõi của tiết học này. Thứ nhất về tư duy quy trình: các em phải hiểu rõ vòng đời của một bài toán phân loại ảnh có giám sát diễn ra như thế nào. Thứ hai về cơ chế thuật toán: chúng ta sẽ giải mã nguyên lý "học lười" của thuật toán K N N và cách mô hình Bag-of-Features chuẩn hóa dữ liệu. Và thứ ba, về kỹ năng thực chiến: các em sẽ phải tự tay cài đặt được bộ phân loại này bằng thư viện Scikit-learn trong Python.
+Người 2: Thầy ơi, em thấy trong mục tiêu thứ hai có cụm từ "nguyên lý học lười". Máy tính mà cũng biết "lười" giống tụi em lúc sắp thi ạ?
+Người 1: (Cười) Đúng vậy em. Thuật ngữ tiếng Anh của nó là "Lazy Learning" - một triết lý cực kỳ thú vị và cũng rất thực dụng của AI mà lát nữa thầy trò ta sẽ cùng mổ xẻ. Chắc chắn các em sẽ thấy hình bóng của chính mình trong cách cái máy tính nó "học lười".
+ 
+Slide 3: QUY TRÌNH PHÂN LỚP ẢNH CÓ GIÁM SÁT
+Người 1: Chúng ta đi vào khái niệm đầu tiên: Thế nào là Phân lớp ảnh Có giám sát?. Hiểu đơn giản, mô hình được "dạy" thông qua dữ liệu đã được gán nhãn từ trước, rồi sau đó mới đối mặt với dữ liệu thực tế.
+Người 2: Có phải giống như lúc nhỏ ba mẹ dạy em nhận biết con vật không thầy? Ba mẹ đưa cuốn sách có hình con chó rồi chỉ vào bảo "Đây là con chó", chỉ sang hình con mèo bảo "Đây là con mèo".
+Người 1: Ví dụ của em chính xác tuyệt đối! Quy trình của máy tính cũng trải qua 3 bước y hệt như vậy. Bước 1 là Dữ liệu đầu vào: Ta cung cấp cho máy tính các cặp dữ liệu gồm "Vector đặc trưng" (chính là hình dáng, kết cấu) đi kèm với "Nhãn lớp" (đáp án). Chẳng hạn như dùng đặc trưng H O G kết hợp với nhãn là "Người" hoặc "Không phải người".
+Người 1: Bước 2 là Giai đoạn Huấn luyện: Mô hình sẽ phân tích và tìm ra mối liên hệ bí mật giữa các con số trong vector và cái nhãn đáp án. Và Bước 3 là Giai đoạn Dự đoán: Lúc này, ta đưa cho máy tính một bức ảnh hoàn toàn mới chưa từng thấy, bắt nó áp dụng kiến thức đã học để tự gán nhãn, với mục tiêu là phải đoán trúng phóc so với thực tế. Trên slide là ví dụ chuỗi pipeline kinh điển của thuật toán H O G cộng với S V M để phát hiện người đi bộ đấy.
+ 
+Slide 4: THUẬT TOÁN K-HÀNG XÓM GẦN NHẤT (KNN)
+Người 1: Bây giờ, chúng ta sẽ làm quen với thuật toán phân lớp nền tảng nhất: Thuật toán K-Hàng xóm gần nhất, viết tắt là K N N. Thuật toán này dựa trên một triết lý vô cùng trực quan trong dân gian: "Ngưu tầm ngưu, mã tầm mã" hay "Gần mực thì đen, gần đèn thì sáng". Nó hoạt động hoàn toàn dựa trên sự tương đồng về khoảng cách trong không gian.
+Người 2: Em nhìn trên slide thấy có một không gian tọa độ. Có một đống các chấm tròn màu xanh tụ lại một góc, một nhóm các hình vuông màu cam tụ ở góc khác. Ở giữa lại có một "Ngôi sao màu xám" mang dấu hỏi chấm. Vậy K N N sẽ giải quyết ngôi sao này thế nào ạ?
+Người 1: Rất tinh mắt! Giả định cốt lõi của K N N là: Một đối tượng bí ẩn (như ngôi sao xám kia) có khả năng cực kỳ cao sẽ thuộc về cùng một lớp với những "hàng xóm" nằm sát nó nhất trong không gian đặc trưng. Ta chỉ cần vẽ một vòng tròn quanh ngôi sao đó, xem đa số hàng xóm trong vòng tròn đó là màu xanh hay màu cam, thì gán luôn màu đó cho ngôi sao.
+Người 2: À, em bắt đầu hiểu chữ "Học lười" lúc nãy thầy nói rồi. Có phải vì nó chẳng thưa đẻ ra một công thức toán học nào phức tạp để phân ranh giới hai vùng, mà nó cứ đợi có điểm mới xuất hiện rồi mới bắt đầu nhìn ngó xung quanh không thầy?
+Người 1: Rất thông minh! Đó chính là bản chất của "Lazy Learning" - Học Lười. Nó không xây dựng mô hình toán học tường minh nào trong quá trình huấn luyện cả. Nó dời toàn bộ gánh nặng khối lượng tính toán sang giai đoạn dự đoán.
+ 
+Slide 5: CƠ CHẾ HOẠT ĐỘNG 2 GIAI ĐOẠN CỦA KNN
+Người 1: Để làm rõ hơn sự "lười biếng" này, chúng ta hãy xem cơ chế 2 giai đoạn của K N N trên slide. Giai đoạn 1 là Giai đoạn Học, nhưng thực chất hành động ở đây chỉ đơn giản là... Ghi nhớ. Thuật toán lưu toàn bộ tập dữ liệu huấn luyện, bao gồm cả vector và nhãn, vào bộ nhớ RAM của máy tính.
+Người 2: Lưu vào RAM thôi thì tốc độ chắc là chớp mắt thầy nhỉ? Em đoán chi phí thời gian chắc bằng hằng số luôn.
+Người 1: Chính xác, chi phí thời gian học gần như là ô một, cực kỳ nhanh. Nhưng bù lại nó sẽ tốn rất nhiều dung lượng lưu trữ nếu tập ảnh có hàng triệu tấm. Giống như một học sinh lười, lúc ôn thi không chịu suy luận logic mà cứ học vẹt, nhét hết sách vở vào đầu.
+Người 1: Hậu quả sẽ đến ở Giai đoạn 2: Xử lý và Dự đoán. Khi một điểm dữ liệu ảnh mới xuất hiện, hệ thống phải thực hiện 3 bước. Bước 1: Phải đi đo khoảng cách từ điểm mới đó đến toàn bộ tất cả các điểm đang có trong kho lưu trữ. Bước 2: Lọc ra đúng K điểm có khoảng cách nhỏ nhất (tức là K hàng xóm gần nhất). Bước 3: Bầu phiếu đa số, xem trong K hàng xóm đó, nhãn nào chiếm đông hơn thì gán nhãn đó cho điểm mới.
+Người 2: Chà! Khác gì lúc vào phòng thi, gặp một câu hỏi mới, học sinh lười phải lật tung toàn bộ trí nhớ ra, rà soát từng trang sách xem câu này giống đoạn nào nhất để chép vào. Nếu dữ liệu có một triệu bức ảnh thì nó phải đo một triệu lần khoảng cách cho mỗi một hình mới! Thế này thì lúc thi chậm lắm thầy ơi.
+Người 1: Phân tích rất xuất sắc! Đó chính là đặc điểm chí mạng của K N N: Học thì siêu nhanh mà thi thì siêu chậm. Và chữ "K" ở đây chính là một biến số mà người kỹ sư phải chọn. Nếu ta chọn hỏi ý kiến 3 hàng xóm, kết quả có thể khác với việc hỏi ý kiến của 50 hàng xóm. Việc chọn chữ K này là một "nghệ thuật" mà chúng ta sẽ tìm hiểu ở phần tiếp theo.
+ 
+Slide 6: NGHỆ THUẬT CHỌN SIÊU THAM SỐ K
+Người 1: Ở cuối phần trước, thầy có nói việc chọn số lượng hàng xóm, tức là giá trị K, là một nghệ thuật. Hiệu năng của toàn bộ mô hình phụ thuộc hoàn toàn vào con số này.
+Người 2: Em nghĩ nếu để cho chắc ăn, mình cứ chọn K thật nhỏ, ví dụ K bằng 1 luôn đi thầy. Tức là chỉ cần tìm đúng một người giống mình nhất để bắt chước là xong.
+Người 1: Ý tưởng của em rất thực tế, nhưng hãy nhìn vào hình minh họa bên trái trên slide. Khi K quá nhỏ, ví dụ K bằng 1, mô hình sẽ gặp hiện tượng "Quá khớp" hay còn gọi là Overfitting. Lúc này, biên quyết định giữa các lớp trở nên cực kỳ phức tạp và ngoằn ngoèo như hình răng cưa.
+Người 2: À em hiểu rồi! Ví dụ có một điểm màu xanh bị nhiễu, lọt thỏm vào giữa vùng màu cam. Nếu K bằng 1, cái điểm mới xuất hiện cạnh điểm nhiễu đó sẽ bị gán nhãn sai ngay lập tức vì nó chỉ tin đúng một "ông hàng xóm" bị nhiễu kia.
+Người 1: Tuyệt vời, em lấy ví dụ rất chuẩn! Hệ thống lúc này cực kỳ nhạy cảm với nhiễu trong dữ liệu. Vậy ngược lại, nếu ta chọn K quá lớn, ví dụ K bằng 100 thì sao?
+Người 2: Chắc là hiện tượng "Dưới khớp" - Underfitting phải không thầy? Khi đó ranh giới sẽ bị mượt hóa quá mức. Giống như việc đi hỏi ý kiến cả làng, cuối cùng quyết định luôn nghiêng về phe đa số, làm đánh mất các chi tiết phân loại quan trọng ở vùng ranh giới.
+Người 1: Đúng vậy. Để giải quyết, người kỹ sư không đoán mò mà sẽ dùng kỹ thuật "Kiểm chứng chéo" (Cross-validation). Tức là họ chia tập dữ liệu ra, thử nghiệm liên tục với các giá trị K khác nhau để tìm ra giá trị tối ưu nhất mang lại độ chính xác cao nhất.
+ 
+Slide 7: ĐÁNH GIÁ THUẬT TOÁN KNN: ƯU ĐIỂM & THÁCH THỨC
+Người 1: Trải qua quá trình tìm hiểu, thầy muốn chúng ta cùng tổng kết lại ưu và nhược điểm của K N N. Về ưu điểm, chắc chắn các em đều thấy nó rất trực quan và dễ hiểu, hoàn toàn không cần giải các bài toán tối ưu hóa phức tạp.
+Người 2: Dạ vâng, và nó còn "Huấn luyện siêu tốc" nữa vì nó có học gì đâu, chỉ việc chép dữ liệu vào RAM thôi. Thêm nữa, em thấy nếu hệ thống có thêm ảnh mới để học, mình chỉ cần ném thêm ảnh đó vào kho lưu trữ là xong, rất linh hoạt và không phải huấn luyện lại toàn bộ từ đầu.
+Người 1: Rất tốt! K N N cũng có tính "Tiệm cận tối ưu", nghĩa là nếu em sở hữu một tập mẫu dữ liệu đủ lớn, độ chính xác của nó là cực kỳ đáng nể. Tuy nhiên, đời không như là mơ. Thách thức lớn nhất của nó là cực kỳ chậm khi dự đoán, vì phải quét toàn bộ cơ sở dữ liệu cho mỗi bức ảnh mới. Nó cũng ngốn một lượng lớn bộ nhớ RAM để lưu trữ toàn bộ dữ liệu huấn luyện.
+Người 1: Và một tử huyệt nữa chính là "Lời nguyền số chiều" (Curse of Dimensionality). Khi vector ảnh có quá nhiều chiều, ví dụ lên tới hàng ngàn điểm ảnh, thì khái niệm về "khoảng cách" toán học sẽ dần mất đi ý nghĩa. Ở không gian hàng ngàn chiều, mọi điểm dường như cách xa nhau một khoảng bằng nhau, khiến việc tìm "hàng xóm gần nhất" trở nên vô cùng nhạy cảm với nhiễu.
+ 
+Slide 8: TẦM QUAN TRỌNG CỦA CHUẨN HÓA DỮ LIỆU (FEATURE SCALING)
+Người 1: Chính vì K N N hoạt động hoàn toàn dựa vào việc đo khoảng cách, chúng ta phải đối mặt với một vấn đề sống còn ở Bước Tiền xử lý: Sự áp đảo của biên độ.
+Người 2: Áp đảo biên độ là sao ạ? Thầy có thể lấy ví dụ thực tế không?
+Người 1: Hãy tưởng tượng em đang đo khoảng cách giữa 2 người dựa trên 2 đặc trưng: Đặc trưng A là Cân nặng (có dải từ 0 đến 100 kg), đặc trưng B là Chiều cao tính bằng mét (dải từ 1.5 đến 1.9 mét). Khi đưa vào công thức Euclidean, độ chênh lệch vài chục đơn vị của Cân nặng sẽ hoàn toàn đè bẹp sự khác biệt vỏn vẹn không phẩy mấy mét của Chiều cao. Giá trị khoảng cách lúc này gần như chỉ phụ thuộc vào cân nặng, biến đặc trưng Chiều cao trở nên vô nghĩa. Trên slide cũng minh họa Đặc trưng A dải từ 0 đến 255 áp đảo hoàn toàn Đặc trưng B dải 0 đến 1 chấm 0.
+Người 2: Nguy hiểm quá! Vậy làm sao để bảo vệ khoảng cách khỏi sự chênh lệch tỷ lệ này thưa thầy?
+Người 1: Giải pháp là "Chuẩn hóa không gian" (Feature Scaling). Ta có hai kỹ thuật phổ biến. Thứ nhất là Min-Max Scaling, ép mọi đặc trưng về cùng một dải giá trị, ví dụ từ 0 đến 1. Thứ hai là Standardization, chuẩn hóa theo phân phối chuẩn sao cho mọi đặc trưng đều có Trung bình bằng 0 và Độ lệch chuẩn bằng 1. Nhờ vậy, mọi đặc trưng dù đo bằng đơn vị gì cũng sẽ có tiếng nói ngang nhau trong quá trình bầu phiếu.
+ 
+Slide 9: TRIỂN KHAI THỰC TẾ VỚI SCIKIT-LEARN
+Người 1: Lý thuyết thì nhiều, nhưng nhờ sự phát triển của các thư viện mã nguồn mở, việc cài đặt K N N trong Python lại đơn giản đến bất ngờ. Trên slide là đoạn code triển khai với thư viện Scikit-learn, chỉ gói gọn trong đúng 3 dòng lệnh cốt lõi.
+Người 2: Tuyệt quá! Em thấy dòng đầu tiên là khởi tạo mô hình bằng lệnh K Neighbors Classifier và truyền vào số lượng láng giềng n_neighbors bằng 5.
+Người 1: Đúng thế. Dòng thứ 2 là hàm fit. Ta nạp ma trận đặc trưng x_train và vector nhãn y_train vào để mô hình "lưu trữ" dữ liệu vào bộ nhớ. Và cuối cùng, dòng số 3 là hàm predict, ta đưa ảnh mới vào để nó tính toán và trả về kết quả dự đoán y_pred.
+Người 2: Nhìn code thì có vẻ dễ ăn thầy nhỉ.
+Người 1: Đừng vội mừng! Em hãy nhìn dòng chữ in đậm bên dưới. Lưu ý tiền xử lý: Toàn bộ x_train và dữ liệu mới phải là các vector đặc trưng đã được chuẩn hóa (Scaling) theo đúng chuẩn ta vừa học ở slide trước, và quan trọng nhất: Chúng phải có kích thước nhất quán!.
+ 
+Slide 10: NÚT THẮT DỮ LIỆU: BÀI TOÁN KÍCH THƯỚC VECTOR
+Người 1: Và chính chữ "kích thước nhất quán" đó dẫn chúng ta đến một "Nút thắt dữ liệu" khổng lồ của bài toán phân lớp ảnh. Mời các em nhìn vào slide 10. Tại sao các đặc trưng cục bộ ta học ở chương 4 chưa thể dùng ngay cho K N N?.
+Người 2: Ý thầy là các đặc trưng như SIFT hay SURF ạ? Ở chương trước em nhớ là mỗi bức ảnh nó lại sinh ra một số lượng điểm đặc trưng khác nhau. Ví dụ ảnh cái biển báo STOP nhiều chi tiết thì có 1000 điểm, ảnh bầu trời trơn láng thì chỉ có 100 điểm thôi.
+Người 1: Đó chính là vấn đề! Trong khi đó, yêu cầu bắt buộc của mọi thuật toán máy học như K N N hay S V M là đầu vào phải là một vector duy nhất và có kích thước cố định (ví dụ 1 nhân 128). Cái "phễu" của K N N không thể nuốt trôi một lúc 1000 vector của ảnh này và 100 vector của ảnh kia, nó sẽ báo lỗi không tương thích ngay.
+Người 2: Vậy làm sao mình nhét được bức ảnh vào mô hình bây giờ thưa thầy? Mình cắt bớt điểm đặc trưng đi ạ?
+Người 1: Không, nếu cắt bớt ta sẽ mất dữ liệu. Lời giải cho bài toán này là một kiệt tác mang tên Mô hình Bag-of-Features (BoF). Người ta đã lấy cảm hứng từ Xử lý ngôn ngữ tự nhiên (N L P) để nén hàng nghìn descriptor rời rạc đó thành một vector đại diện duy nhất cho toàn bộ bức ảnh. Cơ chế "nén" kỳ diệu này hoạt động như thế nào, chúng ta sẽ khám phá ngay ở các slide tiếp theo!
+ 
+Slide 11: BAG-OF-FEATURES BƯỚC 1: XÂY DỰNG TỪ ĐIỂN THỊ GIÁC
+Người 1: Chào mừng các em quay lại. Ở cuối phần trước, chúng ta đã đứng trước một "bức tường" lớn: Mô hình K N N đòi hỏi đầu vào là vector cố định, nhưng ảnh thực tế lại trả về số lượng điểm đặc trưng SIFT hay SURF thay đổi thất thường. Để phá vỡ bức tường này, chúng ta áp dụng bước đầu tiên của mô hình Bag-of-Features, viết tắt là B O F: Xây dựng Từ điển Thị giác.
+Người 2: Từ điển thị giác ạ? Có phải giống như lúc tụi em học tiếng Anh, phải học từ vựng trước khi ráp thành câu không thầy?
+Người 1: Một sự liên tưởng tuyệt vời! Ý tưởng hoàn toàn tương tự. Bước thứ nhất là Gom dữ liệu. Thầy sẽ lấy toàn bộ hàng triệu vector đặc trưng cục bộ, tức là các descriptor từ hàng ngàn bức ảnh trong tập huấn luyện, đổ dồn tất cả vào chung một không gian đồ thị khổng lồ. Lúc này, thầy chưa cần quan tâm vector nào thuộc về bức ảnh nào.
+Người 1: Bước thứ hai là Phân cụm K-Means. Máy tính sẽ tự động gom nhóm các vector có sự tương đồng cao lại với nhau thành đúng "K" cụm riêng biệt. Cuối cùng, bước 3 là Định nghĩa Từ vựng: Trọng tâm, hay còn gọi là tâm của mỗi cụm, sẽ được trích xuất ra và đại diện cho một "Từ vựng thị giác" (Visual Word). Tập hợp K tâm cụm này tạo thành một cuốn "Từ điển thị giác" (Codebook) chuẩn mực.
+Người 2: Em hiểu rồi! Thay vì phải nhớ hàng triệu điểm đặc trưng lẻ tẻ, máy tính chỉ cần nhớ "K" cái tâm cụm đại diện. Ví dụ K bằng 500, thì cuốn từ điển của máy tính chỉ có đúng 500 "từ vựng thị giác" cốt lõi.
+ 
+Slide 12: BAG-OF-FEATURES BƯỚC 2: BIỂU DIỄN BẰNG HISTOGRAM
+Người 1: Rất chính xác! Và Slide 12 này chính là nơi phép màu thực sự diễn ra. Khi có một cuốn từ điển trong tay, làm thế nào ta dùng nó để nén một bức ảnh mới? Đó là nhờ Quy trình Lượng hóa (Quantization).
+Người 2: Thầy ơi, lượng hóa có phải là mình ép các điểm ảnh mới tuân theo quy luật của từ điển không ạ?
+Người 1: Đúng thế. Khi đưa một bức ảnh mới vào, ta cũng trích xuất các đặc trưng cục bộ của nó. Nhưng thay vì giữ nguyên, ta đem từng đặc trưng đi đối chiếu với cuốn Từ điển thị giác. Nó gần với "Từ vựng" (hay tâm cụm) nào nhất, ta gán luôn nó thành Từ vựng đó. Giống như em nghe một âm thanh na ná chữ "Hello", em sẽ tự động quy chuẩn nó về đúng từ "Hello" trong từ điển tiếng Anh vậy.
+Người 2: À! Sau khi quy chuẩn xong toàn bộ các điểm trong ảnh, mình làm gì tiếp theo thưa thầy?
+Người 1: Ta bước sang công đoạn Tạo Histogram. Ta chỉ việc đi đếm tần suất: "Từ vựng số 1 xuất hiện bao nhiêu lần?", "Từ vựng số 2 xuất hiện bao nhiêu lần?", quét cho đến "Từ vựng thứ K". Kết quả ta thu được là một Biểu đồ tần suất Histogram.
+Người 2: Ôi em hiểu sự đột phá ở đây rồi! Vì từ điển có đúng K từ vựng, nên cái biểu đồ đếm tần suất này chắc chắn sẽ luôn có chiều dài đúng bằng K. Dù bức ảnh gốc có 1 nghìn hay 10 nghìn điểm đặc trưng đi nữa, cuối cùng nó cũng bị nén gọn lại thành một vector có kích thước cố định là một nhân K!
+Người 1: Xuất sắc! Vector Histogram đó chính là chiếc "chìa khóa" hoàn hảo, khớp tuyệt đối với cái ổ khóa yêu cầu kích thước cố định của thuật toán K N N.
+ 
+Slide 13: TỔNG KẾT PIPELINE & ĐỊNH HƯỚNG
+Người 1: Chặng đường của chúng ta hôm nay đã đi đến hồi kết. Nhìn vào Slide 13, thầy muốn các em ghi nhớ toàn bộ hành trình Phân lớp này thành một Pipeline chuẩn mực 3 bước.
+Người 1: Bước 1: Trích xuất các Đặc trưng cục bộ vô cùng mạnh mẽ như SIFT hay SURF, giúp ta bất biến với tỷ lệ và góc nhìn. Bước 2: Nén qua mô hình B O F, biến hàng ngàn descriptor thiên biến vạn hóa thành một Vector Histogram duy nhất có kích thước cố định. Và Bước 3: Đưa vector đó vào hệ thống Phân loại K N N, để máy tính so sánh khoảng cách và bỏ phiếu gán nhãn cuối cùng.
+Người 2: Nhìn lại cả một quá trình từ việc tìm điểm neo ở những tiết đầu chương 4, cho đến lúc ráp lại thành một hệ thống nhận diện hoàn chỉnh thế này, em thấy kiến thức xâu chuỗi với nhau rất chặt chẽ ạ.
+Người 1: Cảm ơn em. Nhưng hãy nhớ, K N N chưa phải là đích đến cuối cùng. Dù nó rất trực quan và dễ hiểu, ranh giới phân loại của nó phụ thuộc quá nhiều vào tính cục bộ và cực kỳ tốn tài nguyên tìm kiếm khi dữ liệu lớn.
+ 
+Slide 14: Q&A VÀ GIAO BÀI TẬP VỀ NHÀ
+Người 1: Ở tiết sau, Tiết 10, chúng ta sẽ vượt qua chính giới hạn này của K N N. Thầy sẽ giới thiệu một thuật toán cực kỳ sắc bén, có khả năng tối đa hóa lề quyết định toàn cục, đó chính là Máy Vector Hỗ trợ, hay còn gọi là S V M. Trước khi kết thúc, có bạn nào có câu hỏi gì không?
+Người 2: Dạ thầy ơi, vậy trong bài tập thực hành trên Scikit-learn sắp tới, tụi em sẽ phải tự lập trình lại cả thuật toán K-Means cho bước Bag of Features, rồi mới đưa vào K N N phải không ạ?
+Người 1: Một câu hỏi rất thực tế! Thật may là các em không phải lập trình mọi thứ từ con số không. Thư viện Scikit-learn hỗ trợ sẵn hàm K Means ở module cluster để các em tạo từ điển, và hàm K Neighbors Classifier để phân lớp. Bài tập về nhà tuần này của các em là hãy tải tập dữ liệu ảnh từ hệ thống e-learning, tự tay xây dựng pipeline 3 bước này bằng Python. Thầy muốn thấy các em tạo ra một cuốn "từ điển" gồm 100 từ vựng thị giác và cho máy tính phân biệt được đâu là xe đạp, đâu là ô tô.
+Người 2: Dạ vâng, tụi em rõ rồi ạ. Bài giảng hôm nay thực sự rất thú vị, cảm ơn thầy ạ!
+Người 1: Cảm ơn các em đã tập trung lắng nghe và tương tác rất tích cực. Hẹn gặp lại các em vào Tiết 10 với bài toán S V M. Chúc các em hoàn thành tốt bài tập thực hành! Chào cả lớp.

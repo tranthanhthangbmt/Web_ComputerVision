@@ -1,0 +1,82 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em sinh viên lớp IT23M. Ở các tiết học trước, chúng ta đã cùng nhau tìm hiểu về SIFT, một thuật toán được mệnh danh là "tiêu chuẩn vàng" trong việc phát hiện và mô tả đặc trưng ảnh. Hôm nay, thầy trò ta sẽ bước sang Buổi 2 - Tiết 2 của Chương 4, để làm quen với một "người anh em" siêu tốc của SIFT. Đó chính là thuật toán SURF, viết tắt của Speeded Up Robust Features.
+Người 2: Dạ thưa thầy, SIFT đã là "tiêu chuẩn vàng" và nhận dạng cực kỳ tốt rồi, vậy tại sao mình lại còn cần đến SURF nữa ạ? Cái tên "Speeded Up" có phải mang ý nghĩa là nó giải quyết vấn đề về tốc độ chạy của SIFT không thầy?
+
+Slide 2: MỤC TIÊU BÀI HỌC
+Người 1: Một câu hỏi bắt đúng trọng tâm! Nhược điểm của SIFT chính là lý do ra đời của SURF và cũng là mục tiêu đầu tiên của bài học hôm nay. Về mặt kiến thức, các em cần hiểu lý do SURF ra đời là để đáp ứng nhu cầu tối ưu tốc độ và xử lý thời gian thực. Thứ hai, các em sẽ nắm vững cơ chế "Ảnh tích phân", đây được xem là chìa khóa vàng làm nên tên tuổi của SURF. Và cuối cùng là giải thích được vai trò của "Bộ lọc Box" trong việc xấp xỉ đạo hàm toán học.
+Người 2: Vậy về kỹ năng đầu ra của bài này thì sao ạ? Chúng em sẽ ứng dụng được gì vào thực tế thưa thầy?
+Người 1: Về mặt kỹ năng, đáp ứng chuẩn đầu ra của môn học, các em sẽ có khả năng phân tích và đối chiếu để đánh giá ưu, nhược điểm giữa SIFT và SURF. Từ đó, các em có thể tự tin ra quyết định: Lựa chọn thuật toán nào cho phù hợp nhất với từng bài toán thực tế mà công ty hay dự án yêu cầu.
+
+Slide 3: VẤN ĐỀ CỐT LÕI: BÀI TOÁN TỐC ĐỘ
+Người 1: Bây giờ chúng ta đi sâu vào vấn đề cốt lõi: Bài toán Tốc độ. Như chúng ta đã biết, SIFT cung cấp độ chính xác tuyệt đối, nhưng quy trình xây dựng Kim tự tháp Gaussian của nó thì quá nặng nề và chậm chạp, đòi hỏi nhiều tài nguyên máy tính.
+Người 2: Em có thể hình dung việc này giống như chụp một bức ảnh phong cảnh trên điện thoại rồi ngồi chờ nó từ từ áp dụng bộ lọc thì không sao. Nhưng nếu áp dụng vào thực tế khác thì chắc có vấn đề thầy nhỉ?
+Người 1: Hoàn toàn đúng! Em hãy thử tưởng tượng các ứng dụng thực tế đòi hỏi thời gian thực như Thực tế tăng cường (AR), xe tự lái hay hệ thống điều hướng của Robot. Một chiếc xe đang chạy trên cao tốc với vận tốc một trăm ki-lô-mét trên giờ không thể đứng chờ máy tính mất vài giây để nhận diện chướng ngại vật phía trước. Chúng yêu cầu tốc độ phản hồi tính bằng mili-giây. Đó là lý do vào năm 2006, thuật toán SURF được các nhà khoa học đề xuất như một giải pháp để bẻ khóa giới hạn tốc độ đó, nhưng kỳ diệu là vẫn giữ nguyên được sự mạnh mẽ trong nhận diện.
+
+Slide 4: CẤU TRÚC DNA CỦA THUẬT TOÁN SURF
+Người 1: Vậy SURF đã làm cách nào để chạy nhanh đến vậy? Chúng ta hãy cùng quan sát cấu trúc DNA của thuật toán SURF trên slide. Nó bao gồm ba trụ cột chính, kết hợp lại thành một động cơ toán học tối ưu tốc độ tuyệt đối.
+Người 2: Ba trụ cột đó là gì vậy thầy? Nhìn sơ đồ em thấy có vẻ rất vững chắc.
+Người 1: Đúng vậy, đó là ba nền tảng cốt lõi: Trụ cột thứ nhất là Ma trận Hessian, giúp phát hiện các cấu trúc dạng đốm hay còn gọi là blob với độ chính xác và hiệu năng vượt trội. Trụ cột thứ hai là Ảnh tích phân, giúp thực hiện các phép tính chập khổng lồ với thời gian không đổi, hay trong ngôn ngữ thuật toán ta gọi là độ phức tạp Ô một. Trụ cột thứ ba là Bộ lọc Box, sử dụng các khối hình chữ nhật cứng cáp để xấp xỉ lại đạo hàm Gaussian phức tạp. Bây giờ, chúng ta sẽ khám phá vũ khí đầu tiên.
+
+Slide 5: VŨ KHÍ BÍ MẬT #1: ẢNH TÍCH PHÂN (INTEGRAL IMAGES)
+Người 1: Vũ khí bí mật đầu tiên và quan trọng nhất: Ảnh tích phân. Cơ chế của nó rất thú vị: Tại một điểm ảnh bất kỳ có tọa độ (x, y), giá trị ảnh tích phân tại đó sẽ bằng đúng tổng của toàn bộ các điểm ảnh nằm phía bên trên và bên trái của nó trong bức ảnh gốc.
+Người 2: Nghe có vẻ giống như việc mình cộng dồn dần các con số từ góc trên cùng bên trái lan xuống điểm hiện tại phải không thầy? Nhưng thao tác cộng dồn như vậy thì làm sao giúp máy tính chạy nhanh hơn được ạ?
+Người 1: Sự thần kỳ nằm ở khâu sử dụng cơ sở dữ liệu đã cộng dồn đó! Bình thường, để tính tổng cường độ sáng của một vùng hình chữ nhật lớn trên ảnh, em phải quét vòng lặp qua hàng ngàn pixel bên trong vùng đó. Vùng chữ nhật càng lớn, máy tính chạy càng chậm. Nhưng với Ảnh tích phân, máy tính sở hữu sức mạnh bẻ khóa Ô một. Để tính tổng của một vùng chữ nhật bất kỳ, em chỉ cần lấy giá trị đã lưu sẵn tại 4 góc của hình chữ nhật đó (gọi là 4 điểm A, B, C, D), rồi thực hiện đúng 4 phép truy xuất bộ nhớ và 3 phép toán cộng trừ.
+Người 2: Ồ! Ý thầy là, dù cho cái cửa sổ hình chữ nhật đó có kích thước nhỏ bằng 4 nhân 4 pixel, hay khổng lồ chiếm tới phân nửa bức ảnh, thì máy tính cũng chỉ tốn đúng 3 phép cộng trừ thôi sao?
+Người 1: Chính xác tuyệt đối! Kích thước bộ lọc có lớn đến đâu đi chăng nữa, tốc độ xử lý vẫn không hề thay đổi. Đây chính là nền tảng cốt lõi giúp SURF thực hiện các phép tính chập cực nhanh, vượt xa hiệu năng của SIFT.
+
+Slide 6: VŨ KHÍ BÍ MẬT #2: MA TRẬN HESSIAN
+Người 1: Chúng ta đã biết Ảnh tích phân giúp tính toán siêu nhanh, nhưng máy tính sẽ tính cái gì? Đó chính là lúc vũ khí thứ 2 xuất hiện: Ma trận Hessian. Nhiệm vụ cốt lõi của ma trận này là định vị các điểm cấu trúc dạng đốm, hay còn gọi là các "blobs", với tốc độ siêu tốc.
+Người 2: Dạ, em nhớ ở bài SIFT mình cũng có nhắc đến Hessian để loại bỏ phản ứng cạnh. Vậy ở SURF, nó hoạt động thế nào để tìm ra được các đốm này ạ?
+Người 1: Ở SURF, người ta không dùng Hessian để loại trừ nữa, mà dùng nó làm bộ dò tìm chính! Toán học đằng sau nó là tính Định thức, hay tiếng Anh là Determinant, của ma trận bao gồm các đạo hàm bậc hai. Các em không cần hoang mang với đạo hàm, hãy hiểu đơn giản: Định thức này đo lường độ cong của bề mặt cường độ sáng. Khi định thức đạt giá trị cực đại, điều đó chứng tỏ độ cong ở cả hai hướng x và y đều rất gắt, tạo thành một cái "đốm" sáng hoặc tối nổi bật. Đó chính là ứng viên Keypoint tiềm năng nhất của chúng ta.
+
+Slide 7: VŨ KHÍ BÍ MẬT #3: BỘ LỌC BOX (BOX FILTERS)
+Người 1: Tuy nhiên, để tính được các đạo hàm bậc hai cho ma trận Hessian theo cách truyền thống thì lại vướng phải "vết xe đổ" của SIFT. Vấn đề của SIFT là việc thực hiện phép tích chập với đạo hàm Gaussian đường cong hình chuông cực kỳ ngốn tài nguyên máy tính.
+Người 2: Đường cong hình chuông thì rất mịn màng nhưng máy tính xử lý số thực chắc chắn là mệt rồi. Vậy SURF "lách luật" bằng cách nào thưa thầy?
+Người 1: Một pha bẻ lái cực kỳ thông minh của các nhà sáng lập SURF: Đó là "Bao vuông" Gaussian! Thay vì dùng đường cong nhấp nhô, SURF sử dụng các khối hình chữ nhật cứng cáp để xấp xỉ lại đạo hàm đó, đây chính là Bộ lọc Box. Em hãy tưởng tượng thay vì nặn một ngọn đồi bằng đất sét rất mất công, ta dùng các khối gạch Lego vuông vức để xếp thành một mô hình ngọn đồi tương tự.
+Người 2: Ồ, nãy thầy có nói Ảnh tích phân ở Slide 5 cực kỳ giỏi trong việc cộng trừ các mảng hình chữ nhật. Có phải hai vũ khí này sinh ra là để dành cho nhau không ạ?
+Người 1: Sự liên kết tuyệt vời! Chính xác là như vậy. Vì Bộ lọc Box hoàn toàn là các khối chữ nhật, nên nó tương thích một trăm phần trăm với Ảnh tích phân. Kết quả là máy tính không cần quét qua từng pixel nữa, phép tính đạo hàm khổng lồ giờ đây được tính toán gần như ngay lập tức!
+
+Slide 8: CÔNG THỨC ĐỊNH THỨC SIÊU TỐC
+Người 1: Khi kết hợp Bộ lọc Box và Ảnh tích phân, chúng ta có được phép xấp xỉ đạo hàm mà không hề suy giảm tốc độ. Và đây là công thức định thức siêu tốc rút gọn của SURF: Định thức của H xấp xỉ sẽ bằng: D x-x nhân D y-y, trừ đi bình phương của không phẩy chín nhân D x-y. Xin nhắc lại, toán học trong video này thầy đọc là: D x-x nhân D y-y trừ đi mở ngoặc không phẩy chín nhân D x-y đóng ngoặc bình phương.
+Người 2: Công thức nhìn rất gọn gàng ạ. Nhưng thầy cho em hỏi, con số không phẩy chín (0.9) từ đâu chui ra vậy ạ? Sao không phải là số 1 hay số khác?
+Người 1: Câu hỏi rất sắc sảo! Khi chúng ta dùng các khối gạch Lego vuông vức (Bộ lọc Box) để làm giả một ngọn đồi tròn trịa (phân phối Gaussian thực tế), chắc chắn sẽ sinh ra sai số. Con số 0.9 chính là "Hệ số hiệu chỉnh" được các nhà khoa học tính toán kỹ lưỡng để bù đắp lại khoảng sai số đó. Nó giúp cho ma trận Hessian dù tính bằng hình vuông nhưng kết quả trả về vẫn chính xác tương đương với đường cong Gaussian nguyên bản.
+
+Slide 9: KHÔNG GIAN TỶ LỆ (SCALE SPACE) KIỂU MỚI
+Người 1: Giải quyết xong bài toán tìm điểm, giờ ta bàn đến Không gian Tỷ lệ. Ở SIFT, để tìm vật thể ở các kích thước khác nhau, thuật toán dùng cách thu nhỏ ảnh gốc lại (Downsampling). Việc giảm kích thước ảnh liên tục khiến dữ liệu dễ bị mất thông tin và máy tính phải xử lý tuần tự từng bước rất chậm chạp.
+Người 2: Em hiểu ạ. Giống như mình cố thu nhỏ bức tranh lại để nhìn toàn cảnh. Vậy SURF thì làm ngược lại sao thầy?
+Người 1: Đúng vậy, SURF sở hữu Không gian Tỷ lệ kiểu mới gọi là phóng to bộ lọc (Upscaling). Hãy nhớ lại, dù bộ lọc có to bằng cái nhà thì Ảnh tích phân vẫn tính nó trong thời gian không đổi! Vì thế, SURF giữ nguyên bức ảnh gốc ban đầu, không hề thu nhỏ hay thay đổi gì cả, thay vào đó nó tăng kích thước của Bộ lọc Box lên thành các bộ lọc nhỏ, vừa, và lớn.
+Người 2: Chà, thế này thì ưu điểm lớn nhất là gì ạ? Có phải ảnh sẽ không bị vỡ nét không thầy?
+Người 1: Hoàn toàn chính xác! Việc này mang lại hai lợi ích khổng lồ: Thứ nhất là không bao giờ làm mất điểm ảnh gốc do không bị thu nhỏ. Thứ hai, vì ảnh gốc đứng im, các bộ lọc kích thước khác nhau có thể được máy tính chạy song song cùng một lúc cực kỳ hiệu quả, tiết kiệm cả rổ thời gian!
+
+Slide 10: ĐỊNH VỊ CỰC TRỊ VÀ NGƯỠNG HESSIAN
+Người 1: Slide thứ 10 là bước gặt hái thành quả. Sau khi áp dụng các bộ lọc ở nhiều tỷ lệ khác nhau, ta có một không gian 3 chiều. Đầu tiên, SURF sử dụng Ức chế phi cực đại (gọi tắt là NMS). Thuật toán sẽ đem so sánh định thức Hessian của một pixel hiện tại với 26 pixel lân cận, bao gồm 8 điểm cùng tầng, 9 điểm ở tầng trên và 9 điểm ở tầng dưới. Nếu nó lớn nhất, nó là cực trị.
+Người 2: Có tận hàng ngàn cực trị như vậy thì làm sao biết điểm nào là xịn nhất, không bị nhiễu thưa thầy?
+Người 1: Đó là lý do ta có bước thứ hai: Bộ lọc Hessian Threshold. Nó đóng vai trò như một người gác cổng, chỉ giữ lại các điểm có giá trị định thức vượt qua một ngưỡng an toàn đã được thiết lập sẵn. Điểm nào mờ nhạt, yếu ớt sẽ bị loại bỏ ngay. Cuối cùng, ở bước thứ 3 là Định vị tinh tế (Sub-pixel), thuật toán sẽ dùng toán học để nội suy ra tọa độ chính xác nằm dưới mức pixel, giúp triệt tiêu hoàn toàn các sai số cục bộ do lưới điểm ảnh gây ra.
+
+Slide 11: GIAI ĐOẠN 3 - GÁN HƯỚNG CHÍNH (BẤT BIẾN PHÉP XOAY)
+Người 1: Sau khi định vị được các điểm cực trị ổn định, chúng ta bước sang Giai đoạn 3: Gán hướng chính để đảm bảo thuật toán không bị "mù" khi bức ảnh bị xoay nghiêng. Nếu ở SIFT ta dùng biểu đồ phân bố gradient khá nặng nề, thì SURF lại tiếp tục tối ưu hóa bằng "Phản hồi Haar-wavelet" theo hai hướng x và y. Dĩ nhiên, việc tính toán Haar-wavelet diễn ra với tốc độ ánh sáng nhờ vào cơ sở dữ liệu Ảnh tích phân mà ta đã thiết lập từ đầu.
+Người 2: Thưa thầy, trên slide em thấy có nhắc đến "Cơ chế Radar" với một cửa sổ quét 60 độ. Nó hoạt động giống như radar quét tìm máy bay địch phải không ạ?
+Người 1: Một sự liên tưởng rất hình ảnh! Thuật toán sẽ dùng một cửa sổ hình quạt có góc mở 60 độ, quét xoay vòng quanh điểm Keypoint trong phạm vi bán kính là sáu xích-ma. Trong mỗi lần quét, nó cộng dồn tất cả các phản hồi Haar-wavelet bên trong cửa sổ đó. Khi chiếc quạt quét đủ một vòng tròn, hướng nào thu được tổng vectơ phản hồi lớn nhất thì đó sẽ được ấn định là "Hướng chính" của đặc trưng. Mọi tính toán tiếp theo đều sẽ xoay theo kim chỉ nam này.
+
+Slide 12: GIAI ĐOẠN 4 - TẠO VECTOR ĐẶC TRƯNG 64 CHIỀU
+Người 1: Giờ là lúc chúng ta tạo ra "mã di truyền" cho Keypoint ở Giai đoạn 4. Tương tự như SIFT, SURF cũng chia vùng không gian quanh điểm đó thành một lưới gồm 16 ô vuông, mỗi ô có kích thước 4 nhân 4 pixel. Tuy nhiên, thay vì thu thập 8 hướng gradient phức tạp, SURF thực hiện "trích xuất siêu nén" bằng cách chỉ tính đúng 4 giá trị cho mỗi ô.
+Người 2: Bốn giá trị đó là gì vậy thầy? Liệu có đủ thông tin để nhận diện không ạ?
+Người 1: Bốn giá trị phản hồi đó bao gồm: Tổng các đê x, tổng các đê y, tổng giá trị tuyệt đối của đê x, và tổng giá trị tuyệt đối của đê y. Việc đưa thêm giá trị tuyệt đối vào giúp SURF bắt được các sự biến thiên độ sáng đột ngột cực kỳ tốt. Với 16 ô nhỏ, mỗi ô có 4 giá trị, ta nhân lại sẽ có một Vector Đặc trưng độ dài đúng 64 chiều.
+Người 2: Ồ, 64 chiều tức là nó gọn nhẹ hơn đúng một nửa so với vector 128 chiều của SIFT. Em đoán đây là lý do nó được gọi là tối ưu tuyệt đối cho đối sánh thời gian thực phải không thầy?
+Người 1: Chính xác! Bộ nhớ giảm một nửa, tốc độ tính toán và so khớp trên máy tính sẽ tăng lên gấp đôi. Đó là một thành tựu toán học tuyệt vời.
+
+Slide 13: TRẬN CHIẾN VƯƠNG QUYỀN - SIFT vs. SURF
+Người 1: Ở slide thứ 13, chúng ta có một bảng phân tích đối chiếu toàn diện giữa hai gã khổng lồ: SIFT và SURF. Như các em thấy, SIFT chậm do dùng cơ chế lõi là Hiệu của Gaussian và thu nhỏ ảnh gốc. Ngược lại, SURF chạy nhanh gấp 3 đến 10 lần nhờ sử dụng Ma trận Hessian, Bộ lọc Box và chiến thuật phóng to bộ lọc chứ không thu nhỏ ảnh.
+Người 2: Nhìn bảng này, cả hai đều đạt được độ bất biến về Tỉ lệ, Xoay và Chiếu sáng. Vậy có phải SURF luôn là người chiến thắng và ta nên bỏ hẳn SIFT không thầy?
+Người 1: Không hẳn đâu em. Trong kỹ thuật không có "viên đạn bạc" giải quyết mọi vấn đề. SIFT tuy chậm nhưng vector 128 chiều của nó vẫn giữ được độ chính xác và chi tiết nhỉnh hơn một chút, đặc biệt là khi bức ảnh bị biến dạng góc nhìn cực kỳ phức tạp. Nếu em làm cho hệ thống xe tự lái cần phản xạ nhanh thì hãy chọn SURF. Nhưng nếu em làm phần mềm ghép ảnh vệ tinh, cần độ tỉ mỉ tối đa và không quan tâm đến thời gian, thì SIFT vẫn là lựa chọn an toàn.
+
+Slide 14: THỰC CHIẾN: LẬP TRÌNH SURF VỚI OPENCV
+Người 1: Tiếp theo, chúng ta chuyển những lý thuyết đồ sộ nãy giờ thành code. Thư viện OpenCV hỗ trợ chúng ta làm điều đó chỉ với hai dòng lệnh đơn giản. Dòng đầu tiên, ta khởi tạo bộ phát hiện bằng lệnh: surf bằng xê-vê-hai chấm ích-features-hai-đê chấm S-U-R-F gạch dưới cờ-ri-ết, và truyền vào một tham số quan trọng là hessianThreshold.
+Người 2: Ở đây thầy đang thiết lập ngưỡng Hessian là 400. Mẹo thực chiến cho tham số này là gì ạ? Cứ để càng cao càng tốt hay sao thưa thầy?
+Người 1: Mẹo ở đây là sự đánh đổi, giống như cái rây bột vậy. Giá trị hessianThreshold càng cao thì lưới lọc càng khắt khe, số lượng điểm đặc trưng thu được sẽ càng ít, nhưng bù lại điểm nào qua được lưới lọc đều là những điểm cực kỳ sắc nét, có độ ổn định và tin cậy rất lớn. Dòng lệnh thứ 2 detectAndCompute sẽ làm nhiệm vụ gom tất cả lại và xuất ra danh sách các Keypoint cùng ma trận vector 64 chiều cho em.
+
+Slide 15: TỔNG KẾT TIẾT 6 & HÀNH TRÌNH TIẾP THEO
+Người 1: Chúng ta đã đi đến slide cuối cùng của tiết học hôm nay. Tổng kết lại, cốt lõi làm nên sức mạnh của SURF nằm ở 3 điểm: Thứ nhất, dùng Ảnh tích phân và Bộ lọc Box để bứt tốc. Thứ hai, định vị bằng Hessian và mô tả bằng Haar-wavelet. Thứ ba, nén dữ liệu thành Vector 64 chiều tối ưu cho thời gian thực.
+Người 2: Vậy là bài toán về Tốc độ đã được giải quyết trọn vẹn. Tiết học sau mình sẽ học gì tiếp theo thưa thầy?
+Người 1: Cả SIFT và SURF đều rất mạnh, nhưng chúng chỉ chuyên đi tìm các "Điểm" đặc trưng nhỏ bé. Hãy tưởng tượng em muốn máy tính nhận diện một người đang đi bộ. Việc tìm ra hàng trăm điểm nốt ruồi hay vân tay trên người đó không giúp máy tính hiểu được "Hình dáng" tổng thể của cơ thể người. Vì vậy, ở tiết học sau, chúng ta sẽ vượt ra ngoài các điểm rời rạc để khám phá Đặc trưng vùng HOG và Đặc trưng kết cấu LBP. Các em nhớ đọc trước tài liệu nhé. Chào các em!
+

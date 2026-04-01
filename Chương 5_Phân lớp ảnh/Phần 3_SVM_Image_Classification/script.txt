@@ -1,0 +1,73 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Ở hai tiết trước của Chương 5, chúng ta đã nắm vững nền tảng học có giám sát và mô hình Bag-of-Features. Hôm nay, chúng ta sẽ bước sang Tiết 3, cũng là tiết cuối của chương: Thuật toán Support Vector Machine, hay gọi tắt là S V M. Nhìn lên màn hình, các em có thể thấy mục tiêu tối thượng của bài học nằm ở dòng phụ đề: Tối đa hóa lề và kiến tạo ranh giới quyết định tuyến tính trong không gian vector.
+Người 2: Thưa thầy, hình minh họa trên slide trông giống như một không gian ba chiều với một mặt phẳng kính ở giữa đang cắt đôi hai nhóm điểm màu xanh và màu cam. Những mặt phẳng và các nét đứt này thể hiện điều gì vậy ạ?
+Người 1: Rất tinh mắt! Đó chính là không gian vector chứa dữ liệu. Cái "mặt phẳng kính" xẻ đôi hai nhóm đó chính là Ranh giới quyết định (Decision Boundary). Còn các điểm nằm sát ngay mặt phẳng đó đóng vai trò cực kỳ quan trọng, được gọi là các Vector hỗ trợ (Support Vectors). Chúng ta sẽ dần dần bóc tách tất cả những khái niệm này ngay sau đây.
+
+Slide 2: LỘ TRÌNH TIẾT HỌC: 5 CỘT MỐC TƯ DUY
+Người 1: Để chinh phục được thuật toán S V M, thầy trò ta sẽ đi qua một lộ trình gồm 5 cột mốc tư duy. Đầu tiên là triết lý Bộ phân lớp Lề tối đa, nơi ta hiểu về khoảng cách an toàn. Mốc thứ hai là nền tảng toán học và hình học của Vector hỗ trợ trong bài toán Ranh giới Cứng.
+Người 2: Vậy nếu dữ liệu thực tế nó không đẹp rạch ròi mà bị lẫn lộn vào nhau thì sao thưa thầy?
+Người 1: Một câu hỏi rất hay! Đó chính là lúc ta bước sang mốc thứ ba: Lề mềm, sử dụng hàm Hinge Loss để xử lý dữ liệu nhiễu. Tiếp theo, mốc thứ tư là một "phép thuật" không gian phi tuyến mang tên Hàm hạt nhân, hay Kernel Trick. Và cuối cùng, mốc thứ năm là mở rộng ra phân lớp Đa lớp bằng chiến lược One-vs-One cùng thực chiến ứng dụng.
+
+Slide 3: DNA CỦA SUPPORT VECTOR MACHINE
+Người 1: Trước khi đi vào các mốc cụ thể, ta cần phải hiểu bản chất đã. Bất kỳ thuật toán học máy nào cũng có mã gen, hay DNA riêng của nó. DNA của thuật toán S V M được cấu thành từ 3 bản chất cốt lõi. Thứ nhất, nó là chuyên gia trong nhóm Học có giám sát, giải quyết bài toán phân lớp nhị phân bằng cách học từ các dữ liệu đã được gán nhãn.
+Người 2: Thế còn đặc tính thứ hai "Mô hình phân biệt" nghĩa là sao ạ?
+Người 1: Mô hình phân biệt tức là nó bỏ qua việc tìm hiểu xem dữ liệu được sinh ra bằng cách nào. Nó đi thẳng vào mục tiêu thực dụng nhất: vạch ra một ranh giới rạch ròi nhất giữa các cụm đối tượng. Và đặc tính thứ ba, cũng là cốt lõi của cốt lõi: S V M làm việc dựa trên Lề và Siêu mặt phẳng. Nhiệm vụ tối thượng của nó là tìm ra một khoảng trống, hay còn gọi là lề, rộng nhất để đặt nhát cắt trong không gian.
+
+Slide 4: TRIẾT LÝ LỀ TỐI ĐA (MAXIMUM MARGIN CLASSIFIER)
+Người 1: Bây giờ ta đào sâu vào triết lý thứ ba: Lề tối đa. Các em nhìn lên biểu đồ bên trái. Nếu chỉ để tách hai nhóm điểm xanh và cam, tại sao ta không vẽ đại một đường thẳng ngẫu nhiên đi qua khe hở giữa chúng?
+Người 2: Theo em quan sát, nếu mình vẽ một đường ranh giới ngẫu nhiên nằm quá sát vào cụm màu cam, thì nhỡ sau này có một điểm màu cam mới xuất hiện hơi lệch ra một tí là sẽ bị máy tính đoán nhầm thành màu xanh ngay. Như thế rủi ro dự đoán sai là rất lớn đúng không thầy?
+Người 1: Em phân tích vô cùng chính xác! Việc vẽ ngẫu nhiên có thể đạt sai số huấn luyện bằng không, nhưng rủi ro dự đoán sai khi gặp dữ liệu thực tế lại cực kỳ cao. Thuật toán S V M khắc phục triệt để điều này bằng cách tối ưu hóa lề. Nó đẩy đường ranh giới ra xa đều cả hai nhóm điểm, tạo thành một "vùng đệm an toàn" rộng nhất có thể như ở biểu đồ bên phải. Nhờ "vùng đệm" này, mô hình sẽ giảm thiểu tối đa sai số tổng quát hóa.
+
+Slide 5: TOÁN HỌC CƠ SỞ: RANH GIỚI CỨNG (HARD MARGIN)
+Người 1: Để máy tính hiểu và tự động vẽ được "vùng đệm an toàn" đó, ta phải mô hình hóa nó bằng toán học. Đây là hình thức cơ bản nhất: Ranh giới Cứng. Ở chính giữa lề, ta có phương trình của Siêu mặt phẳng phân lớp là: w chuyển vị nhân với vector x, cộng b bằng không.
+Người 2: Nhìn trên hình, em thấy có hai đường nét đứt giới hạn khu vực vùng đệm màu xám. Vậy khoảng cách lề này được tính bằng công thức toán học nào thưa thầy?
+Người 1: Khoảng cách lề, tức là bề rộng toàn phần của vùng đệm, được tính bằng công thức: hai chia cho chuẩn của vector w. Các em hãy đặc biệt chú ý đến những điểm có vòng tròn bao quanh nằm chễm chệ ngay trên hai đường mép lề. Chúng thỏa mãn phương trình biên là: y i nhân với mở ngoặc, w chuyển vị nhân x i cộng b, đóng ngoặc, bằng một.
+Người 2: Ồ, vậy những điểm nằm ngay trên mép lề đó chính là các "Vector Hỗ trợ" đúng không ạ? Nghĩa là sức mạnh định hình ranh giới phân lớp của thuật toán này thực chất chỉ phụ thuộc vào một số ít các điểm thiểu số này thôi sao thầy?
+Người 1: Tuyệt vời, em đã nắm được linh hồn của thuật toán rồi đấy! Các điểm khác nằm sâu bên trong cụm dù có bị xóa đi thì ranh giới vẫn hoàn toàn không thay đổi. Cuối cùng, để tạo ra được một vùng lề rộng nhất có thể, mục tiêu tối ưu hóa của chúng ta là phải cực tiểu hóa hàm: một phần hai nhân với bình phương chuẩn của vector w.
+
+Slide 6: DỮ LIỆU THỰC TẾ VÀ LỀ MỀM (SOFT MARGIN)
+Người 1: Chúng ta vừa nói về Ranh giới Cứng, nhưng đó là một viễn cảnh quá hoàn hảo. Các em nhìn lên màn hình, trong thực tế, dữ liệu luôn có sự chồng lấn, hay còn gọi là Overlapping, các điểm xanh và cam lẫn lộn vào nhau. Ở tình huống này, ranh giới cứng sẽ ngay lập tức sụp đổ hoặc căn bản là không thể tồn tại. Để giải quyết, SVM sử dụng triết lý Lề Mềm bằng cách đưa vào một án phạt có tên là Hàm mất mát bản lề, hay Hinge Loss.
+Người 2: Hàm Hinge Loss này tính toán án phạt như thế nào vậy thầy? Em thấy đồ thị của nó là một đường gấp khúc.
+Người 1: Đúng vậy, đường gấp khúc đó thể hiện quy tắc rất rõ ràng. Công thức của nó là: E H L bằng giá trị lớn nhất giữa không và, một trừ đi t i nhân y i. Nghĩa là, nếu dữ liệu nằm an toàn đúng phía, mức phạt sẽ bằng không. Nhưng nếu điểm dữ liệu lấn vạch vi phạm lề, mức phạt sẽ tăng dần lên theo đường chéo tuyến tính. Từ đó, hàm mục tiêu mới của chúng ta sẽ thay đổi thành: Cực tiểu hóa của, tổng các sai số E H L, cộng với, lambda nhân với bình phương chuẩn của vector w.
+
+Slide 7: PHÉP THUẬT KHÔNG GIAN: THỦ THUẬT HẠT NHÂN (KERNEL TRICK)
+Người 1: Xử lý được nhiễu rồi, nhưng rắc rối chưa dừng lại. Sẽ có những tập dữ liệu xếp thành hình vòng tròn, bao bọc lấy nhau. Ở không gian gốc hai chiều, ta hoàn toàn không thể vẽ một đường thẳng tuyến tính nào để phân tách chúng cả.
+Người 2: Chẳng lẽ thuật toán SVM phải chịu thua ở dữ liệu phi tuyến tính sao thầy?
+Người 1: Không hề! Đây là lúc mốc tư duy thứ tư phát huy tác dụng: Thủ thuật Hạt nhân - Kernel Trick. Các em hình dung, ta dùng một Ánh xạ Kernel tên là Phi để "bẻ cong" và đẩy mặt phẳng dữ liệu chui lên một không gian chiều cao hơn, ví dụ là không gian ba chiều. Lúc này, dữ liệu đã được kéo giãn ra không gian 3D, và ta lại có thể dễ dàng dùng một mặt phẳng phẳng lỳ để xẻ đôi dữ liệu.
+Người 2: Nhưng thưa thầy, ném dữ liệu lên không gian đa chiều như thế thì máy tính phải tính toán cực kỳ nặng và dễ bị bùng nổ chi phí đúng không ạ?
+Người 1: Em lo lắng rất đúng, nhưng điều kỳ diệu của "Phép thuật" Kernel chính là ở chỗ: các phép tính toán phức tạp trong không gian đa chiều thực chất chỉ cần thực hiện trên đúng các Vector Hỗ trợ mà thôi! Nhờ vậy, ta bẻ cong được không gian mà chi phí tính toán hoàn toàn không bị bùng nổ.
+
+Slide 8: VƯỢT QUA GIỚI HẠN: PHÂN LỚP ĐA LỚP (MULTI-CLASS)
+Người 1: Điểm yếu cuối cùng của SVM gốc là nó sinh ra chỉ để nhận diện nhị phân, tức là chỉ phân biệt được 0 hoặc 1, đúng hoặc sai. Nhưng bài toán thực tế thường có nhiều lớp, ví dụ phân biệt chó, mèo, chim, và cá. Để vượt qua giới hạn này, người ta dùng chiến lược O V O, viết tắt của One-vs-One, tức là chia để trị.
+Người 2: Chiến lược chia để trị này hoạt động như thế nào khi mình có 4 lớp động vật như trên hả thầy?
+Người 1: Thuật toán sẽ phân rã bài toán lớn ra. Thay vì giải quyết một lúc 4 lớp, nó sẽ tạo ra hàng loạt các bộ phân lớp nhị phân nhỏ chỉ để so sánh từng cặp một: chó với mèo, chó với chim, chim với cá... Theo công thức toán học, với n lớp, ta sẽ có: n nhân với mở ngoặc n trừ một đóng ngoặc, tất cả chia cho hai, bộ phân lớp nhị phân. Với 4 lớp, ta có 6 bộ phân lớp. Cuối cùng, chúng ta sẽ tổng hợp quyết định lại bằng cơ chế Bầu chọn đa số - Voting, hoặc dùng mã Error Correcting Codes để xuất ra kết quả cuối cùng.
+
+Slide 9: TIÊU CHUẨN VÀNG S O T A: HOG + LINEAR SVM
+Người 1: Chúng ta đã nắm vững lý thuyết, giờ là lúc thực chiến! Ứng dụng đỉnh cao nhất, từng được coi là "Tiêu chuẩn vàng" hay S O T A trong tác vụ phát hiện người đi bộ, chính là sự kết hợp giữa đặc trưng HOG và Linear SVM do hai nhà khoa học Dalal và Triggs đề xuất.
+Người 2: Em thấy trên sơ đồ, một bức ảnh thực tế chụp người đi bộ được biến đổi thành một hình nộm toàn các nét đứt màu cam và xanh. Quá trình này có tác dụng gì ạ?
+Người 1: Đó là quá trình bóc tách và biến đổi đặc trưng HOG. Quá trình này sẽ vứt bỏ hoàn toàn thông tin về màu sắc quần áo hay da dẻ, chỉ giữ lại duy nhất cấu trúc hình học ổn định của cơ thể dưới dạng một biểu đồ hướng gradient. Cụ thể, ảnh sẽ được lượng hóa thành một vector đặc trưng độ dài đúng 3.780 chiều. Môi trường siêu đa chiều này chính là điều kiện cực kỳ lý tưởng để bộ não Linear SVM phóng ra một mặt phẳng tuyến tính cắt lớp và nhận diện chính xác người đi bộ.
+
+Slide 10: THỰC CHIẾN LẬP TRÌNH: MÃ NHẬN DIỆN (OPENCV)
+Người 1: Và để lập trình mô hình này, chúng ta không cần phải tự viết lại từ đầu. Thư viện tối ưu hóa thị giác máy tính OpenCV đã đóng gói tất cả cực kỳ gọn gàng. Chỉ cần đúng 3 bước mã lệnh cốt lõi.
+Người 2: Thầy giải thích giúp em 3 dòng code trên màn hình được không ạ? Nhìn có vẻ hàm gọi khá dài.
+Người 1: Rất đơn giản. Dòng số 1 là Khởi tạo mắt quét: ta dùng hàm cv2.HOGDescriptor để định nghĩa các thông số lưới và block cho việc rút trích đặc trưng. Dòng số 2 là Nạp trọng số Não bộ: ta gọi hàm hog.setSVMDetector truyền vào trọng số pre-trained là getDefaultPeopleDetector(), lúc này não bộ đã có sẵn kinh nghiệm nhận diện người đi bộ. Và dòng số 3, Quét cửa sổ trượt đa tỷ lệ để tìm mục tiêu: ta chạy hàm hog.detectMultiScale(image), máy tính sẽ lập tức trả về danh sách các tọa độ vùng chứa người trong ảnh kèm theo mức độ tự tin.
+
+Slide 11: MA TRẬN SO SÁNH: K-NEAREST NEIGHBORS VS. SVM
+Người 1: Để hiểu rõ hơn sức mạnh của S V M, chúng ta hãy đặt nó lên bàn cân với người anh em K N N mà ta đã học ở tiết đầu tiên. Các em hãy nhìn vào ma trận so sánh trên màn hình, đây chính là sự tiến hóa trong tư duy phân lớp. Về bản chất học, K N N thuộc trường phái lười biếng, tiếng Anh gọi là Lazy Learning, tức là nó chẳng học gì trước cả. Trong khi đó, S V M lại là Eager Learning, nó chủ động học và vạch ra ranh giới ngay từ đầu.
+Người 2: Việc "lười biếng" của K N N chắc chắn sẽ gây hậu quả khi làm bài toán thực tế đúng không thầy? Em đoán là nó sẽ rất tốn bộ nhớ.
+Người 1: Em đoán rất chuẩn! Vì lười biếng, K N N bắt buộc phải bê nguyên toàn bộ kho dữ liệu khổng lồ vào trong bộ nhớ, nên nó cực kỳ nặng. Ngược lại, S V M siêu nhẹ, bởi vì như ta đã phân tích, sau khi học xong nó ném hết dữ liệu đi, chỉ giữ lại vài điểm thiểu số trên mép lề gọi là Vector Hỗ trợ.
+Người 2: Vậy còn tốc độ lúc mang ra nhận diện thực tế thì sao ạ?
+Người 1: Khác biệt một trời một vực em ạ. Với K N N, mỗi lần có ảnh mới vào, nó phải lôi toàn bộ dữ liệu ra tính toán lại khoảng cách cục bộ từ đầu, nên tốc độ test rất chậm. Còn với S V M, vì nó đã tính toán xong mặt phẳng lề tối đa toàn cục từ trước rồi, nên lúc test, nó chỉ làm vài phép nhân ma trận là ra ngay kết quả, tốc độ chớp nhoáng.
+
+Slide 12: TỔNG KẾT CHƯƠNG 5: DÂY CHUYỀN THỊ GIÁC MÁY TÍNH
+Người 1: Bây giờ, hãy lùi lại một bước để nhìn toàn cảnh bức tranh Chương 5. Toàn bộ dây chuyền thị giác máy tính truyền thống được lắp ráp từ 3 giai đoạn độc lập. Giai đoạn 1 là "Mắt và Tiền xử lý", nhiệm vụ của nó là nhìn vào bức ảnh và trích xuất ra các đặc trưng hình học bất biến như SIFT, SURF hay HOG.
+Người 2: Em nhớ rồi ạ! Sau đó những đặc trưng rời rạc này sẽ được chuyển qua Giai đoạn 2 là "Cầu nối" để lượng hóa lại. Công cụ mà chúng ta dùng ở đây chính là mô hình Bag of Features, giúp nén mọi thứ thành một vector có độ dài cố định.
+Người 1: Hoàn toàn chính xác! Và Giai đoạn 3, điểm đến cuối cùng của hệ thống, chính là "Bộ não Phán quyết". Bộ não này chính là thuật toán S V M chúng ta vừa học. Nó sẽ tiếp nhận cái vector cố định kia, đặt vào không gian, tính toán siêu mặt phẳng lề tối đa và đưa ra nhãn dán cuối cùng xem đó là con mèo hay con chó.
+
+Slide 13: HOÀN THÀNH MỤC TIÊU & CHÂN TRỜI HỌC SÂU
+Người 1: Tới đây, thầy trò ta đã chính thức chinh phục xong các mục tiêu của Chương 5. Các em đã biết phân biệt tư duy của K N N và S V M, biết mô hình hóa Bag of Features, và hiểu được cơ chế tối đa hóa lề để tạo ranh giới tuyến tính. Tuy nhiên, công nghệ thì không bao giờ đứng yên.
+Người 2: Dạ, hệ thống 3 giai đoạn truyền thống này mạnh như vậy, được coi là tiêu chuẩn vàng cơ mà, chẳng lẽ nó vẫn có điểm yếu sao thưa thầy?
+Người 1: Có chứ em. Điểm nghẽn lớn nhất nằm ở chỗ các đặc trưng như SIFT hay HOG đều là do con người tự suy nghĩ và thiết kế thủ công, gọi là Hand-crafted. Khi dữ liệu trở nên siêu lớn và siêu phức tạp, khả năng của con người không thể thiết kế xuể. Nó đã bộc lộ giới hạn.
+Người 2: Vậy giải pháp cho tương lai là gì ạ?
+Người 1: Giải pháp chính là từ bỏ việc thiết kế thủ công. Chúng ta sẽ bước sang một kỷ nguyên mới mang tên Học sâu, hay Deep Learning. Ở chương sau, các em sẽ làm quen với Mạng Nơ-ron Tích chập, gọi tắt là C N N. Đây là một hệ thống mang tính cách mạng, nó tự động học luôn cả Đặc trưng và Cách phân loại trong một dây chuyền xuyên suốt duy nhất, tiếng Anh gọi là hệ thống End-to-End. Khái niệm thú vị này chúng ta sẽ cùng khám phá trong tiết học tới. Chào các em!
+

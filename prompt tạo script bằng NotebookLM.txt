@@ -1,0 +1,8 @@
+hãy kiểm tra 13 slide trong file Phần 3_SVM_Image_Classification.pdf, hãy liệt kê nội dung trên từng slide, viết đúng thứ tự, làm cho slide 1-5 trước
+++++++++++++++++++++
+tôi muốn viết kịch bản cho chương 5, tiết 3 (từ nội dung các slide đã viết ở trên, Phần 3_SVM_Image_Classification.pdf) có cấu trúc đầu ra giống như trong file "Kịch bản Chương 4_Tiết 1.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói
+
+++++++++++++++++++++
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-13)

@@ -4,162 +4,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHƯƠNG 5: PHÂN LỚP ẢNH</title>
+    <title>Chương 5: Phân lớp ảnh</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --hover-color: #1d4ed8;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-color: #1f2937;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        .part-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            display: inline-flex;
             align-items: center;
-            padding: 40px 20px;
+            white-space: nowrap;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.8s ease-out;
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
+        .part-btn:hover {
+            background: #f3f4f6;
+            color: #0d6efd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
-        h1 {
-            font-size: 2.2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            line-height: 1.3;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
+        .part-btn.active {
+            background: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
         }
 
-        p.subtitle {
-            font-size: 1.2rem;
-            color: #6b7280;
-            font-weight: 600;
+        .desktop-text {
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            display: inline-block;
+            transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            vertical-align: middle;
         }
 
-        .back-btn {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .part-btn:hover .desktop-text,
+        .part-btn.active .desktop-text {
+            max-width: 300px;
+            opacity: 1;
+            margin-left: 4px;
+        }
+
+        .mobile-text {
+            display: none;
+        }
+
+        /* Info Button Style */
+        .info-btn {
+            background: #fff;
+            color: #8a2be2;
+            /* BlueViolet */
+            border: 1px solid #8a2be2;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background-color: var(--card-bg);
-            color: var(--primary-color);
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
+            gap: 6px;
         }
 
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--hover-shadow);
-            background-color: var(--primary-color);
+        .info-btn:hover {
+            background: #8a2be2;
             color: white;
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        /* Modal Styles */
+        .info-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
             width: 100%;
-            max-width: 1200px;
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            text-align: center;
+            /* Center content */
         }
 
-        @keyframes fadeInDown {
+        .modal-content {
+            margin: auto;
+            display: inline-block;
+            /* Allow centering with text-align */
+            max-width: 98vw;
+            /* Maximize usage of screen */
+            max-height: 98vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation-name: zoom;
+            animation-duration: 0.4s;
+            transition: width 0.3s ease;
+            /* Smooth size transition */
+            cursor: zoom-in;
+        }
+
+        /* Zoomed State - True Scrollable Zoom */
+        .modal-content.zoomed {
+            width: 150%;
+            /* Force wider than screen to enable scrolling */
+            max-width: none;
+            max-height: none;
+            margin: 0;
+            cursor: grab;
+            transform: none;
+            /* Disable CSS transform to allow native scrolling */
+        }
+
+        .modal-content.zoomed:active {
+            cursor: grabbing;
+        }
+
+        @keyframes zoom {
             from {
-                opacity: 0;
-                transform: translateY(-20px);
+                transform: scale(0)
             }
 
             to {
-                opacity: 1;
-                transform: translateY(0);
+                transform: scale(1)
             }
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 100000;
         }
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5rem;
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Mobile adjustments */
+        @media only screen and (max-width: 700px) {
+            .modal-content {
+                width: 100%;
             }
 
-            header {
-                margin-top: 40px;
+            .info-btn .btn-text {
+                display: none;
             }
 
-            .grid-container {
-                grid-template-columns: 1fr;
+            .desktop-icon,
+            .desktop-text {
+                display: none !important;
             }
 
-            .back-btn {
-                position: relative;
+            .mobile-text {
+                display: inline;
+                font-weight: bold;
+            }
+
+            .part-btn {
+                padding: 8px;
+                font-size: 16px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
                 display: inline-flex;
-                margin-bottom: 20px;
-                top: auto;
-                left: auto;
+                justify-content: center;
+                align-items: center;
             }
+
+            .info-btn {
+                border-radius: 20px;
+                width: auto;
+                padding: 8px 16px;
+            }
+        }
+
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+            font-size: 18px;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <a href="../index.html" class="back-btn" title="Quay lại Dashboard"
-            style="padding: 10px; border-radius: 50%; width: 40px; height: 40px; justify-content: center;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-        </a>
-        <h1>PHÂN LỚP ẢNH</h1>
-        <p class="subtitle">CHƯƠNG 5</p>
-    </header>
-    <div class="grid-container">
-        <p style="text-align: center; color: #6b7280; font-size: 1.2rem; grid-column: 1/-1; padding: 40px;">
-            Nội dung đang được cập nhật...
-        </p>
+    <div class="container" style="margin-top: 20px;">
+        <!-- Tabs Nav -->
+        <div class="tabs" style="display: flex; align-items: center; gap: 10px;">
+            <!-- Back Button (Small) -->
+            <a href="../index.html" class="tab-btn"
+                style="width: auto; padding: 0 15px; font-size: 14px; display: flex; align-items: center; color: #666; text-decoration: none; border-bottom: 3px solid transparent;">
+                <i class="fa-solid fa-arrow-left mr-2"></i>
+            </a>
+            <button class="tab-btn active" onclick="openTab(event, 'theory')">
+                <i class="fa-solid fa-book mr-2"></i>Lý thuyết
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'practice')">
+                <i class="fa-solid fa-code mr-2"></i>Thực hành
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'quiz')">
+                <i class="fa-solid fa-puzzle-piece mr-2"></i>Trắc nghiệm
+            </button>
+        </div>
+        
+        <!-- Tab Content: Theory -->
+        <div id="theory" class="tab-content active">
+            <!-- PART SELECTION & INFOGRAPHIC -->
+            <div class="mb-4 flex space-x-2"
+                style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; flex-grow: 1;">
+                    <button class="part-btn active" onclick="loadPart(1, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 1</span><span class="desktop-text">: Supervised Learning & KNN</span><span class="mobile-text">1</span></button>
+                    <button class="part-btn" onclick="loadPart(2, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 2</span><span class="desktop-text">: The Visual Dictionary</span><span class="mobile-text">2</span></button>
+                    <button class="part-btn" onclick="loadPart(3, this)"><span class="desktop-icon"><i
+                                class="fa-solid fa-circle-play"></i> Tiết 3</span><span class="desktop-text">: SVM Image Classification</span><span class="mobile-text">3</span></button>
+                </div>
+                <!-- Infographic Button -->
+                <button class="part-btn info-btn" onclick="showInfographic()"
+                    title="Xem Tóm tắt nội dung (Infographic)">
+                    <i class="fa-solid fa-images"></i><span class="btn-text">Infographic</span>
+                </button>
+            </div>
+            
+            <div class="bg-white p-4 rounded-xl shadow-sm" style="height: 800px;">
+                <!-- PDF Viewer / Slide Player -->
+                <iframe id="pdf-frame" width="100%" height="100%" style="border: none;"></iframe>
+            </div>
+        </div>
+        
+        <!-- Tab Content: Practice -->
+        <div id="practice" class="tab-content">
+            <div class="notebook-section">
+                <h3 class="text-xl font-bold mb-4">📂 Bài tập & Google Colab</h3>
+                <table class="notebook-table">
+                    <thead>
+                        <tr>
+                            <th>Tuần</th>
+                            <th>Tên Notebook/Bài tập</th>
+                            <th>Mức độ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notebook-list">
+                        <tr>
+                            <td>Tuần 5</td>
+                            <td>Thực hành phân lớp ảnh (KNN)</td>
+                            <td><span class="badge easy" style="background-color: #f9ab00; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Thực hành</span></td>
+                            <td style="display: flex; gap: 5px;">
+                                <a href="https://colab.research.google.com/github/tranthanhthangbmt/Web_ComputerVision/blob/main/Ch%C6%B0%C6%A1ng%205_Ph%C3%A2n%20l%E1%BB%9Bp%20%E1%BA%A3nh/Th%E1%BB%B1c%20h%C3%A0nh/knn.ipynb"
+                                    target="_blank" class="btn-start"
+                                    style="padding: 5px 10px; font-size: 0.8rem; background-color: #f9ab00; border-color: #f9ab00; color: #fff; text-decoration: none; display: inline-flex; align-items: center;"><i class="fa-brands fa-google mr-1"></i> Colab</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Tab Content: Quiz -->
+        <div id="quiz" class="tab-content">
+            <!-- Dynamic Quiz Link -->
+            <div class="bg-white p-6 rounded-xl shadow-sm h-full">
+                <h3 class="mb-4 text-center font-bold text-gray-700">Làm Bài Trắc Nghiệm Chương 5</h3>
+                <iframe id="quiz-frame" class="quiz-frame" src=""></iframe>
+            </div>
+        </div>
     </div>
+    
+    <!-- INFOGRAPHIC MODAL -->
+    <div id="info-modal" class="info-modal">
+        <span class="close-modal" onclick="closeInfographic()">&times;</span>
+        <img class="modal-content" id="info-image">
+        <div id="caption"></div>
+    </div>
+    
+    <footer class="footer">
+        <p>&copy; 2026 Computer Vision Course.</p>
+    </footer>
+    
+    <script>
+        // Tab function
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove('active');
+            }
+
+            tablinks = document.getElementsByClassName("tab-btn");
+
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.className += " active";
+        }
+
+        // Config specific for Chapter 5
+        const config = {
+            parts: {
+                1: 'Phần 1_Supervised_Learning_and_KNN/index.html',
+                2: 'Phần 2_The_Visual_Dictionary/index.html',
+                3: 'Phần 3_SVM_Image_Classification/index.html'
+            },
+            quizCsv: '../Quiz/index.html?group=Chuong5'
+        };
+
+        let currentPartId = 1; // Track current part
+
+        function loadPart(partId, btn) {
+            currentPartId = partId; // Update current part
+
+            // Update Active State
+            if (btn) {
+                document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            // Load Content
+            const url = config.parts[partId];
+
+            if (url) {
+                document.getElementById('pdf-frame').src = url;
+            } else {
+                console.error("Part not found:", partId);
+                alert("Nội dung bài học này chưa khả dụng.");
+            }
+        }
+
+        /* INFOGRAPHIC LOGIC */
+        function showInfographic() {
+            const modal = document.getElementById("info-modal");
+            const modalImg = document.getElementById("info-image");
+            const captionText = document.getElementById("caption");
+
+            // Construct path: "Infographic/Phần 1_.png"
+            const imgPath = `Infographic/Phần ${currentPartId}_.png`;
+
+            modal.style.display = "block";
+            modalImg.src = imgPath;
+            // Reset Zoom
+            modalImg.classList.remove('zoomed');
+            captionText.innerHTML = `Infographic - Tiết ${currentPartId} <br> <span style='font-size:14px; color:#aaa'>(Nhấn vào ảnh để phóng to/thu nhỏ)</span>`;
+        }
+
+        function closeInfographic() {
+            document.getElementById("info-modal").style.display = "none";
+        }
+
+        // Close on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById("info-modal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Drag to Scroll Logic
+        const img = document.getElementById("info-image");
+        const modal = document.getElementById("info-modal");
+        let isDown = false;
+        let startX, startY;
+        let scrollLeft, scrollTop;
+        let isDragging = false; // Flag to distinguish click from drag
+
+        img.addEventListener('mousedown', (e) => {
+            if (!img.classList.contains('zoomed')) return;
+            isDown = true;
+            isDragging = false; // Reset drag flag
+            startX = e.pageX - modal.offsetLeft;
+            startY = e.pageY - modal.offsetTop;
+            scrollLeft = modal.scrollLeft;
+            scrollTop = modal.scrollTop;
+            e.preventDefault(); // prevent image drag
+        });
+
+        img.addEventListener('mouseleave', () => {
+            isDown = false;
+        });
+
+        img.addEventListener('mouseup', (e) => {
+            isDown = false;
+            if (!isDragging) {
+                // It was a click, toggle zoom
+                e.stopPropagation();
+                img.classList.toggle("zoomed");
+            }
+        });
+
+        img.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - modal.offsetLeft;
+            const y = e.pageY - modal.offsetTop;
+            const walkX = (x - startX) * 1.5; // scroll-fast
+            const walkY = (y - startY) * 1.5;
+
+            // If moved more than a few pixels, consider it a drag
+            if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
+                isDragging = true;
+            }
+
+            modal.scrollLeft = scrollLeft - walkX;
+            modal.scrollTop = scrollTop - walkY;
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load Default Part (Part 1)
+            loadPart(1, document.querySelector('.part-btn.active'));
+
+            // Set Quiz src
+            document.getElementById('quiz-frame').src = config.quizCsv;
+        });
+    </script>
 </body>
 
 </html>

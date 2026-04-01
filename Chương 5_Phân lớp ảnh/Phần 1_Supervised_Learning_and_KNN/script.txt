@@ -1,0 +1,45 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Ở những chương trước, chúng ta đã nắm vững các kỹ thuật xử lý và trích xuất đặc trưng của bức ảnh. Hôm nay, thầy trò ta sẽ bước sang một chương mang tính quyết định: Chương 5 - Phân lớp ảnh. Trong tiết học đầu tiên này, chúng ta sẽ cùng tìm hiểu về khái niệm Học có giám sát, đồng thời làm quen với một thuật toán kinh điển là K-Nearest Neighbors, hay còn gọi tắt là thuật toán ca-en-en.
+Người 2: Thưa thầy, ở các chương trước mình chủ yếu tìm cạnh với tìm góc của đồ vật. Vậy "phân lớp ảnh" có phải là bước tiếp theo để máy tính thực sự hiểu bức ảnh đó đang chứa cái gì không ạ?
+
+Slide 2: MỤC TIÊU PHẦN HỌC
+Người 1: Một câu hỏi dẫn dắt rất chính xác! Để làm được điều em vừa nói, chúng ta cần hoàn thành ba mục tiêu trong bài học hôm nay. Thứ nhất, các em phải hiểu rõ cơ chế của quy trình Học có giám sát. Thứ hai, ta cần phân biệt được rõ ràng hai dạng bài toán: Phân lớp và Hồi quy. Cuối cùng, về mặt kỹ thuật, các em sẽ phải nắm vững bản chất "phi tham số" của thuật toán ca-en-en.
+Người 2: Nghe cụm từ "học có giám sát" có cảm giác giống như có một người giáo viên chỉ bảo cho máy tính từng li từng tí một đúng không thầy?
+
+Slide 3: TỔNG QUAN VỀ HỌC CÓ GIÁM SÁT (SUPERVISED LEARNING)
+Người 1: Sự liên tưởng của em rất hay! Học có giám sát hoạt động đúng như vậy. Mục tiêu tối thượng của nó là giảm thiểu tối đa sai số, sao cho dự đoán của máy tính đồng thuận nhất với thực tế. Quy trình này được chia làm hai giai đoạn tách biệt. Giai đoạn một là Huấn luyện. Ở đây, ta sẽ "mớm" cho máy tính cặp thông tin bao gồm: Dữ liệu đầu vào, ký hiệu là ích i, và Nhãn đáp án, ký hiệu là tê i. Từ những ví dụ mẫu này, máy tính sẽ tự động thiết lập nên một Mô hình.
+Người 2: Vậy sau khi máy tính đã học xong và tạo ra được Mô hình rồi, thì giai đoạn hai chính là mang mô hình đó ra để thi đúng không thầy?
+Người 1: Đúng vậy em! Giai đoạn hai được gọi là giai đoạn Kiểm thử. Ta sẽ đưa một dữ liệu hoàn toàn mới, chưa từng xuất hiện trong lúc học, đi qua Mô hình đã được thiết lập. Mô hình sẽ dựa vào những gì đã học để tự động đưa ra dự đoán đầu ra cho dữ liệu mới đó.
+
+Slide 4: ĐẶC TÍNH ĐẦU RA: HỒI QUY VS. PHÂN LỚP
+Người 1: Dựa vào chính cái "dự đoán đầu ra" mà ta vừa nhắc tới, máy học có giám sát chia làm hai nhánh bài toán cốt lõi là Hồi quy và Phân lớp. Nhánh thứ nhất, Hồi quy, là khi đầu ra của chúng ta là các giá trị liên tục. Ví dụ như em dùng dữ liệu để dự đoán nhiệt độ ngày mai, hay dự đoán giá của một căn nhà.
+Người 2: Thế còn Phân lớp thì sao ạ? Có phải giống như việc mình phân loại học sinh thành các mức độ giỏi, khá, trung bình không thầy?
+Người 1: Rất chuẩn xác! Nhánh Phân lớp là khi dự đoán đầu ra của ta là các nhãn rời rạc nằm trong một danh sách đã cho trước. Ví dụ như nhận diện xem ảnh này là "con ngựa" hay "con mèo". Trong khóa học của chúng ta, ta đặc biệt quan tâm tới "Phân lớp ảnh ngữ nghĩa", tức là nhiệm vụ dự đoán và gắn nhãn cho toàn bộ một bức ảnh vào một danh mục hợp lý nhất.
+
+Slide 5: BẢN CHẤT CỐT LÕI CỦA K-NEAREST NEIGHBORS (KNN)
+Người 1: Bây giờ, ta sẽ đi thẳng vào một thuật toán phân lớp cực kỳ nổi tiếng: K-Nearest Neighbors, hay gọi là thuật toán ca-en-en. Đặc điểm lớn nhất của nó là một kỹ thuật học máy "phi tham số". Tức là, nó hoàn toàn không có ý định tóm tắt dữ liệu.
+Người 2: Việc "tóm tắt dữ liệu" nghĩa là sao thầy? Có phải bình thường máy tính sẽ tìm ra một cái phương trình ngắn gọn nào đó để đại diện cho tất cả dữ liệu đúng không ạ?
+Người 1: Đúng thế. Các mô hình khác thường cố gắng tóm tắt mọi thứ qua một hàm giải tích tổng quát có số lượng tham số rất thấp. Ví dụ như hàm bậc nhất: ép của ích, bằng, đắp-liu nhân ích, cộng bê. Nhưng thuật toán ca-en-en thì nói "không" với điều đó. Đặc trưng của nó là "Lưu trữ toàn vẹn" – nó sẽ giữ lại nguyên vẹn toàn bộ các mẫu huấn luyện trong bộ nhớ. Sau đó, nó thực hiện suy luận trực tiếp bằng cách tính toán khoảng cách từ dữ liệu mới đến tất cả các mẫu dữ liệu đã lưu.
+
+Slide 6: CƠ CHẾ HOẠT ĐỘNG CỦA KNN
+Người 1: Ở slide trước thầy có nói là thuật toán ca-en-en lưu trữ toàn vẹn dữ liệu. Điều này dẫn đến một cơ chế hoạt động rất đặc biệt: nó hoàn toàn không có pha huấn luyện tường minh. Mọi tính toán thực sự chỉ diễn ra tại thời điểm dự đoán, tức là lúc kiểm thử.
+Người 2: Vậy máy tính cứ lấy dữ liệu mới đem đi so sánh với toàn bộ dữ liệu cũ hả thầy? Như thế có vẻ hơi nguyên thủy ạ.
+Người 1: Đúng là học máy vét cạn, tiếng Anh gọi là Brute-force. Dù nguyên thủy nhưng nó lại đạt hiệu quả thống kê tối ưu khi tập mẫu của chúng ta đủ lớn đấy em. Thuật toán sẽ tiến hành tìm ra ca mẫu lân cận gần nhất, và quyết định lớp bằng cách "bầu chọn đa số". Lớp nào xuất hiện nhiều nhất trong số các lân cận đó sẽ chiến thắng.
+
+Slide 7: BÀI TOÁN ĐÁNH ĐỔI: ẢNH HƯỞNG CỦA SIÊU THAM SỐ K
+Người 2: Việc chọn số lượng lân cận là ca có ảnh hưởng gì lớn không thầy? Ví dụ em thử chọn ca bằng một thì sao ạ?
+Người 1: Câu hỏi rất hay! Đây chính là một bài toán đánh đổi. Nếu em chọn ca quá nhỏ, ví dụ ca bằng một, mô hình sẽ phản ứng cực kỳ nhạy cảm với nhiễu, làm cho ranh giới quyết định bị phân mảnh. Hiện tượng này gọi là Quá khớp hay Overfitting.
+Người 2: Vậy mình cứ tăng hệ số ca lên thật lớn cho an toàn được không ạ?
+Người 1: Lại không được. Nếu ca quá lớn, mô hình sẽ làm mượt ranh giới quá mức, dẫn đến việc nuốt chửng luôn các vùng dữ liệu nhỏ. Đó là hiện tượng Dưới khớp hay Underfitting. Giải pháp ở đây là ta phải dùng phương pháp Kiểm chứng chéo, hay Cross-validation, để dò tìm ra giá trị ca tối ưu nhất giúp định hình ranh giới một cách chuẩn xác.
+
+Slide 8: TỐI ƯU KHÔNG GIAN VỚI CẤU TRÚC CÂY K-D (K-D TREES)
+Người 1: Trở lại với vấn đề vét cạn, nếu tập dữ liệu quá khổng lồ thì việc tính khoảng cách sẽ cực kỳ chậm. Để giải quyết rào cản tính toán này, ta sẽ dùng kỹ thuật tối ưu không gian với cấu trúc Cây ca-đê, hay K-d Trees.
+Người 2: Cấu trúc cây này hoạt động như thế nào để tăng tốc độ tìm kiếm vậy thầy?
+Người 1: Nó là một cấu trúc dữ liệu giúp phân chia không gian đặc trưng đa chiều bằng các siêu mặt phẳng đan xen. Trong cấu trúc phân tầng này, các nút trong sẽ đóng vai trò là mặt phẳng cắt, còn nút lá sẽ chứa dữ liệu thực tế. Đặc biệt, khi kết hợp với chiến lược Best Bin First, thuật toán sẽ ưu tiên duyệt các không gian gần với điểm truy vấn nhất. Nhờ vậy, ta có thể bỏ qua được rất nhiều tính toán thừa, tăng tốc độ tìm lân cận lên cực kỳ nhanh.
+
+Slide 9: TỔNG KẾT & VẤN ĐỀ MỞ ĐƯỜNG (DẪN NHẬP TIẾT 2)
+Người 1: Tổng kết lại, thuật toán ca-en-en đã hoàn thành xuất sắc vai trò là một bộ phân lớp phi tham số cực kỳ mạnh mẽ. Nhưng các em phải nhớ kỹ, sự thành công này chỉ đúng với các vector đặc trưng có cùng số chiều.
+Người 2: Nghĩa là sao ạ? Trong thực tế dữ liệu ảnh của mình có thể không cùng số chiều sao thầy?
+Người 1: Chính xác! Đó gọi là Nghịch lý kích thước. Các bộ trích xuất đặc trưng hình ảnh mà ta đã học như SIFT hay SURF luôn tạo ra số lượng điểm đặc trưng khác nhau cho mỗi ảnh. Ví dụ, ảnh một có thể cho ra ma trận đê nhân năm trăm điểm, trong khi ảnh hai lại là đê nhân tám trăm điểm. Thuật toán ca-en-en hoàn toàn không thể so sánh trực tiếp hai ma trận có kích thước khác biệt thế này!
+Người 2: Chà, vậy mình phải làm sao để xử lý sự chênh lệch này ạ? Chẳng lẽ thuật toán chịu thua?
+Người 1: Đó chính là nhiệm vụ hấp dẫn của Tiết 2. Chúng ta sẽ cùng nhau tìm lời giải cho bài toán: làm sao để nén hàng ngàn vector có độ dài bất kỳ thành MỘT vector duy nhất có độ dài cố định. Lời giải sẽ nằm ở Mô hình Bag-of-Features, hay Túi từ vựng thị giác. Tiết học hôm nay kết thúc ở đây, chào các em!

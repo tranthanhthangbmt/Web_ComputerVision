@@ -1,0 +1,77 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Ở tiết học trước, chúng ta đã làm quen với bài toán phân lớp ảnh bằng thuật toán K láng giềng gần nhất, và chúng ta đang bị mắc kẹt ở một "nghịch lý kích thước" khi các đặc trưng trích xuất ra không đồng nhất về số lượng. Hôm nay, thầy trò ta sẽ giải quyết triệt để vấn đề đó trong Chương 5, Tiết 2: Mô hình Bag of Features, hay còn gọi là mô hình Túi Đặc Trưng. Tiết học này sẽ đánh dấu bước chuyển mình quan trọng từ việc xử lý các đặc trưng cục bộ sang một biểu diễn toàn cục hoàn chỉnh.
+Người 2: Thưa thầy, "từ cục bộ đến toàn cục" nghĩa là sao ạ? Có phải là mình sẽ gom tất cả các điểm đặc trưng hỗn loạn mà mình đã tìm được bằng thuật toán SIFT ở chương trước lại thành một khối thống nhất không ạ?
+Người 1: Chính xác là như vậy! Các em hãy nhìn lên hình minh họa trên slide. Thay vì ném cho máy tính một mớ các điểm SIFT thô hỗn loạn và rời rạc, chúng ta sẽ học cách biến đổi chúng thành một biểu đồ tần suất có cấu trúc chặt chẽ, với một lượng dữ liệu đầu ra cố định.
+
+Slide 2: MỤC TIÊU VÀ LỘ TRÌNH TIẾT HỌC
+Người 1: Để làm được điều đó, lộ trình bài học hôm nay của chúng ta sẽ đi qua 4 cột mốc chính. Đầu tiên, chúng ta sẽ tìm hiểu khởi nguồn của mô hình này từ lĩnh vực Xử lý ngôn ngữ tự nhiên. Thứ hai, ta sẽ mổ xẻ xem tại sao người ta lại gọi nó là một cái "Túi". Thứ ba, thầy sẽ giới thiệu bản thiết kế quy trình chuẩn gồm 4 bước. Và cuối cùng, chúng ta sẽ xem xét các giải pháp để vượt qua giới hạn điểm mù không gian của mô hình này.
+Người 2: Nghe thật thú vị ạ. Nhưng em hơi thắc mắc ở cột mốc đầu tiên. Xử lý ngôn ngữ tự nhiên là làm việc với câu chữ, văn bản. Tại sao nó lại liên quan đến Xử lý ảnh của chúng ta hả thầy?
+
+Slide 3: KHỞI NGUỒN VÀ Ý TƯỞNG CỐT LÕI - SỰ GIAO THOA ĐA LĨNH VỰC
+Người 1: Một câu hỏi rất hay! Đó chính là sự giao thoa tuyệt vời giữa các lĩnh vực trí tuệ nhân tạo. Trong xử lý ngôn ngữ tự nhiên, một văn bản được coi là một tập hợp của các từ vựng. Các nhà khoa học thị giác máy tính đã mượn đúng ý tưởng đó và đặt ra một giả thuyết: Vậy tại sao chúng ta không coi một bức ảnh là một tập hợp của các "Từ vựng thị giác"?
+Người 2: "Từ vựng thị giác" ạ? Nghĩa là thay vì đọc chữ "con chó", "đám mây", thì máy tính sẽ đọc các chi tiết nhỏ như "cái mép tai", "cái đuôi", "mảng lông" trên bức ảnh, đúng không thầy?
+Người 1: Rất thông minh! Ý tưởng cốt lõi ở đây chính là coi mỗi "Từ vựng thị giác" là một đơn vị cơ sở mang tính định lượng. Nó tương ứng với một đặc trưng cục bộ, phản ánh chi tiết của một vùng ảnh nhỏ bé. Nhiều vùng ảnh nhỏ ghép lại sẽ mô tả được toàn bộ bức ảnh.
+
+Slide 4: TẠI SAO GỌI LÀ TÚI?
+Người 1: Bây giờ chúng ta chuyển sang một khái niệm rất tượng hình: Tại sao lại gọi là mô hình "Túi"? Các em hãy nhìn vào ví dụ về chiếc xe ô tô trên màn hình. Giả sử thầy tháo tung chiếc xe này ra và ném tất cả các bộ phận vào trong một cái túi vải. Lúc này, hệ thống sẽ hoạt động dựa trên một "Giả định độc lập".
+Người 2: Giả định độc lập có nghĩa là khi ở trong túi, các bộ phận nó lộn xộn hết lên. Hệ thống sẽ không thể biết được khoảng cách từ cái bánh xe đến cái cửa sổ là bao nhiêu nữa, nó bỏ qua hoàn toàn cấu trúc hình học và vị trí không gian của chiếc xe. Phải vậy không ạ?
+Người 1: Hoàn toàn chính xác! Hệ thống lúc này nhắm mắt làm ngơ trước vị trí tương đối, nó chỉ làm một việc duy nhất là thò tay vào túi và đếm số lượng tần suất. Ví dụ: móc ra được 4 cái bánh xe, 2 cái cửa sổ, 2 cái cửa chính.
+Người 2: Nhưng thưa thầy, nếu bỏ qua vị trí không gian như vậy thì máy tính sao biết đó là cái xe ô tô được ạ? Lỡ người ta xếp 4 cái bánh xe chồng lên nhau thì sao? Làm thế chẳng phải là đánh mất đi thông tin cấu trúc rất quan trọng sao thầy?
+Người 1: Em phân tích rất sắc sảo! Đó đúng là một sự đánh đổi có chủ đích. Chúng ta chấp nhận hy sinh thông tin cấu trúc hình học phức tạp để đổi lấy tốc độ xử lý cực nhanh và hiệu quả phân loại tốt cho các hạng mục đối tượng chung. Đôi khi, chỉ cần biết trong túi có 4 bánh xe và vô lăng là máy tính đã đủ tự tin dự đoán đó là một chiếc ô tô rồi.
+
+Slide 5: BẢN THIẾT KẾ QUY TRÌNH 4 BƯỚC TỔNG QUAN
+Người 1: Để biến ý tưởng về chiếc túi đó thành một thuật toán thực tế, chúng ta sẽ tuân theo một bản thiết kế quy trình gồm 4 bước chuẩn hóa. Bước 1: Trích xuất đặc trưng. Chúng ta sẽ dùng các thuật toán như SIFT hoặc SURF để tìm ra các điểm nổi bật trên ảnh.
+Người 2: Bước này thì tụi em đã được học kỹ ở chương trước rồi ạ. Vậy có các điểm đặc trưng rồi thì Bước 2 làm gì tiếp theo thưa thầy?
+Người 1: Bước 2 là Học Từ Điển. Từ hàng triệu điểm đặc trưng trích xuất được, chúng ta sẽ dùng thuật toán phân cụm K means để gom chúng lại, tạo ra một cuốn từ điển thị giác chuẩn mực. Tiếp đến là Bước 3: Lượng hóa. Chúng ta sẽ ánh xạ từng đặc trưng trích xuất được vào mã số ID của từ vựng gần giống nhất trong cuốn từ điển.
+Người 2: Em mường tượng ra rồi! Và Bước 4 cuối cùng chắc chắn là Lập Biểu Đồ Tần Suất. Mình sẽ đếm xem mỗi mã số ID từ vựng xuất hiện bao nhiêu lần trong cái "túi", từ đó tạo ra một vector đầu ra có độ dài cố định, kết thúc hoàn hảo quy trình.
+Người 1: Đúng như em nói. Bốn bước này: Trích xuất, Học từ điển, Lượng hóa và Lập biểu đồ chính là trái tim của mô hình Bag of Features. Cụ thể từng bước hoạt động như thế nào và cách nó giải quyết triệt để vấn đề cổ chai dữ liệu ra sao, thầy trò ta sẽ cùng mổ xẻ chi tiết ở các slide tiếp theo nhé.
+
+Slide 6: BƯỚC 1: TRÍCH XUẤT ĐẶC TRƯNG VÀ VẤN ĐỀ CỔ CHAI
+Người 1: Chúng ta cùng đi sâu vào Bước 1: Trích xuất đặc trưng. Ở bước này, hệ thống sử dụng các thuật toán cốt lõi như SIFT để tạo ra các vector đặc trưng một trăm hai mươi tám chiều, hoặc SURF để tạo ra vector sáu mươi tư chiều. Điểm mạnh của chúng là không bị ảnh hưởng khi ảnh bị phóng to, thu nhỏ hay thay đổi ánh sáng. Nhưng, ngay tại đây, chúng ta đụng phải một "vấn đề cổ chai" cực kỳ đau đầu.
+Người 2: "Vấn đề cổ chai" là sao ạ? Có phải do số lượng chiều của vector quá lớn làm máy tính chạy chậm không thầy?
+Người 1: Không phải do số chiều em ạ, mà là do tổng số điểm đặc trưng tìm được trên mỗi ảnh. Các em hình dung, một bức ảnh chụp tòa nhà đơn giản có thể chỉ trích xuất được 500 điểm, nhưng một bức ảnh chụp phong cảnh phức tạp lại trích xuất ra tới 800 điểm. Hai ma trận dữ liệu này hoàn toàn lệch nhau về kích thước. Mà các bộ phân lớp học máy như K láng giềng gần nhất hay SVM thì lại rất nguyên tắc, chúng tuyệt đối không thể so sánh hai ma trận khác kích thước này với nhau được!
+
+Slide 7: BƯỚC 2: HỌC TỪ VỰNG THỊ GIÁC (CODEBOOK)
+Người 1: Để giải quyết sự lệch pha đó, chúng ta buộc phải xây dựng một hệ quy chiếu chung ở Bước 2, gọi là quá trình Học Từ Vựng Thị Giác. Trước tiên, ta gom hàng triệu vector đặc trưng từ toàn bộ tập ảnh huấn luyện lại thành một đống khổng lồ.
+Người 2: Hàng triệu vector lộn xộn như thế thì làm sao để tổ chức thành một cuốn từ điển được ạ?
+Người 1: Đó là lúc ta cần đến thuật toán gom cụm K means. Thuật toán này sẽ tự động tìm và nhóm các vector có đặc điểm nhận dạng giống nhau lại thành từng cụm riêng biệt. Điểm cốt lõi là đây: Tâm của mỗi cụm đó sẽ được coi là một "Từ vựng thị giác". Và tập hợp tất cả các tâm cụm này lại, ta sẽ có được một cuốn Từ điển chuẩn, hay còn gọi là Codebook.
+
+Slide 8: BÀI TOÁN ĐÁNH ĐỔI: KÍCH THƯỚC TỪ ĐIỂN
+Người 1: Khi tạo từ điển, chúng ta phải đối mặt với một bài toán đánh đổi. Đó là quyết định xem cuốn từ điển này nên có bao nhiêu từ vựng, ký hiệu là K.
+Người 2: Em nghĩ từ điển càng phong phú, K càng lớn thì máy tính nhận diện càng chi tiết chứ thầy? Mình cứ cho K thật to là được mà ạ.
+Người 1: Không đơn giản thế đâu em. Nếu K quá lớn, tức là hiện tượng quá khớp, việc tính toán sẽ trở nên cực kỳ chậm chạp và hệ thống rất dễ bị nhận diện sai bởi các điểm nhiễu lặt vặt. Ngược lại, nếu K quá nhỏ, tức là chưa đủ khớp, hệ thống sẽ mất đi sức mạnh phân biệt vì các chi tiết quan trọng lại bị gộp chung vào một từ. Do đó, ta phải tìm một Điểm Cân Bằng. Ngoài ra, người ta còn dùng kỹ thuật "Danh sách dừng" để chủ động gạch bỏ những từ vựng xuất hiện quá dày đặc nhưng vô giá trị, ví dụ như các họa tiết phông nền, giúp tăng độ chính xác lên đáng kể.
+
+Slide 9: BƯỚC 3: LƯỢNG HÓA ĐẶC TRƯNG
+Người 1: Khi đã có từ điển trong tay, ta bước sang Bước 3: Lượng hóa. Mục tiêu là rời rạc hóa các vector liên tục. Các em hãy nhìn vào sơ đồ cơ chế ánh xạ trên màn hình. Mỗi khi có một vector đặc trưng một trăm hai mươi tám chiều mới đưa vào, hệ thống sẽ đo khoảng cách từ nó đến tất cả các tâm cụm trong cuốn Từ điển. Khoảng cách này thường được tính bằng công thức Ơ clit.
+Người 2: Có phải nó giống như việc mình dò xem cái từ mới này mang ý nghĩa gần giống với từ nào nhất trong từ điển không thầy?
+Người 1: Một sự so sánh rất hay! Sau khi tìm được tâm cụm gần nhất, hệ thống sẽ vứt bỏ hoàn toàn vector một trăm hai mươi tám chiều phức tạp kia đi, và chỉ nén lại bằng một mã số ID duy nhất của từ vựng đó. Chẳng hạn, toàn bộ đặc trưng cái bánh xe sẽ được gắn gọn gàng bằng ID số 42.
+
+Slide 10: BƯỚC 4: LẬP BIỂU ĐỒ TẦN SUẤT
+Người 1: Và giờ là lúc phép màu xuất hiện ở Bước 4: Lập biểu đồ tần suất. Khi tất cả các chi tiết trong ảnh đều đã biến thành các mã số ID, chúng ta chỉ việc thả chúng vào các "ống nghiệm" đánh số từ 1 đến K và đếm xem mỗi ID xuất hiện bao nhiêu lần.
+Người 2: Ôi, em hiểu ra rồi! Nghĩa là dù bức ảnh ban đầu có 500 điểm hay 5.000 điểm đặc trưng, thì sau khi đếm xong, kết quả mình thu được vẫn chỉ là một danh sách K con số tần suất thôi đúng không thầy?
+Người 1: Quá xuất sắc! Đó chính là Ý Nghĩa Cốt Lõi của toàn bộ mô hình này. Đầu ra cuối cùng luôn luôn là MỘT vector duy nhất có chiều dài cố định bằng đúng số lượng từ vựng K. Nhờ vector chiều dài cố định này, nút thắt cổ chai ở Bước 1 đã được tháo gỡ hoàn toàn. Chúng ta đã biến đống dữ liệu hỗn độn thành một bộ khung hoàn hảo, sẵn sàng đưa vào các thuật toán học máy để phân loại rồi đấy!
+
+Slide 11: HẠN CHẾ CHÍ MẠNG: ĐIỂM MÙ KHÔNG GIAN
+Người 1: Dù mô hình Túi đặc trưng, hay BoF, giải quyết được vấn đề kích thước dữ liệu rất tốt, nhưng nó lại mang một hạn chế chí mạng: đó là sự mù lòa hoàn toàn trước phân bố hình học.
+Người 2: Điểm mù không gian nghĩa là sao ạ? Có phải hệ thống sẽ không phân biệt được trên dưới, trái phải của đồ vật không thầy?
+Người 1: Chính xác! Các em hãy nhìn lên hai bức ảnh minh họa. Bức ảnh thứ nhất có bầu trời ở trên, mặt biển ở dưới. Bức ảnh thứ hai bị đảo ngược lại, mặt biển ở trên, bầu trời ở dưới. Mặc dù bố cục trái ngược nhau hoàn toàn, nhưng vì hệ thống chỉ làm mỗi việc là đếm tần suất các mảnh ghép nhét chung trong một cái túi, nên cả hai ảnh này lại sinh ra một vector biểu đồ giống hệt nhau! Nghịch lý này mang lại rủi ro cực lớn khi chúng ta cần nhận dạng các bối cảnh phức tạp.
+
+Slide 12: TIẾN HÓA 1: KHỚP KIM TỰ THÁP KHÔNG GIAN (SPM)
+Người 1: Để khắc phục nhược điểm đó, các nhà khoa học đã tạo ra bước tiến hóa đầu tiên, gọi là Khớp Kim tự tháp Không gian, viết tắt là ét pi em (SPM).
+Người 2: Chữ "Kim tự tháp" có phải là mình sẽ cắt bức ảnh thành nhiều mảnh với nhiều cấp độ to nhỏ khác nhau không ạ?
+Người 1: Đúng là như vậy. Thay vì ném tất cả vào một cái túi to, thuật toán sẽ chia bức ảnh thành các lưới không gian với độ phân giải tăng dần, ví dụ như lưới một nhân một, lưới hai nhân hai, rồi lưới bốn nhân bốn. Sau đó, hệ thống mới tiến hành đếm tần suất cục bộ của từ vựng trong từng ô lưới nhỏ đó. Nhờ cơ chế này, vị trí không gian hai chiều của bức ảnh được phục hồi lại một cách lỏng lẻo, tạo ra một biểu diễn toàn cục cực kỳ mạnh mẽ và chính xác hơn.
+
+Slide 13: TIẾN HÓA 2: MÔ HÌNH TƯƠNG QUAN BAYES (pLSA / LDA)
+Người 1: Một hướng tiến hóa thứ hai tinh tế hơn, đó là sử dụng các Mô hình tương quan xác suất Bayes như Pê Lờ Ét A (pLSA) hoặc Lờ Đê A (LDA). Lúc này, hệ quy chiếu của chúng ta hoàn toàn thay đổi. Thay vì đếm thô, chúng ta xem toàn bộ bức ảnh giống như một "Đoạn văn bản", còn các lớp đối tượng bên trong như Bầu trời, bãi cỏ hay con chó được xem là các "Chủ đề".
+Người 2: À, em mường tượng ra rồi! Tức là nó sẽ dùng xác suất để suy luận xem một cụm chi tiết này thì nghiêng về chủ đề "con chó", hay nghiêng về chủ đề "bãi cỏ" đúng không ạ?
+Người 1: Rất thông minh! Hệ thống sẽ sử dụng một biến tiềm ẩn để tạo liên kết xác suất giữa các từ vựng thị giác nhỏ bé với bức ảnh. Quá trình phân loại cuối cùng sẽ được quyết định dựa trên việc tính toán xem xác suất hậu nghiệm của chủ đề nào là lớn nhất.
+
+Slide 14: BẢNG TỔNG HỢP: SO SÁNH CÁC BIỂU DIỄN TOÀN CỤC
+Người 1: Bây giờ, chúng ta cùng nhìn lại bảng so sánh trực diện ba phương pháp biểu diễn toàn cục vừa học. Mô hình Túi đặc trưng nguyên thủy tuy giả định các từ vựng là độc lập tuyệt đối và bỏ qua hoàn toàn không gian, nhưng lại có điểm mạnh vô địch là tốc độ cực nhanh và rất đơn giản.
+Người 2: Còn mô hình Tháp không gian SPM thì bảo toàn được cấu trúc hai chiều rất tốt nhờ việc chia lưới phân giải đa cấp. Trong khi đó, mô hình chủ đề Bayes thì lại mạnh về khả năng suy luận ngữ nghĩa và xử lý bối cảnh phức tạp nhờ việc xem bức ảnh là sự pha trộn của các chủ đề ẩn, đúng không thầy?
+Người 1: Em tổng hợp rất chuẩn xác! Tùy vào bài toán thực tế ưu tiên tốc độ xử lý hay ưu tiên nhận diện cấu trúc, ngữ nghĩa mà chúng ta sẽ linh hoạt lựa chọn phương pháp cho phù hợp.
+
+Slide 15: TỔNG KẾT TIẾT 2 & DẪN NHẬP TIẾT 3
+Người 1: Đến đây, chúng ta đã hoàn thành xuất sắc mục tiêu của Tiết 2. Thành quả lớn nhất là chúng ta đã tạo ra được một "Bộ khung xương dữ liệu hoàn hảo". Nghĩa là, ta đã biến đổi thành công một bức ảnh có kích thước bất kỳ, to hay nhỏ, thành đúng MỘT vector duy nhất có độ dài cố định.
+Người 2: Tuyệt vời quá ạ! Vậy là xong rồi phải không thầy? Dữ liệu đã chuẩn hóa thành một vector độ dài cố định thế này thì máy tính chắc chắn sẽ nhận diện được ngay đó là con chó hay cái xe hơi rồi!
+Người 1: Vẫn chưa đâu em, chúng ta đang đứng ở điểm nghẽn cuối cùng! Vector dữ liệu này dù có giàu thông tin đến mấy, thì tự nó cũng không thể phán quyết được bức ảnh đó chứa đối tượng gì. Nó giống như một cơ thể có khung xương hoàn hảo nhưng lại đang thiếu mất một "Bộ não". Vì vậy, ở Tiết 3 tiếp theo, chúng ta sẽ đi tìm bộ não đó thông qua thuật toán phân lớp học máy ét vê em (SVM), để tìm ra các siêu mặt phẳng phân tách tối ưu nhất. Tiết học của chúng ta hôm nay tạm dừng tại đây, chào các em!

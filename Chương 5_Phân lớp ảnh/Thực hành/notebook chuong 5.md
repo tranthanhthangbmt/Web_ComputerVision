@@ -555,3 +555,166 @@ plt.show()
 Trong đoạn mã định nghĩa mô hình `SVC(kernel='rbf', C=1.0, gamma='auto')`, có 2 siêu tham số cực kỳ quan trọng là $C$ và $\gamma$ (gamma):
 1. Tham số $C$ đại diện cho Lề mềm. Điều gì sẽ xảy ra với ranh giới quyết định và lề nếu em tăng $C$ lên mức khổng lồ (ví dụ $C = 1000$) hoặc giảm xuống rất nhỏ ($C = 0.01$)? 
 2. Tham số $\gamma$ (độ rộng của hàm cơ sở xuyên tâm RBF) nếu được set quá cao (ví dụ `gamma=100`) thì mô hình sẽ có biểu hiện gì đối với dữ liệu nhiễu (Gợi ý: Hãy nghĩ đến hiện tượng Overfitting của KNN ở Phần 2)?
+
+++++++++++++++++++++++++
+Dưới đây là nội dung chi tiết cho **Phần 7** – phần cuối cùng của Jupyter Notebook. Phần này đúc kết lại toàn bộ kiến thức Chương 4 và Chương 5 bằng một dự án thực tế kinh điển.
+
+***
+
+### [Mô tả Markdown Cell]
+
+# Phần 7: Dự án Thực chiến: Nhận diện Người đi bộ (Pedestrian Detection) với HOG + SVM
+
+**Mục tiêu học tập:** 
+* Vận dụng kết hợp kiến thức về đặc trưng thiết kế thủ công (Hand-crafted features) và bộ não phân lớp (Classifier).
+* Tái hiện lại "Tiêu chuẩn vàng" (Gold Standard) do Dalal & Triggs đề xuất năm 2005: Sự kết hợp giữa **HOG (Histogram of Oriented Gradients)** và **Linear SVM**.
+* Nắm vững quy trình 5 bước cốt lõi của một hệ thống nhận diện thực tế.
+* Thực hành sử dụng thư viện OpenCV để khởi tạo bộ quét và nạp trọng số SVM đã huấn luyện sẵn.
+
+### 7.1 Tại sao lại là bộ đôi HOG + Linear SVM?
+*   **Sức mạnh của HOG:** Thuật toán HOG bóc tách và loại bỏ hoàn toàn thông tin về màu sắc, chỉ giữ lại "bộ xương" (cấu trúc hình học, đường bao cơ thể) của vật thể. Do cấu trúc hình dáng của con người tương đối ổn định khi đứng thẳng, HOG tạo ra một biểu diễn cực kỳ xuất sắc.
+*   **Sự phù hợp với Linear SVM:** Đối với một cửa sổ trượt chứa người đi bộ, HOG sinh ra một vector đặc trưng dày đặc có độ dài lên tới 3.780 chiều. Không gian đa chiều khổng lồ này chính là môi trường lý tưởng để Linear SVM có thể dễ dàng tìm ra siêu mặt phẳng phân tách tuyến tính giữa lớp "Người" và "Không phải người".
+
+### 7.2 Pipeline Hệ thống Nhận diện 5 Bước
+Hệ thống nhận diện người đi bộ của chúng ta sẽ hoạt động ngầm qua 5 bước cốt lõi sau:
+1.  **Tiền xử lý (Preprocessing):** Chuẩn hóa gamma và màu sắc của ảnh đầu vào.
+2.  **Tính Gradient:** Tính toán độ lớn và hướng gradient tại từng pixel.
+3.  **Bỏ phiếu Không gian (Spatial Voting):** Chia ảnh thành các ô lưới (cells), gom nhóm thành các khối (blocks) trượt chồng lấp và lập biểu đồ Histogram.
+4.  **Chuẩn hóa Khối (Block Normalization):** Giúp đặc trưng bất biến với các điều kiện chiếu sáng khác nhau (ví dụ: ảnh bị bóng đổ hoặc phơi sáng quá mức).
+5.  **Phân loại với SVM:** Đưa vector khổng lồ 3.780 chiều thu được vào bộ phân lớp Linear SVM để đưa ra phán quyết cuối cùng.
+
+### 7.3 Thực chiến Lập trình với OpenCV
+Trong thực tế phát triển phần mềm (Góc nhìn Developer), chúng ta không cần viết lại thuật toán tối ưu toán học của SVM từ con số 0. Thư viện OpenCV đã cung cấp sẵn bộ mô tả HOG và cho phép nạp trực tiếp bộ trọng số SVM (đã được huấn luyện bởi hàng ngàn ảnh người đi bộ) vào hệ thống.
+
+---
+
+### [Mô tả Code Cell]
+**Nhiệm vụ:** Sinh viên chạy đoạn mã dưới đây để kích hoạt hệ thống nhận diện người đi bộ. Hệ thống sẽ dùng một "cửa sổ trượt" đa tỷ lệ quét qua toàn bộ bức ảnh để tìm kiếm.
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Giả lập tạo ra một bức ảnh tải từ máy tính (Sinh viên có thể thay thế bằng ảnh tải lên thật)
+# image = cv2.imread('pedestrian_street.jpg')
+# image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+print("1. Đang khởi tạo Bộ mô tả đặc trưng hình học (Mắt quét) - HOG Descriptor...")
+# Khởi tạo HOG với các tham số mặc định (winSize=64x128, blockSize=16x16, blockStride=8x8, cellSize=8x8, nbins=9)
+hog = cv2.HOGDescriptor()
+
+print("2. Đang nạp trọng số của Não bộ phán quyết (Pre-trained Linear SVM)...")
+# Nạp bộ phân lớp SVM tuyến tính đã được huấn luyện sẵn chuyên để nhận diện người
+hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+
+print("3. Đang tiến hành quét cửa sổ trượt đa tỷ lệ để tìm mục tiêu...")
+# Hàm detectMultiScale sẽ trả về:
+# rects: Tọa độ các bounding box chứa người [x, y, w, h]
+# weights: Độ tin cậy (Confidence score) của mỗi box tương ứng
+# (Sinh viên có thể tinh chỉnh winStride và scale để cân bằng giữa tốc độ và độ chính xác)
+"""
+(rects, weights) = hog.detectMultiScale(image, 
+                                        winStride=(4, 4), 
+                                        padding=(8, 8), 
+                                        scale=1.05)
+
+# 4. Vẽ Bounding Box kết quả lên ảnh
+image_result = image.copy()
+for (x, y, w, h) in rects:
+    cv2.rectangle(image_result, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    cv2.putText(image_result, 'Person', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
+# Trực quan hóa
+plt.figure(figsize=(10, 6))
+plt.imshow(image_result)
+plt.title("Kết quả nhận diện Người đi bộ bằng HOG + Linear SVM")
+plt.axis('off')
+plt.show()
+"""
+print("-> Sẵn sàng! Hãy nạp một bức ảnh và bỏ comment đoạn code trên để xem phép thuật của Computer Vision truyền thống.")
+```
+
+### [Mô tả Markdown Cell]
+
+### Tổng kết Dây chuyền Thị giác Máy tính Cổ điển và Vấn đề Mở đường
+Chúc mừng các em đã hoàn thành khóa huấn luyện về các thuật toán Phân lớp ảnh kinh điển! Thông qua dự án này, chúng ta đã thấy rõ sự phân công nhiệm vụ hoàn hảo của một hệ thống thị giác máy tính truyền thống:
+*   **Chương 4 (SIFT, SURF, HOG):** Đóng vai trò là **"Mắt" và "Tiền xử lý"** – Trách nhiệm bóc tách, trích xuất các đặc trưng tinh túy nhất từ ảnh thô.
+*   **Mô hình Bag-of-Features (Tiết 2):** Đóng vai trò **"Cầu nối"** – Lượng hóa và đồng nhất kích thước dữ liệu vô trật tự thành các vector quy chuẩn.
+*   **Chương 5 (KNN, SVM - Tiết 3):** Đóng vai trò là **"Bộ não"** – Tiếp nhận các vector đặc trưng, tìm ra quy luật và tính toán ranh giới để đưa ra phán quyết cuối cùng (VD: Có người hay không).
+
+**Câu hỏi tư duy (Dẫn nhập Chương tiếp theo):**
+Hệ thống HOG + SVM này đòi hỏi con người phải can thiệp thủ công (hand-crafted features) để thiết kế toán học cho bộ trích xuất (Mắt) cực kỳ công phu. Tuy nhiên, điều gì sẽ xảy ra nếu dữ liệu trở nên phi thường phức tạp (VD: Nhận diện cùng lúc 1000 loài động vật khác nhau, bị che khuất, biến dạng)? Liệu con người có thể "thiết kế thủ công" mãi được không? 
+
+$\rightarrow$ *Giải pháp nằm ở kỷ nguyên **Học Sâu (Deep Learning)** và **Mạng Nơ-ron Tích chập (CNN)**, nơi máy tính tự động học cả đặc trưng lẫn cách phân loại từ đầu đến cuối (End-to-end). Hẹn gặp lại các em ở chương tiếp theo!*
+
++++++++++++++++++++++++++++++++++
+
+### [Mô tả Markdown Cell]
+
+# Phần 8: Bài tập Thực hành & Tự đánh giá (Từ Cơ bản đến Nâng cao)
+
+Dưới đây là 10 bài tập được thiết kế để kiểm tra mức độ thấu hiểu của sinh viên đối với Chương 5. Các bài tập trải dài từ lý thuyết cơ bản, tính toán toán học cho đến lập trình thực chiến.
+
+---
+
+### Mức độ: Dễ (Nắm bắt Khái niệm cơ bản)
+
+**Bài 1: Phân biệt Phân lớp (Classification) và Hồi quy (Regression)**
+Hãy phân loại các bài toán dưới đây thuộc nhóm **Phân lớp** hay **Hồi quy** và giải thích ngắn gọn dựa trên đặc tính của đầu ra mục tiêu:
+1. Dự đoán tỷ lệ phần trăm lượng mưa ngày mai dựa trên độ ẩm và nhiệt độ.
+2. Hệ thống đọc biển báo giao thông tự động xác định biển báo là "Cấm đi ngược chiều" hay "Giới hạn tốc độ".
+3. Xác định tuổi thọ còn lại (tính bằng năm) của một cỗ máy công nghiệp.
+4. Gán nhãn một bức ảnh X-quang là có khối u hay không có khối u.
+
+**Bài 2: Tính toán K-Nearest Neighbors (KNN) thủ công**
+Bản chất của KNN là tính toán khoảng cách trực tiếp từ dữ liệu mới đến các mẫu đã lưu. Giả sử ta có 3 điểm dữ liệu huấn luyện 2D: $A(1, 1)$ nhãn "Mèo", $B(2, 2)$ nhãn "Mèo", và $C(5, 5)$ nhãn "Chó". Cho một điểm kiểm thử $X(2, 1)$.
+1. Hãy dùng khoảng cách Euclidean để tính khoảng cách từ $X$ đến $A, B, C$.
+2. Nếu $k=1$, điểm $X$ sẽ được dự đoán thuộc lớp nào?
+3. Nếu $k=3$, theo cơ chế bầu chọn đa số, điểm $X$ sẽ thuộc lớp nào?
+
+**Bài 3: Hiện tượng Quá khớp (Overfitting) và Dưới khớp (Underfitting) trong KNN**
+Việc lựa chọn siêu tham số $k$ quyết định trực tiếp đến hình dáng của ranh giới quyết định.
+Hãy viết một đoạn mã Python nhỏ (sử dụng `scikit-learn`) để tạo một tập dữ liệu phân lớp giả lập có chứa nhiễu. Huấn luyện hai mô hình KNN với $k=1$ và $k=100$. Hãy giải thích bằng lời tại sao $k=1$ lại gây ra hiện tượng ranh giới bị phân mảnh (quá khớp), còn $k=100$ lại làm "mượt" dữ liệu quá mức (dưới khớp). Đề xuất phương pháp chuẩn mực để dò tìm $k$ tối ưu.
+
+---
+
+### Mức độ: Trung bình (Hiểu Pipeline & Tính toán Hệ thống)
+
+**Bài 4: Điểm nghẽn của KNN và Cấu trúc Cây (K-d Trees)**
+Ngay cả khi được trang bị K-Nearest Neighbors xấp xỉ (ANN), việc lưu trữ và tính toán khoảng cách trên tập dữ liệu hàng triệu mẫu vẫn là một rào cản thực tiễn.
+Hãy tìm hiểu và giải thích cách cấu trúc cây K-d Trees trong thư viện **FLANN (Fast Library for Approximate Nearest Neighbors)** phân chia không gian đặc trưng. Thuật toán này đã đánh đổi yếu tố gì để lấy được tốc độ gia tốc vượt trội so với kỹ thuật học máy "vét cạn" (brute-force)?
+
+**Bài 5: Học Từ vựng Thị giác (Visual Vocabulary)**
+Trong Bước 2 của mô hình Bag-of-Features, ta dùng thuật toán K-means Clustering để gom hàng triệu vector đặc trưng thành các tâm cụm (từ vựng thị giác). 
+Kích thước của Từ điển ($K$) là một bài toán đánh đổi. Hãy phân tích rủi ro xảy ra đối với khả năng phân biệt chi tiết ảnh nếu chọn $K$ quá nhỏ (ví dụ $K=5$), và rủi ro về thời gian tính toán cũng như khớp sai với nhiễu nếu chọn $K$ quá khổng lồ (ví dụ $K=100.000$). Kỹ thuật "Danh sách dừng" (Stop list) được dùng để làm gì trong bước này?
+
+**Bài 6: Vượt qua điểm mù Không gian với SPM (Spatial Pyramid Matching)**
+Mô hình Bag-of-Features nguyên thủy gặp "điểm mù" vì nó sử dụng **giả định độc lập**, bỏ qua hoàn toàn cấu trúc hình học và vị trí không gian của các điểm đặc trưng.
+Kỹ thuật Khớp Kim tự tháp Không gian (SPM) giải quyết vấn đề này bằng cách chia lưới ảnh. Giả sử Từ điển của ta có kích thước $K = 100$. Nếu áp dụng SPM với 3 cấp độ phân giải: Toàn ảnh ($1 \times 1$), chia 4 ô ($2 \times 2$), và chia 16 ô ($4 \times 4$), hãy tính toán **độ dài của vector Histogram cuối cùng** được sinh ra để đưa vào SVM.
+
+**Bài 7: Nền tảng Toán học của Support Vector Machine (SVM)**
+Khác với KNN lưu trữ toàn bộ dữ liệu, ranh giới quyết định của SVM chỉ phụ thuộc vào một số ít các điểm dữ liệu nằm trên mép lề gọi là **Vector hỗ trợ (Support Vectors)**.
+Cho phương trình siêu mặt phẳng là $w^T x + b = 0$. Hãy chứng minh hoặc giải thích bằng lời tại sao để tối đa hóa khoảng cách Lề (Margin) có giá trị $\frac{2}{||w||}$, bài toán tối ưu lại quy về việc tìm cực tiểu của hàm $\min \frac{1}{2} ||w||^2$ với điều kiện $y_i(w^T x_i + b) \geq 1$.
+
+---
+
+### Mức độ: Khó (Vận dụng Sâu & Thực chiến Mở rộng)
+
+**Bài 8: Xử lý Dữ liệu Nhiễu và Phi tuyến trong SVM**
+Khi hai lớp dữ liệu lồng ghép vào nhau phức tạp, siêu mặt phẳng tuyến tính sẽ hoàn toàn bất lực.
+1. Hãy viết code khởi tạo một mô hình `SVC` trong `scikit-learn` sử dụng **Hàm hạt nhân Gaussian (RBF Kernel)** để ánh xạ dữ liệu lên không gian chiều cao hơn.
+2. Hãy điều chỉnh **Lề mềm (Soft Margin)** thông qua siêu tham số $C$. Giải thích cách hàm mất mát **Hinge Loss** hoạt động để phạt những mẫu vi phạm lề. Tham số độ rộng kernel ($\gamma$) ảnh hưởng thế nào đến hiện tượng quá khớp (overfitting)?
+
+**Bài 9: Phân rã bài toán Phân lớp Đa lớp (Multi-class Classification)**
+Bản chất toán học của SVM được thiết kế dành riêng cho phân lớp nhị phân (binary classification). Để nhận diện 1.000 danh mục vật thể khác nhau (ví dụ: tập dữ liệu ImageNet), người ta thường áp dụng chiến lược **One-vs-One (OVO)**.
+Hãy tính xem hệ thống phải xây dựng và huấn luyện tổng cộng bao nhiêu bộ phân lớp nhị phân độc lập cho tập dữ liệu 1.000 lớp này? Kết quả phân lớp cuối cùng sẽ được quyết định bằng cơ chế nào?
+
+**Bài 10: Tái hiện Tiêu chuẩn vàng: HOG + Linear SVM (Project)**
+Sự kết hợp giữa HOG và Linear SVM từng là "Tiêu chuẩn vàng" trong phát hiện người đi bộ vì HOG bóc tách cấu trúc hình học ổn định của cơ thể, tạo ra môi trường lý tưởng (ví dụ: không gian vector 3.780 chiều) để mặt phẳng tuyến tính cắt lớp.
+Hãy dùng thư viện OpenCV để lập trình một ứng dụng hoàn chỉnh:
+1. Đọc một bức ảnh chứa người từ thư mục của bạn.
+2. Khởi tạo bộ mô tả `cv2.HOGDescriptor()` với các thông số lưới/block mặc định.
+3. Nạp trọng số phân lớp đã được huấn luyện sẵn bằng lệnh `setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())`.
+4. Sử dụng cửa sổ trượt (sliding window) đa tỷ lệ qua hàm `detectMultiScale` để tìm tọa độ người.
+5. Vẽ bounding box và đánh giá: Thuật toán có nhận diện nhầm (False Positive) các vật thể có hình dáng thẳng đứng (như cột điện, thân cây) thành người hay không? Tại sao? Tinh chỉnh các tham số `winStride` và `scale` để cải thiện.

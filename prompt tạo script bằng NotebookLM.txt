@@ -1,8 +1,69 @@
-hãy kiểm tra 13 slide trong file Phần 3_SVM_Image_Classification.pdf, hãy liệt kê nội dung trên từng slide, viết đúng thứ tự, làm cho slide 1-5 trước
+giờ tôi muốn chuẩn bị buổi học cho module 3, gồm 3 tiết, với nội dung theo yêu cầu buổi học "Mô-dun 3. Sáng tạo nội dung số
+3.1. Phát triển nội dung số
+3.1.1. Phân tích mục tiêu và đối tượng
+- Xây dựng chân dung người học, người tiêu dùng nội dung. Nếu không rõ mục tiêu và đối tượng, nội dung dễ "lạc hướng” và không mang lại hiệu quả
+-Mục tiêu nội dung số để làm gì, ví dụ: bán hàng, giáo dục, giải trí, v.v... 
+-Đối tượng là người sẽ tiếp cận nội dung số, ví dụ: họ là ai (tuổi, giới tính, nghề nghiệp, thói quen số)? Họ đang ở dâu (Facebook,
+3.1.2. Lập kế hoạch nội dung số
+-Lập kế hoạch nội dung (tháng/quý/năm).
+-Xác định loại nội dung phù hợp: bài viết, infographic, video, podcast, carousel, livestream...
+3.1.3. Sản xuất nội dung số. Nội dung phải hướng đến có giá trị thật sự: giúp người xem, giải trí, truyển cảm hứng hoặc thúc đẩy hành động. Một số tiêu chí khi xây dựng nội dung hoặc lựa chọn nhân sự/công cụ làm nội dung:
+-Khả năng viết nội dung hấp dẫn, đúng giọng điệu thương hiệu, phù hợp nền tảng (SEO, social, quảng cáo).
+-Khả năng sáng tạo kịch bản video hấp dẫn (nếu làm video YouTube, TikTok, Reels...).
+-Khả năng thiết kế hình ảnh bắt mắt, dúng kích thước từng nền tảng. Khả năng quay/chỉnh sửa video, âm thanh.
+3.2. Tích hợp và tạo lập lại nội dung số
+3.2.1. Rà soát và đánh giá nội dung đã có.
+-Thu thập tất cả nội dung số liên quan, ví dụ: Bài blog, Video, Infographic, PowerPoint, v.v...
+-Phân loại chúng theo chủ đề, định dạng, độ cập nhật.
+3.2.2. Thiết kế khung nội dung mới
+-Xây dựng khung dàn ý hoặc storyboard cho sản phẩm mới.
+-Xác định vị trí phù hợp để chèn, rút trích, tóm tắt, hoặc làm nổi bật nội dung cũ...
+3.2.3. Biên tập và chuyển đổi nội dung
+- Chuẩn hóa ngôn ngữ, tông giọng, định dạng.
+-Cập nhật dữ liệu, hình ảnh, ví dụ cho phù hợp thời điểm mới.
+- Cắt, ghép, chuyển đổi nội dung theo đúng hình thức mới.
+3.3. Thực thi bản quyền và giấy phép
+3.3.1. Xác định các thành phần có thể có bản quyền
+-Trong một sản phẩm nội dung số (video, bài viết, app, ebook...), các thành phần thường dễ vướng bản quyền.
+3.3.2. Kiểm tra nguồn gốc và giấy phép sử dụng
+- Phân loại tài nguyên bạn dùng theo giấy phép.
+3.3.3. Áp dụng giấy phép bản quyền sử dụng
+- Khi sử dụng nội dung có bản quyền cho phép sử dụng, hãy ghi nguồn rõ ràng.
+- Gửi email xin phép, hoặc tìm nội dung thay thế từ nguồn có bản quyền rõ ràng.
+3.4. Lập trình
+3.4.1. Lựa chọn công nghệ phù hợp
+- Chọn ngôn ngữ và công cụ lập trình phù hợp với định dạng nội dung.
+3.4.2. Áp dụng các khâu thiết kế, cài đặt và kiểm thử khi thực hiện lập trình cho nội dung số
+-Khâu thiết kế thường dựa trên yêu cầu người dùng hoặc mục tiêu của nội dung số.
+-Khâu lập trình tuân thủ bản thiết kế để ra sản phẩm với công nghệ đã lựa chọn.
+-Khâu kiểm thức xác nhận sản phẩm đáp ứng đúng các nội dung đã thiết kế
+
+++++++++++++++++++++++++++++++++++++
+tốt rồi, giờ tôi muốn tạo nội dung slide cho từng tiết học, bắt với tiết 1. Với tiết này tôi cần tổng cộng là 15 slide. với slide 14 là bài tập của tiết, slide 15 là lời giải. Hãy tạo nội dung cho từng slide, không cần các nội dung khác. Làm nội dung cho Tiết 1, phần 1 (slide 1-5) trước. 
+
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
++++++++++++++++++++++++++++++
+[làm slide]
+hãy tạo slide nội dung bài học cho tôi, từ tài liệu này. Đây là tiết 1/3 của buổi học. Trên slide đầu tiên cần có tiêu đề Tiết 1/3. Tổng số slide là 15, nội dung đúng y chang với tài liệu này (nội dung slide_Module_3_Tiết_1.md). Nếu có hình ảnh hay bảng biểu minh họa thì lấy trong các tài liệu đính kèm. Không tạo ra các hình AI mà chỉ sử dụng các icon đơn giản. Thiết kế đơn giản mang tính học thuật. Phông nền trắng.
+-----------------
+[làm infographic]
+hãy tạo infographic nội dung bài học cho tôi, từ tài liệu này. Đây là tiết 1/3 của buổi học. Trên tiêu đề cần có tiêu đề Tiết 1/3. (nội dung slide_Module_3_Tiết_1.md). 
+++++++++++++++++++++++++++++++
+[tạo script lời thuyết trình, chỉ chọn slide cần làm]
+hãy kiểm tra 15 slide trong file Ch6_T3_CNN_Object_Recognition_and_Detection.pdf, hãy liệt kê nội dung trên từng slide, viết đúng thứ tự, làm cho slide 1-5 trước
+-----------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+-------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
+
 ++++++++++++++++++++
-tôi muốn viết kịch bản cho chương 5, tiết 3 (từ nội dung các slide đã viết ở trên, Phần 3_SVM_Image_Classification.pdf) có cấu trúc đầu ra giống như trong file "Kịch bản Chương 4_Tiết 1.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói
+[select slide, script.txt (cấu trúc đầu ra), các ebook môn học]
+tôi muốn viết kịch bản cho Chương 6, tiết 2 (từ nội dung các slide đã viết ở trên, Ch6_T3_CNN_Object_Recognition_and_Detection.pdf) có cấu trúc đầu ra giống như trong file "script.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói
 
 ++++++++++++++++++++
 tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
 
-tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-13)
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)

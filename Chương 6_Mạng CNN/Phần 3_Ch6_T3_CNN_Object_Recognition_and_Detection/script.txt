@@ -1,0 +1,87 @@
+﻿Slide 1: CHƯƠNG 6. MẠNG CNN - TIẾT 3/3
+Người 1: Chào các em. Ở các tiết trước, chúng ta đã đi sâu vào kiến trúc cốt lõi của mạng nơ-ron tích chập. Hôm nay, thầy trò ta sẽ bước vào Tiết 3 của Chương 6, cũng là phần hấp dẫn nhất: Ứng dụng của mạng xê-en-en (CNN) trong Nhận diện và Phát hiện Đối tượng. Nội dung hôm nay sẽ chia làm hai phần chính: Nhận diện đối tượng, tức là phân loại ảnh, và thứ hai là Định vị và Phát hiện đối tượng.
+Người 2: Thưa thầy, nhận diện đối tượng thì em hiểu là cho máy tính biết ảnh có con mèo hay con chó. Còn "định vị và phát hiện" thì có phải là mình chỉ ra chính xác con mèo đó đang đứng ở góc nào trong ảnh không ạ?
+Người 1: Một sự liên tưởng rất chính xác! Đó chính là hành trình nâng cấp mà chúng ta sẽ tìm hiểu ngay sau đây. Hãy đi vào bài toán cơ bản đầu tiên.
+
+Slide 2: BÀI TOÁN CƠ BẢN: MẠNG NƠ-RON TRẢ LỜI "ĐÓ LÀ CÁI GÌ?"
+Người 1: Trước khi định vị, mạng nơ-ron phải trả lời được câu hỏi "Đó là cái gì?". Nhìn lên sơ đồ, các em thấy ảnh đầu vào sẽ đi qua các lớp Tích chập và Gộp để trích xuất đặc trưng. Sau đó, ma trận dữ liệu sẽ được làm phẳng, đưa qua lớp kết nối đầy đủ để phân loại. Cuối cùng, ta dùng hàm kích hoạt sốp-mác (Softmax) ở lớp cuối.
+Người 2: Hàm sốp-mác (Softmax) này có nhiệm vụ biến các con số khô khan thành phần trăm xác suất đúng không thầy?
+Người 1: Đúng vậy em. Đầu ra của nó là một phân phối xác suất cho từng danh mục. Bản chất của bài toán này là gán một nhãn duy nhất cho toàn bộ bức ảnh. Ví dụ, nó sẽ nhìn toàn bộ ảnh và kết luận: "Đây là hình con mèo với xác suất chín mươi tám phần trăm". Nhưng trong thực tế, chỉ biết "là cái gì" thôi thì chưa đủ.
+
+Slide 3: MỞ RỘNG KHÔNG GIAN: TỪ NHẬN DIỆN ĐẾN ĐỊNH VỊ KHÔNG GIAN
+Người 1: Chúng ta bước sang Slide 3, nơi không gian được mở rộng. Không chỉ nói "Đây là con mèo", mô hình phải vẽ được một hộp giới hạn bao quanh con mèo đó. Hộp giới hạn này được định hình bởi 4 thông số: tọa độ tâm ích và y, cùng với chiều rộng vê-kép và chiều cao hát.
+Người 2: Thưa thầy, em thấy tọa độ và kích thước là các con số liên tục. Vậy thì đây đâu còn là bài toán phân loại nhãn nữa, mà phải là bài toán hồi quy đúng không ạ?
+Người 1: Em nắm bài rất chắc! Chính xác, định vị là một bài toán hồi quy. Để làm được điều này, người ta dùng Mô hình Đa tác vụ (Multi-task Learning). Bên cạnh lớp đoán nhãn, người ta bổ sung song song một lớp Dense thứ hai gồm 4 nơ-ron chuyên để dự đoán giá trị liên tục là ích, y, vê-kép và hát. Nhánh này được huấn luyện và tối ưu bằng hàm mất mát em-ét-e (MSE), tức là hàm Sai số toàn phương trung bình.
+
+Slide 4: THƯỚC ĐO ĐỘ CHÍNH XÁC KHÔNG GIAN: CHỈ SỐ I-Ô-U
+Người 1: Mặc dù hàm em-ét-e (MSE) rất tốt để mạng nơ-ron tự điều chỉnh trong quá trình huấn luyện, nhưng nó lại không phản ánh đúng tỷ lệ bao phủ thực tế giữa hộp dự đoán và hộp chuẩn. Vì vậy, để con người chúng ta dễ dàng đo lường xem hộp giới hạn dự đoán chính xác đến đâu, ta dùng một thước đo gọi là chỉ số i-ô-u (IoU).
+Người 2: Công thức tính chỉ số này như thế nào khi đọc ra thành lời vậy thầy?
+Người 1: Rất dễ nhớ. Điểm i-ô-u (IoU), hay còn gọi là chỉ số Jaccard, được tính bằng Diện tích phần giao nhau, đem chia cho, Diện tích phần hợp nhất của hai hộp giới hạn.
+Người 2: Ồ, vậy là nếu hộp dự đoán lệch hoàn toàn khỏi hộp thực tế thì phần giao nhau bằng không, suy ra điểm bằng không. Còn nếu trùng khớp hoàn toàn thì điểm sẽ bằng một.
+Người 1: Đúng thế! Biên độ của chỉ số i-ô-u chạy từ không đến một, giúp ta đánh giá độ chính xác không gian cực kỳ trực quan. Từ 0 phẩy 5 trở lên thường đã được coi là một dự đoán tốt rồi.
+
+Slide 5: TÌM KIẾM ĐA ĐỐI TƯỢNG: PHƯƠNG PHÁP CỬA SỔ TRƯỢT
+Người 1: Giờ ta nâng cấp bài toán lên một mức khó hơn: Object Detection. Tức là trên cùng một bức ảnh, ta phải tìm, định vị và phân loại nhiều đối tượng cùng lúc. Khái niệm kinh điển đầu tiên để giải quyết việc này là Phương pháp Cửa sổ trượt.
+Người 2: "Cửa sổ trượt" có phải giống như việc mình cầm một chiếc kính lúp rồi soi lần lượt từ trái sang phải, từ trên xuống dưới của bức ảnh không thầy?
+Người 1: Sự hình dung của em rất sinh động! Mạng CNN truyền thống sẽ quét một ma trận lưới, kích thước ét nhân ét qua từng vùng nhỏ của bức ảnh để tìm kiếm.
+Người 2: Vậy mỗi khi soi vào một vùng nhỏ đó, máy tính sẽ trả về thông tin gì ạ?
+Người 1: Rất tốt, tại mỗi vùng cửa sổ đó, mô hình sẽ xuất ra 3 thông tin đồng thời: Thứ nhất là Xác suất phân lớp xem có con gì ở đó. Thứ hai là Tọa độ hộp giới hạn. Và thứ ba, cực kỳ quan trọng, là Điểm đối tượng. Nó biểu thị phần trăm xác suất thực sự có một vật thể nằm ngay tâm vùng đang xét, tránh việc máy tính nhận diện bóng mây hay hòn đá thành sinh vật.
+
+Slide 6: NÚT THẮT CỔ CHAI: SỰ KÉM HIỆU QUẢ CỦA QUÉT TUẦN TỰ
+Người 1: Trở lại với phương pháp Cửa sổ trượt ở slide trước, các em có nhận ra nút thắt cổ chai của nó nằm ở đâu không? Slide 6 sẽ cho chúng ta câu trả lời: Sự kém hiệu quả của việc quét tuần tự.
+Người 2: Có phải vì mình phải soi từng vùng nhỏ một nên máy tính sẽ mất rất nhiều thời gian để quét hết bức ảnh đúng không thầy?
+Người 1: Chính xác! Chi phí tính toán là khổng lồ vì ta phải chạy một mạng xê-en-en (CNN) lặp đi lặp lại hàng nghìn lần cho một khung hình. Thêm vào đó, kiến trúc cũ sử dụng các lớp kết nối đầy đủ (Dense) ở cuối, tạo ra một giới hạn cứng: bắt buộc ảnh đầu vào phải có kích thước cố định. Hệ quả là mô hình không thể hoạt động theo thời gian thực. Ta cần một sự đột phá mới về cấu trúc mạng!
+
+Slide 7: SỰ ĐỘT PHÁ KHÔNG GIAN: MẠNG TÍCH CHẬP HOÀN TOÀN (FCN)
+Người 1: Và sự đột phá đó đã xuất hiện ở Slide 7: Mạng Tích chập Hoàn toàn, hay còn gọi là ép-xê-en (FCN). Khái niệm này được Jonathan Long và các cộng sự giới thiệu vào năm 2015.
+Người 2: "Hoàn toàn" ở đây có nghĩa là nó bỏ đi các lớp kết nối đầy đủ kia đi ạ?
+Người 1: Em rất tinh ý! Đột phá cốt lõi nằm ở việc loại bỏ hoàn toàn các lớp kết nối đầy đủ, thứ vốn luôn phá hủy thông tin không gian của ảnh. Thay vào đó, mạng sử dụng lớp tích chập với kích thước một nhân một, để trả về một bản đồ đặc trưng bảo toàn cấu trúc ma trận, ví dụ như ma trận tám nhân tám.
+Người 2: Việc bảo toàn này đem lại lợi ích gì lớn nhất vậy thầy?
+Người 1: Ưu điểm tuyệt đối của nó là có thể xử lý ảnh đầu vào với kích thước bất kỳ. Hơn thế nữa, mạng chỉ cần "nhìn" bức ảnh một lần duy nhất để đưa ra dự đoán toàn cục, thay vì phải trượt tuần tự và lắt nhắt như trước kia.
+
+Slide 8: HAI TRƯỜNG PHÁI THIẾT KẾ OBJECT DETECTION
+Người 1: Nhờ sự ra đời của mạng ép-xê-en (FCN), thế giới phát hiện đối tượng đã rẽ nhánh thành Hai trường phái thiết kế, như các em thấy ở Slide 8.
+Người 2: Hai trường phái này cạnh tranh nhau hả thầy? Chúng ưu tiên những mục tiêu gì ạ?
+Người 1: Chúng phục vụ các mục đích khác nhau. Trường phái thứ nhất là "Một giai đoạn" (Single-stage), đại diện là các mô hình Yô-lô (YOLO) và ét-ét-đê (SSD). Chúng dự đoán hộp giới hạn và phân loại trực tiếp trong một mạng duy nhất chạy song song. Mục tiêu tối thượng của nhóm này là tối đa hóa tốc độ, đạt mức thời gian thực.
+Người 2: Vậy trường phái thứ hai là "Hai giai đoạn". Nó chia công việc ra làm hai bước đúng không thầy?
+Người 1: Rất đúng. Nhóm "Hai giai đoạn" (Two-stage) với đại diện là mô hình Phát-tơ a-xê-en-en (Faster R-CNN) chia làm hai bước: Giai đoạn một tiến hành lọc các vùng tiềm năng, giai đoạn hai mới phân loại và tinh chỉnh chính xác lại vùng đó. Vì thế, mục tiêu của nó là tối đa hóa độ chính xác.
+
+Slide 9: YOLO: XỬ LÝ TOÀN CỤC TRONG MỘT LẦN NHÌN
+Người 1: Chuyển sang Slide 9, chúng ta sẽ đi sâu vào siêu sao của trường phái Một giai đoạn: Mô hình Yô-lô (YOLO - You Only Look Once), ra mắt năm 2015 bởi Joseph Redmon.
+Người 2: "Bạn chỉ nhìn một lần" - Cái tên này nghe có vẻ kế thừa cái ưu điểm "nhìn một lần duy nhất" của mạng ép-xê-en (FCN) mà thầy vừa nhắc đến phải không ạ?
+Người 1: Sự xâu chuỗi rất tuyệt vời! Kế thừa ép-xê-en (FCN), Yô-lô (YOLO) xử lý toàn cục bức ảnh. Cơ chế của nó là chia bức ảnh thành một ma trận lưới. Ở đây có một Quy tắc Trách nhiệm rất khắt khe: Nếu tâm của hộp giới hạn chứa đối tượng rơi đúng vào không gian của ô lưới nào, thì ô lưới đó phải chịu hoàn toàn trách nhiệm phát hiện đối tượng ấy.
+Người 2: Nhờ vậy mà tốc độ của nó nhanh hơn hẳn phương pháp quét cũ đúng không thầy?
+Người 1: Đúng vậy, hiệu năng của Yô-lô (YOLO) đạt tốc độ cực kỳ ấn tượng, vượt ngưỡng năm mươi khung hình trên một giây!
+
+Slide 10: CẤU TRÚC ĐẦU RA CỦA LƯỚI YOLO
+Người 1: Cuối cùng trong phần này, hãy xem cấu trúc đầu ra của lưới Yô-lô (YOLO) ở Slide 10. Điểm đặc biệt là mọi dự đoán được xuất ra đồng thời và gói gọn thành một Ten-xơ (Tensor) duy nhất.
+Người 2: Ten-xơ này chứa những lớp thông tin gì bên trong vậy thầy?
+Người 1: Nó dự đoán trực tiếp ba lớp thông tin chồng lên nhau: Thứ nhất là Xác suất danh mục, thứ hai là Điểm tin cậy, và thứ ba là Tọa độ tương đối của hộp giới hạn gồm bốn tham số là ích, y, vê-kép và hát.
+Người 2: Em thấy trên slide có ghi thuật ngữ "Hộp mỏ neo". Tính năng này để làm gì vậy ạ?
+Người 1: Kể từ phiên bản Yô-lô vê hai (YOLOv2) trở đi, mạng bắt đầu sử dụng các "Hộp mỏ neo". Thay vì để máy tính tự đoán hình dáng hộp từ đầu, người ta cung cấp sẵn các khung ưu tiên. Ví dụ: dùng hộp hình chữ nhật dọc để tìm người, hoặc dùng hộp nằm ngang để tìm xe hơi. Cải tiến này giúp mô hình hội tụ nhanh hơn và định vị chuẩn xác hơn rất nhiều.
+
+Slide 11: FASTER R-CNN: ĐỈNH CAO CỦA ĐỘ CHÍNH XÁC
+Người 1: Chúng ta cùng bước sang Slide 11 để tìm hiểu về đại diện ưu tú nhất của trường phái Hai giai đoạn: mô hình Phát-tơ a-xê-en-en (Faster R-CNN). Đây thực sự là đỉnh cao của độ chính xác. Khác với Yô-lô (YOLO) chia ảnh thành các lưới cố định một cách cứng ngắc, mô hình này sử dụng Mạng đề xuất vùng, viết tắt là a-pi-en (RPN).
+Người 2: Mạng đề xuất vùng này có phải là nó sẽ tự động quét để tìm xem chỗ nào có khả năng chứa vật thể đúng không thầy?
+Người 1: Chính xác! Nó tự động học cách tìm ra những khu vực có xác suất chứa đối tượng cao nhất. Sau khi có được các vùng tiềm năng này ở giai đoạn một, mô hình sẽ bước sang giai đoạn hai. Thông qua lớp a-rô-i pu-linh (RoI Pooling) và đầu mạng Phát a-xê-en-en (Fast R-CNN Head), các vùng này sẽ được phân loại và tinh chỉnh tọa độ thêm một lần nữa. Bước tinh chỉnh kép này giúp triệt tiêu gần như toàn bộ sai số định vị.
+
+Slide 12: SSD: MẠNG MỘT GIAI ĐOẠN ĐA TỶ LỆ
+Người 1: Ở Slide 12, thầy giới thiệu thêm một mô hình Một giai đoạn nữa là ét-ét-đê (SSD - Single Shot MultiBox Detector). Nó ra đời để khắc phục một điểm yếu chí mạng của Yô-lô (YOLO) đời đầu: đó là rất kém trong việc nhận diện các vật thể nhỏ đứng san sát nhau.
+Người 2: Vậy mô hình ét-ét-đê (SSD) này dùng chiêu gì để khắc phục điểm yếu đó ạ?
+Người 1: Đó là nhờ đặc tính Cốt lõi: Đa tỷ lệ. Thay vì chỉ dự đoán trên một bản đồ đặc trưng duy nhất, ét-ét-đê (SSD) thực hiện dự đoán trên nhiều bản đồ đặc trưng có kích thước khác nhau. Cơ chế của nó rất thú vị: dùng các lớp kích thước to để "nhìn" vật thể nhỏ, và dùng các lớp kích thước nhỏ để "nhìn" vật thể to. Nó có thể kết hợp hàng nghìn Hộp mỏ neo ở mọi tỷ lệ ngay trong cùng một lần chạy.
+
+Slide 13: BẢNG CHẨN ĐOÁN KIẾN TRÚC OBJECT DETECTION
+Người 1: Nhìn vào bảng chẩn đoán ở Slide 13, các em sẽ thấy bức tranh tổng thể so sánh ba kiến trúc này. Yô-lô (YOLO) thì vô địch về tốc độ, đạt mức thời gian thực nhờ hệ thống lưới ét nhân ét, nhưng độ chính xác chỉ ở mức khá.
+Người 2: Thế nếu em muốn một mô hình vừa nhanh vừa nhận diện tốt các vật nhỏ thì em nên chọn ét-ét-đê (SSD) đúng không thầy?
+Người 1: Đúng thế! Ét-ét-đê (SSD) cân bằng rất tốt, tốc độ nhanh và độ chính xác cao. Nhưng nếu bài toán của em yêu cầu độ chính xác phải cực kỳ cao, ví dụ như định vị vi mô hoặc xử lý các môi trường có nhiều đối tượng chồng chéo phức tạp, thì Phát-tơ a-xê-en-en (Faster R-CNN) mới là lựa chọn số một, dù tốc độ của nó chỉ đạt mức cận thời gian thực.
+
+Slide 14: ĐO LƯỜNG THÀNH CÔNG TỔNG THỂ: CHỈ SỐ mAP
+Người 1: Vậy làm sao để chấm điểm các mô hình này? Ở Slide 14, ta làm quen với chỉ số em-a-pê (mAP). Đầu tiên, các em nhớ kỹ: một dự đoán chỉ được coi là đúng khi nó thỏa mãn đồng thời hai điều kiện. Thứ nhất là đoán đúng nhãn danh mục, và thứ hai là hộp giới hạn phải có chỉ số i-ô-u (IoU) lớn hơn không phẩy năm.
+Người 2: Vậy mình tính điểm em-a-pê (mAP) này bằng thuật toán nào thưa thầy?
+Người 1: Ta có thuật toán hai bước. Bước một, ta tính a-pê (AP) bằng cách tính phần Diện tích dưới đường cong của đồ thị Precision trừ Recall cho từng danh mục riêng lẻ. Bước hai, ta tính em-a-pê (mAP) bằng cách lấy trung bình cộng toàn bộ các điểm a-pê (AP) của mọi danh mục. Ở một số bộ dữ liệu khó, người ta còn lấy trung bình trên nhiều ngưỡng i-ô-u (IoU) khác nhau cho khắt khe hơn nữa.
+
+Slide 15: TỔNG KẾT & KHỞI TẠO BÀI TẬP THỰC HÀNH
+Người 1: Chúng ta đến với Slide cuối cùng. Nhìn lại quy trình tổng thể, mọi bài toán nhận diện đều xoay quanh ba bước: Trích xuất đặc trưng, đi đến Phân loại, và cuối cùng là Định vị hộp giới hạn. Giờ là lúc các em áp dụng Nhiệm vụ Chuyển giao Tri thức, hay Transfer Learning, vào bài tập thực hành.
+Người 2: Bài tập yêu cầu mình phải làm những gì ạ? Mình có phải tự huấn luyện mô hình từ con số không không thầy?
+Người 1: Không cần đâu em! Các em sẽ sử dụng thư viện Keras hoặc PyTorch để tải các mô hình đã được huấn luyện sẵn, ví dụ như Vê-gờ-gờ mười sáu (VGG16) hoặc Rét-nét năm mươi (ResNet50) với tập trọng số ImageNet. Yêu cầu là: hãy tải một ảnh bất kỳ từ Internet, tiền xử lý nó về chuẩn kích thước mạng là hai trăm hai mươi tư, nhân, hai trăm hai mươi tư. Sau đó đưa ảnh qua mô hình để trích xuất ra Top 3 nhãn phân loại có xác suất cao nhất. Bằng cách này, các em đã có thể tự động hóa quá trình nhận diện rồi! Chúc các em code thành công!
+

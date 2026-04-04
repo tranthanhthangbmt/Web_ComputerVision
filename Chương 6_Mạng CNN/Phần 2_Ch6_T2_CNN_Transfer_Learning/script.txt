@@ -1,0 +1,70 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Ở tiết trước, chúng ta đã tìm hiểu các kiến thức cơ bản về mạng nơ-ron tích chập. Hôm nay, thầy trò ta sẽ tiếp tục Chương 6 về mạng xi-en-en với Tiết 2. Nội dung chính của tiết này là về các Mô hình được huấn luyện sẵn (Pretrained Models), và một kỹ thuật cực kỳ quan trọng gọi là Học chuyển giao (Transfer Learning).
+Người 2: Thưa thầy, học chuyển giao có phải giống như việc mình học đi xe đạp xong rồi chuyển sang học đi xe máy sẽ dễ dàng và nhanh biết đi hơn không ạ?
+ 
+Slide 2: KHÁI NIỆM HỌC CHUYỂN GIAO (TRANSFER LEARNING)
+Người 1: Sự liên tưởng của em rất tuyệt vời! Về định nghĩa, Học chuyển giao chính là quá trình chuyển giao tri thức từ một bài toán mà máy tính đã giải quyết được sang một bài toán mới.
+Người 2: Vậy cách tiếp cận cốt lõi của nó là gì thưa thầy? Có phải mình không cần phải bắt đầu dạy máy tính lại từ con số không đúng không ạ?
+Người 1: Chính xác! Thay vì phải huấn luyện một mạng nơ-ron sâu khổng lồ, hay mạng đi-en-en, từ con số không, chúng ta sẽ tái sử dụng một mạng hiện có từ một tác vụ tương tự. Kỹ thuật này hoạt động cực kỳ hiệu quả với mạng xi-en-en, bởi vì các lớp thấp của mạng này luôn học được các đặc trưng mang tính tổng quát rất cao.
+ 
+Slide 3: TẠI SAO CẦN SỬ DỤNG TRANSFER LEARNING?
+Người 1: Để hiểu rõ hơn giá trị của kỹ thuật này, chúng ta cùng xem xét ba lợi ích lớn nhất của việc sử dụng Học chuyển giao. Thứ nhất là tăng tốc độ hội tụ, giúp rút ngắn đáng kể thời gian huấn luyện. Bằng cách khởi tạo mô hình bằng các trọng số đã học thay vì ngẫu nhiên, ta có thể bỏ qua việc học lại các cấu trúc cơ bản như các góc, các cạnh.
+Người 2: Em hiểu rồi. Còn lợi ích thứ hai liên quan đến dữ liệu thì sao ạ? Việc tìm và gán nhãn cho hàng ngàn bức ảnh thường mất rất nhiều công sức và tiền bạc.
+Người 1: Đúng vậy, lợi ích thứ hai chính là tiết kiệm dữ liệu gán nhãn. Kỹ thuật này giúp ta giải quyết những bài toán phức tạp ngay cả khi có rất ít dữ liệu trong tay, qua đó khắc phục hoàn toàn rào cản chi phí gán nhãn dữ liệu đắt đỏ. Và cuối cùng, lợi ích thứ ba là cải thiện hiệu suất. Ta được tái sử dụng kiến trúc phân cấp đã được tối ưu hóa từ trước, qua đó tăng cường khả năng tổng quát hóa trên một tập dữ liệu hoàn toàn mới.
+ 
+Slide 4: CƠ CHẾ TÁI SỬ DỤNG CÁC LỚP (REUSING PRETRAINED LAYERS)
+Người 1: Giờ ta sẽ đi sâu vào cơ chế tái sử dụng các lớp thông qua mô hình kim tự tháp. Các em hãy hình dung cấu trúc mạng xi-en-en chia làm ba phần. Phần đáy dưới cùng là các Lớp thấp, nó học các cấu trúc cơ bản như đoạn thẳng, góc, hay màu sắc, nên mang tính tổng quát cao nhất. Tiến lên trên là Lớp trung gian, nơi mạng kết hợp các đoạn thẳng đó thành các cấu trúc hình học rõ ràng hơn như mắt, mũi hay bánh xe.
+Người 2: Vậy đỉnh của kim tự tháp là Lớp cao, chắc chắn nó sẽ mô hình hóa các đối tượng phức tạp nguyên vẹn như khuôn mặt người hay chiếc ô tô đúng không thầy?
+Người 1: Chuẩn xác! Lớp cao mang tính đặc thù cao nhất cho từng loại bài toán. Do đó, cơ chế cốt lõi của chúng ta là tái sử dụng phần lớn các lớp từ mạng đã được huấn luyện, và chỉ loại bỏ các lớp nằm ở trên cùng. Quá trình này mang lại hiệu quả cao nhất khi bài toán mới có chung các đặc trưng cấp thấp với bài toán gốc.
+ 
+Slide 5: CHIẾN LƯỢC 1 - ĐÓNG BĂNG CÁC LỚP (FEATURE EXTRACTION)
+Người 1: Dựa trên cơ chế đó, chúng ta có Chiến lược đầu tiên: Đóng băng các lớp, hay còn gọi là Trích xuất đặc trưng. Chiến lược này gồm hai bước. Bước một là đóng băng trọng số. Ta sẽ thiết lập các lớp đem đi tái sử dụng ở trạng thái không thể huấn luyện, bằng cách đặt tham số trên-nơ-bồ bằng phôn (trainable = False). Khi đó, thuật toán gra-đi-ên đì-xen (Gradient descent) sẽ không cập nhật và không làm thay đổi các trọng số tinh tế này.
+Người 2: Bước hai có phải là mình lắp thêm một phần "đầu" mới cho mô hình để nó giải đúng bài toán của mình không ạ?
+Người 1: Đúng thế! Bước hai là huấn luyện lớp đầu ra, hay lớp ao-pút (Output) mới. Ta chỉ thêm lớp đầu ra này vào đỉnh mạng và tiến hành huấn luyện duy nhất nó thôi. Ở đây có một nguyên tắc vàng các em cần nhớ: Hai bài toán càng giống nhau thì ta càng nên tái sử dụng nhiều lớp. Nếu hai bài toán cực kỳ giống nhau, ta chỉ việc giữ lại toàn bộ các lớp ẩn, và thay duy nhất lớp ao-pút cuối cùng.
+
+Slide 6: CHIẾN LƯỢC 2 - TINH CHỈNH (FINE-TUNING)
+Người 1: Chúng ta cùng bước sang Chiến lược 2: Tinh chỉnh, hay còn gọi là Phai-tiu-ninh (Fine-Tuning). Ở bước này, ta sẽ tiến hành "mở băng", tức là ăn-phờ-ri (Unfreeze) một số lớp ẩn ở tầng trên cùng của mô hình đã huấn luyện sẵn.
+Người 2: Vậy việc "mở băng" này có tác dụng gì so với việc mình chỉ thay mỗi cái đầu ra như chiến lược số 1 ạ?
+Người 1: Việc này giúp các đặc trưng cấp cao có cơ hội tự điều chỉnh sát hơn với đặc thù của dữ liệu mới. Quy trình này có hai bước. Bước một, ta vẫn đóng băng toàn bộ lớp cũ, và chỉ huấn luyện lớp ao-pút (Output) mới trong vài ê-pốc (epoch) để ổn định các trọng số cơ bản. Sau đó sang bước hai, ta mới mở băng các lớp ẩn trên cùng và tiếp tục huấn luyện toàn bộ mô hình đó.
+Slide 7: LƯU Ý QUAN TRỌNG KHI TINH CHỈNH
+Người 1: Khi thực hiện Tinh chỉnh, có một cảnh báo cực kỳ quan trọng về tốc độ học, hay lơn-ninh rết (Learning Rate). Các em bắt buộc phải giảm tốc độ học xuống, tối thiểu là nhỏ hơn hoặc bằng mười lần khi thực hiện mở băng. Tốc độ học lớn sẽ tàn phá và phá hủy ngay các trọng số tinh tế đã được tối ưu từ trước.
+Người 2: Em hiểu rồi. Vậy mình nên mở băng bao nhiêu lớp là vừa đủ thưa thầy?
+Người 1: Điều này phụ thuộc vào lượng dữ liệu em có. Nếu dữ liệu huấn luyện Ít, ta chỉ nên tinh chỉnh lớp phân loại cuối cùng hoặc một lớp ẩn trên cùng thôi, lý do là để ngăn chặn hiện tượng học vẹt, hay ô-vơ-phít-tinh (Overfitting) diễn ra nghiêm trọng. Ngược lại, nếu dữ liệu huấn luyện Nhiều, ta hoàn toàn có thể mở băng nhiều lớp ẩn hơn, cho phép mô hình học các đặc trưng hoàn toàn mới bám sát với bài toán hiện tại.
+Slide 8: CHIẾN LƯỢC 3 - TIỀN HUẤN LUYỆN KHÔNG GIÁM SÁT
+Người 1: Trong trường hợp bài toán quá phức tạp, lại có rất ít dữ liệu gán nhãn, và chúng ta cũng không tìm được mô hình huấn luyện sẵn nào tương đương, ta sẽ dùng Chiến lược 3: Tiền huấn luyện không giám sát, hay Ân-su-pơ-vai pờ-ri-trên-ninh (Unsupervised Pretraining).
+Người 2: Dữ liệu không có nhãn thì máy tính học kiểu gì được hả thầy?
+Người 1: Rất thông minh! Ta sẽ giải quyết qua ba bước. Bước một, ta thu thập một lượng khổng lồ dữ liệu không gán nhãn, vì loại dữ liệu này trên mạng rất rẻ và dễ kiếm. Bước hai, ta dùng lượng dữ liệu này đào tạo một mô hình tự mã hóa O-tô-en-cốt-đơ (Autoencoder) hoặc mạng Găn (GAN) để chúng tự tìm ra các cấu trúc ẩn của dữ liệu. Bước cuối cùng mới là Học chuyển giao: ta tái sử dụng các lớp thấp của mô hình đó, lắp thêm lớp ao-pút, và tiến hành tinh chỉnh bằng lượng nhỏ dữ liệu có gán nhãn mà ta đang có.
+Slide 9: CHIẾN LƯỢC 4 - TIỀN HUẤN LUYỆN TRÊN TÁC VỤ PHỤ
+Người 1: Một hướng tiếp cận khác cũng rất hay là Chiến lược 4: Tiền huấn luyện trên Tác vụ phụ, hay O-xi-li-a-ri tát-xcờ (Auxiliary Task). Khái niệm cốt lõi là ta sẽ huấn luyện mạng đầu tiên trên một tác vụ phụ dễ tạo ra nhãn hàng loạt trước, rồi mới dùng các lớp trích xuất đặc trưng đó cho tác vụ chính.
+Người 2: Thầy có thể cho một ví dụ thực tế về "tác vụ phụ" này không ạ?
+Người 1: Giả sử em cần làm hệ thống nhận diện nhân viên công ty, nhưng mỗi người chỉ có 2 đến 3 bức ảnh. Số lượng này là không đủ để huấn luyện mạng nơ-ron sâu. Thay vào đó, em tải hàng triệu ảnh ngẫu nhiên trên web về, rồi huấn luyện một mạng lưới, ví dụ mạng Xi-a-mế-sê (Siamese Network), để trả lời câu hỏi phụ: "Hai ảnh này có phải cùng một người không?". Sau khi mạng này học rất giỏi, ta sẽ tái sử dụng bộ trích xuất đặc trưng xuất sắc đó cho hệ thống thực tế của công ty.
+Slide 10: GIỚI THIỆU SƠ LƯỢC CÁC PRETRAINED MODELS PHỔ BIẾN
+Người 1: Để kết thúc phần lý thuyết trước khi sang thực hành, chúng ta sẽ điểm mặt một số Mô hình cơ sở (Pretrained Models) phổ biến nhất. Hầu hết chúng đều được huấn luyện trên tập dữ liệu khổng lồ I-mết-nét (ImageNet) với 1 phẩy 2 triệu ảnh và phân ra 1000 lớp.
+Người 2: Hiện tại thì mô hình nào đang được ưa chuộng nhất vậy thầy?
+Người 1: Mỗi mô hình có một thế mạnh riêng. Mô hình Vê-gờ-gờ (VGG 16 hoặc 19) là kiến trúc kinh điển, mạch thẳng đơn giản, nhưng dung lượng khá lớn và tính toán nặng. Cột mốc lịch sử thực sự thuộc về mô hình Rét-nét (ResNet), nó dùng các kết nối tắt, hay sờ-kíp cờ-nếch-sừn (skip connections) để giải quyết lỗi triệt tiêu đạo hàm, cho phép mạng sâu tới hàng trăm lớp. Ngoài ra ta có In-xép-sừn (Inception hay GoogLeNet) giúp mở rộng mạng theo chiều ngang bằng tính toán song song đa tỷ lệ. Cuối cùng, nếu em lập trình cho thiết bị di động hay I-ô-tê (IoT), thì Mô-bai-nét (MobileNet) và Ép-phi-sừn-nét (EfficientNet) là lựa chọn số một, vì chúng tối ưu hóa dung lượng và số phép toán flốp (FLOPs), tạo ra sự cân bằng hoàn hảo giữa độ chính xác và tốc độ.
+
+Slide 11: THỰC HÀNH - TẢI MÔ HÌNH CƠ SỞ (BASE MODEL)
+Người 1: Chúng ta đã nắm vững lý thuyết, bây giờ hãy cùng xem cách triển khai thực tế. Việc tải một mô hình cơ sở, hay Bây-xờ Mô-đồ (Base Model), cực kỳ đơn giản. Các thư viện như Kê-rát (Keras) của TensorFlow hoặc Tót-vi-dần (TorchVision) của PyTorch cho phép ta tải toàn bộ một kiến trúc phức tạp chỉ với đúng một dòng lệnh.
+Người 2: Em thấy trong đoạn mã có tham số quết bằng i-mết-nét (weights='imagenet') và in-cờ-lút tốp bằng phôn (include_top=False). Chúng có ý nghĩa gì vậy thưa thầy?
+Người 1: Câu hỏi rất tinh tế! Tham số đầu tiên giúp ta tải bộ trọng số đã được tối ưu hóa sẵn từ tập dữ liệu khổng lồ ImageNet, thay vì khởi tạo ngẫu nhiên. Còn tham số thứ hai là một chi tiết rất quan trọng: nó ra lệnh cho máy tính cắt bỏ lớp phân loại, tức là lớp Fully Connected, ở đỉnh của mạng gốc. Nhờ vậy, ta chỉ lấy phần Trích xuất đặc trưng để chuẩn bị lắp vào bài toán mới của riêng mình.
+ 
+Slide 12: THỰC HÀNH - THÊM CÁC LỚP TÙY CHỈNH
+Người 1: Sau khi đã tải xong phần Trích xuất đặc trưng, bước tiếp theo là ta cần thiết kế một cái "đầu" mới, hay lớp Head, cho kiến trúc này. Quá trình này gồm hai bước chính. Bước một là Giảm chiều dữ liệu.
+Người 2: Có phải mình dùng một lớp Pu-ling (Pooling) nào đó để thu nhỏ dữ liệu lại không ạ?
+Người 1: Chính xác! Ta sẽ đặt lên đỉnh mô hình cơ sở một lớp Gờ-lô-bồ a-vơ-rết pu-ling hai đê (Global Average Pooling 2D). Nó sẽ tính trung bình các bản đồ đặc trưng, giúp giảm triệt để số lượng tham số, qua đó chống lại hiện tượng học vẹt (Overfitting) rất hiệu quả. Bước hai, ta thêm Lớp phân loại cho bài toán mới, chính là một lớp Đen-xơ (Dense). Số lượng nơ-ron của lớp này phải bằng chính xác số lớp của bài toán hiện tại, và ta dùng hàm kích hoạt xốp-mắc (softmax) để xuất ra xác suất dự đoán cho từng lớp.
+ 
+Slide 13: MỞ RỘNG - HỌC ĐA TÁC VỤ (MULTI-TASK LEARNING)
+Người 1: Tới đây, thầy muốn giới thiệu thêm một khái niệm mở rộng rất thú vị là Học đa tác vụ, hay Mân-ti-tát lơn-ninh (Multi-task Learning). Khái niệm này cho phép ta rẽ nhánh từ một Pretrained Model duy nhất để giải quyết đồng thời nhiều bài toán khác nhau.
+Người 2: Thầy có thể cho một ví dụ cụ thể về việc rẽ nhánh này được không ạ?
+Người 1: Em hãy tưởng tượng ta cần xử lý một bức ảnh chụp bông hoa. Nhánh thứ nhất sẽ làm nhiệm vụ Phân loại (Classification) xem đó là hoa gì, nhánh này dùng hàm mất mát ca-te-go-ri-cồ cờ-rót-en-trô-pi (categorical_crossentropy) và một lớp Dense dùng hàm softmax. Cùng lúc đó, nhánh thứ hai làm nhiệm vụ Định vị (Localization) để tìm xem bông hoa nằm ở đâu trong ảnh. Nhánh hai này dùng hàm mất mát sai số toàn phương trung bình em-ét-e (MSE) và một lớp Dense dự đoán 4 tọa độ của hộp giới hạn là Tâm x, Tâm y, Rộng và Cao. Sự chia sẻ đặc trưng ở các lớp dưới giúp mô hình học nhanh hơn và tiết kiệm đáng kể tài nguyên tính toán.
+ 
+Slide 14: CÁC KHO MÔ HÌNH HUẤN LUYỆN SẴN (MODEL ZOOS)
+Người 1: Vậy chúng ta có thể tìm những mô hình cơ sở tuyệt vời này ở đâu? Câu trả lời là từ các Kho mô hình huấn luyện sẵn, hay Mô-đồ Du (Model Zoos). Nhờ hệ sinh thái mã nguồn mở này, các em không cần sở hữu siêu máy tính hay tự thiết kế mạng từ đầu, mà vẫn được cung cấp miễn phí các kiến trúc đỉnh cao nhất (State-of-the-Art).
+Người 2: Có những kho mô hình nào nổi tiếng mà sinh viên chúng em nên biết thưa thầy?
+Người 1: Có ba cái tên lớn các em cần nhớ. Thứ nhất là Ten-sơ-phờ-lâu hắp (TensorFlow Hub) và Keras Applications, nó tích hợp sẵn các kiến trúc phân loại như VGG, ResNet và cả các mạng phát hiện đối tượng như YOLO với trọng số chuẩn. Thứ hai là Tót-vi-dần (TorchVision) của PyTorch, một hệ sinh thái đồ sộ, cập nhật liên tục các bài báo mới nhất. Và cuối cùng là Hắc-ging Phây (Hugging Face), một nền tảng chia sẻ đang cực kỳ nổi lên, không chỉ mạnh về ngôn ngữ tự nhiên mà nay đã hỗ trợ rất mạnh cho cả Thị giác máy tính.
+ 
+Slide 15: TỔNG KẾT TIẾT 2 & ĐỊNH HƯỚNG
+Người 1: Để khép lại Tiết 2 ngày hôm nay, chúng ta cùng nhìn lại chìa khóa cốt lõi. Học chuyển giao (Transfer Learning) chính là lời giải hoàn hảo cho bài toán thiếu dữ liệu gán nhãn, giúp ta tiết kiệm một lượng khổng lồ chi phí tính toán phần cứng. Các em cần khắc sâu hai chiến lược chính: Một là Đóng băng lớp dưới (Feature Extraction), và hai là Mở băng cẩn thận lớp trên với tốc độ học (Learning rate) cực nhỏ (Fine-Tuning). Và khi lập trình, hãy nhớ luôn tải mô hình nhanh chóng qua tham số include_top=False.
+Người 2: Vậy ở Tiết 3 tiếp theo, chúng ta sẽ áp dụng những kiến thức này vào bài toán nào thưa thầy?
+Người 1: Ở tiết sau, nền tảng kiến thức về trích xuất đặc trưng bằng mạng xi-en-en và Học chuyển giao mà ta vừa học sẽ là hành trang bắt buộc để chúng ta chinh phục một bài toán phức tạp hơn rất nhiều: Phát hiện đối tượng (Object Detection). Chúng ta sẽ cùng nhau tìm hiểu các mô hình nổi tiếng như Dô-lô (YOLO) hay Phác-tơ Rờ xi-en-en (Faster R-CNN). Hẹn gặp lại các em vào buổi học tới!
+

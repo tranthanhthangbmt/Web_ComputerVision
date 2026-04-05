@@ -1,82 +1,74 @@
-﻿Slide 1: GIỚI THIỆU CHUNG
-Người 1: Chào các em, chào mừng các em đến với Chương 6: Mạng xi-en-en. Trong tiết học đầu tiên của chương này, thầy trò chúng ta sẽ cùng tìm hiểu về kiến trúc mạng xi-en-en và các kỹ thuật cơ bản nhất để xây dựng nên nó.
-Người 2: Thưa thầy, ở các chương trước mình đã học về mạng nơ-ron nhân tạo a-en-en rồi, vậy tại sao mình lại cần thêm một loại mạng mới là xi-en-en để xử lý ảnh ạ?
+﻿Slide 1: CHƯƠNG 6. MẠNG CNN
+Người 1: Chào các em. Ở những chương trước, chúng ta đã tìm hiểu về các mạng nơ-ron nhân tạo truyền thống. Hôm nay, thầy trò ta sẽ bước sang một chương mang tính đột phá trong lĩnh vực xử lý ảnh: Chương 6 - Mạng xê-en-en (CNN). Trong tiết học đầu tiên ngày hôm nay, chúng ta sẽ cùng tìm hiểu về "Kiến trúc Mạng xê-en-en và Các kỹ thuật cơ bản". Nội dung cốt lõi sẽ chia làm hai phần: phần sáu chấm một là Kiến trúc xê-en-en, và phần sáu chấm hai là Các kỹ thuật cơ bản.
+Người 2: Thưa thầy, mạng xê-en-en này có phải là mạng chuyên dùng để nhận diện hình ảnh mà người ta hay nhắc tới trong trí tuệ nhân tạo không ạ?
 
 Slide 2: SỰ BÙNG NỔ THAM SỐ: HẠN CHẾ CỦA MẠNG ANN TRUYỀN THỐNG
-Người 1: Một câu hỏi chuyển ý rất hay! Lý do là vì mạng a-en-en truyền thống, tức là mạng kết nối đầy đủ, sẽ gặp thất bại khi xử lý ảnh kích thước lớn do sự bùng nổ tham số. Các em thử hình dung, với một bức ảnh đầu vào rất nhỏ, chỉ cỡ một trăm nhân một trăm, tức là mười nghìn điểm ảnh. Nếu đưa bức ảnh này đi qua một lớp ẩn đầu tiên chứa một nghìn nơ-ron, ta sẽ có phép tính: mười nghìn nhân một nghìn, bằng mười triệu trọng số!
-Người 2: Chà, mới một lớp ẩn đầu tiên của một bức ảnh nhỏ xíu mà đã sinh ra tới mười triệu kết nối sao thầy?
-Người 1: Đúng vậy! Và khối lượng tính toán khổng lồ này trở thành một gánh nặng với ba hậu quả chính: thứ nhất là tiêu tốn bộ nhớ, thứ hai là tạo ra nút thắt tính toán, và thứ ba là đẩy rủi ro quá khớp lên cực kỳ cao.
+Người 1: Một câu hỏi dẫn dắt rất chính xác! Để hiểu vì sao xê-en-en ra đời, ta cần nhìn lại mạng a-en-en (ANN) truyền thống. Các mạng kết nối đầy đủ này thất bại hoàn toàn khi xử lý ảnh kích thước lớn do khối lượng tính toán khổng lồ. Vấn đề nằm ở chỗ: các nơ-ron kết nối đầy đủ tạo ra quá nhiều liên kết, để lại những gánh nặng nghiêm trọng như tiêu tốn bộ nhớ, tạo ra nút thắt tính toán, và rủi ro quá khớp cực kỳ cao.
+Người 2: Việc "kết nối đầy đủ" này tạo ra số lượng tham số khủng khiếp đến mức nào vậy thầy? Em chưa hình dung được ạ.
+Người 1: Thầy lấy một ví dụ thế này. Giả sử đầu vào của chúng ta là một bức ảnh rất nhỏ, kích thước một trăm nhân một trăm pixel, tương đương mười nghìn pixel. Nếu ta đưa qua một lớp ẩn chứa một nghìn nơ-ron, thì số lượng trọng số sẽ lên tới: mười nghìn nhân một nghìn, bằng mười triệu trọng số. Mười triệu kết nối chỉ cho duy nhất lớp ẩn đầu tiên!
 
 Slide 3: GIẢI PHÁP TỪ SINH HỌC: VÙNG CẢM NHẬN CỤC BỘ
-Người 1: Để khắc phục hạn chế chí mạng đó, các nhà khoa học đã tìm ra giải pháp bắt nguồn từ nguyên lý hoạt động của vỏ não thị giác trong sinh học. Khác với mạng toàn cục, nơ-ron sinh học chỉ phản ứng với các kích thích trong một vùng không gian cực kỳ hạn chế.
-Người 2: Vậy mạng xi-en-en đã mô phỏng lại giải pháp sinh lý học này như thế nào ạ?
-Người 1: Mạng xi-en-en đưa ra khái niệm "vùng cảm nhận cục bộ" với hai nguyên tắc kiến trúc cốt lõi. Thứ nhất là lớp kết nối cục bộ, nghĩa là giới hạn phạm vi kết nối của mỗi nơ-ron. Thứ hai là chia sẻ trọng số, tức là dùng chung một bộ lọc cho toàn bộ bức ảnh thay vì mỗi điểm ảnh dùng một trọng số độc lập.
+Người 1: Đứng trước bài toán bùng nổ tham số đó, các nhà khoa học đã tìm ra giải pháp từ chính sinh lý học. Thực chất, kiến trúc mạng xê-en-en bắt nguồn từ nguyên lý hoạt động của vỏ não thị giác.
+Người 2: Vỏ não thị giác ạ? Có phải là người ta phát hiện ra mắt người không nhìn toàn bộ bức tranh cùng một lúc mà chỉ tập trung vào từng phần nhỏ không thầy?
+Người 1: Sự liên tưởng của em rất hay! Đúng như vậy. Cảm hứng sinh lý học cho thấy nơ-ron sinh học chỉ phản ứng với các kích thích trong một vùng không gian cực kỳ hạn chế. Dựa trên điều này, mạng xê-en-en đưa ra giải pháp "Vùng cảm nhận cục bộ" thông qua hai cách: Một là "Lớp kết nối cục bộ", giúp giới hạn phạm vi kết nối của mỗi nơ-ron; Hai là "Chia sẻ trọng số", tức là dùng chung một bộ lọc cho toàn bộ bức ảnh.
 
-Slide 4: KHỐI XÂY DỰNG CỐT LÕI: LỚP TÍCH CHẬP (CONVOLUTIONAL LAYER)
-Người 1: Khối xây dựng cốt lõi thực hiện nhiệm vụ đó chính là Lớp tích chập. Nhiệm vụ của nó là trích xuất các đặc trưng hình học, ví dụ như đường thẳng hay góc cạnh, thông qua phép chập. Quá trình này vận hành dựa trên bốn khái niệm chính: đầu tiên là "bộ lọc", tức là các ma trận trọng số nhỏ trượt qua toàn bộ ảnh đầu vào. Tiếp theo là "kết nối cục bộ", nơi nơ-ron chỉ tương tác với các điểm ảnh nằm trong vùng cảm nhận.
-Người 2: Vậy kết quả sau khi bộ lọc trượt qua ảnh và tính toán thì gọi là gì hả thầy?
-Người 1: Kết quả hình học sinh ra sau khi áp dụng bộ lọc được gọi là "bản đồ đặc trưng". Và khái niệm cuối cùng chính là "chia sẻ trọng số", nơi tất cả các nơ-ron trong cùng một bản đồ đặc trưng sẽ dùng chung một bộ trọng số và độ lệch.
+Slide 4: SO SÁNH CẤU TRÚC: TỰ DO HÓA VS. RÀNG BUỘC KHÔNG GIAN
+Người 1: Bây giờ, ta cùng xem xét bảng so sánh cấu trúc giữa Mạng nơ-ron truyền thống và Mạng tích chập. Về mô hình kết nối, mạng truyền thống là kết nối toàn cục, còn mạng tích chập là kết nối cục bộ. Về trọng số, mạng truyền thống để trọng số độc lập cho mỗi kết nối, trong khi mạng tích chập lại chia sẻ trọng số trên toàn bộ ảnh.
+Người 2: Thế còn việc nhận thức không gian thì sao ạ? Mạng truyền thống xử lý ảnh hai chiều như thế nào hả thầy?
+Người 1: Đó chính là điểm yếu chí mạng của mạng truyền thống. Nó phá vỡ cấu trúc không gian hai chiều của bức ảnh thành một vector một chiều. Ngược lại, mạng tích chập bảo toàn được hệ thống phân cấp không gian hai chiều này. Nhờ những sự khác biệt đó, số lượng tham số của mạng tích chập được nén và kiểm soát vô cùng chặt chẽ, thay vì bùng nổ theo hàm mũ như mạng truyền thống.
 
-Slide 5: THAM SỐ LỚP TÍCH CHẬP: BƯỚC TRƯỢT (STRIDE)
-Người 2: Việc "trượt qua ảnh" mà thầy vừa nhắc đến, nó trượt nhanh hay chậm, và mỗi lần nhích bao nhiêu điểm ảnh vậy thầy?
-Người 1: Sự di chuyển đó được quy định bởi một tham số cực kỳ quan trọng gọi là bước trượt, tiếng Anh là stride. Nó định nghĩa khoảng cách bằng số điểm ảnh mà bộ lọc sẽ di chuyển sau mỗi phép tính. Nếu ta cài đặt bước trượt bằng một, bộ lọc sẽ nhích từng điểm ảnh một. Cách này giúp giữ lại tối đa thông tin không gian, nhưng đổi lại chi phí tính toán sẽ rất cao.
-Người 2: Vậy nếu mình muốn giảm bớt chi phí tính toán thì mình cho bước trượt lớn hơn một, ví dụ như bước trượt bằng hai, để bộ lọc "nhảy cóc" đúng không ạ?
-Người 1: Hoàn toàn chính xác! Khi bước trượt bằng hai, bộ lọc sẽ nhảy cóc qua các khối, tức là nhảy hai điểm ảnh mỗi lần. Việc này giúp giảm nhanh kích thước không gian của bản đồ đặc trưng, qua đó làm giảm độ phức tạp tính toán đi đáng kể. Chúng ta sẽ nghỉ giải lao một chút trước khi chuyển sang các kỹ thuật tiếp theo của mạng xi-en-en nhé!
+Slide 5: KHỐI XÂY DỰNG CỐT LÕI: LỚP TÍCH CHẬP (CONVOLUTIONAL LAYER)
+Người 1: Từ những ưu thế tuyệt đối trên, ta sẽ đi sâu vào khối xây dựng cốt lõi tạo nên mạng xê-en-en: Lớp Tích chập. Nhiệm vụ chính của lớp này là trích xuất các đặc trưng hình học, ví dụ như đường thẳng hay góc cạnh, thông qua phép toán chập.
+Người 2: Lớp tích chập này hoạt động dựa trên những thành phần nào để lấy được đặc trưng vậy thầy?
+Người 1: Cơ chế hoạt động của nó dựa trên bốn thành phần cốt lõi. Đầu tiên là "Bộ lọc", nó là các ma trận trọng số nhỏ trượt qua toàn bộ ảnh đầu vào. Thứ hai là "Kết nối Cục bộ", nghĩa là nơ-ron chỉ tương tác với các pixel nằm trong Vùng cảm nhận của nó thôi. Thứ ba là "Bản đồ Đặc trưng", đây chính là kết quả hình học được sinh ra sau khi áp dụng bộ lọc. Và cuối cùng là "Chia sẻ Trọng số", tức là tất cả các nơ-ron nằm trong cùng một Bản đồ Đặc trưng sẽ dùng chung một bộ trọng số và hệ số lệch.
 
-Slide 6: THAM SỐ LỚP TÍCH CHẬP - PHẦN ĐỆM (ZERO PADDING)
-Người 1: Chào các em, chúng ta tiếp tục bài học. Ở phần trước ta đã thấy bộ lọc trượt qua ảnh, nhưng có một vấn đề nảy sinh: sau mỗi lớp tích chập, kích thước ảnh sẽ tự động bị thu nhỏ lại, đồng thời thông tin ở các vùng rìa ảnh sẽ bị bỏ qua.
-Người 2: Vậy làm thế nào để mình giữ cho bức ảnh không bị teo nhỏ đi sau nhiều lần tính toán hả thầy?
-Người 1: Chúng ta sẽ dùng một kỹ thuật gọi là Phần đệm, hay Zero Padding. Cơ chế của nó rất đơn giản: ta sẽ bao bọc ảnh đầu vào bằng cách thêm các viền có giá trị bằng không xung quanh biên của ảnh gốc. Mục đích cốt lõi của việc này là giữ nguyên kích thước không gian, tức là chiều cao và chiều rộng, cho bản đồ đặc trưng đầu ra. Nhờ vậy, ta có thể xây dựng các mạng xi-en-en sâu hơn với nhiều lớp hơn mà không sợ bị mất dữ liệu.
+Slide 6: THAM SỐ LỚP TÍCH CHẬP: BƯỚC TRƯỢT (STRIDE)
+Người 1: Tiếp theo, chúng ta sẽ tìm hiểu về một tham số quan trọng của lớp tích chập, đó là Bước trượt, hay tiếng Anh gọi là S-t-r-i-d-e. Tham số này quy định khoảng cách, tính bằng số pixel, mà bộ lọc sẽ di chuyển sau mỗi phép tính.
+Người 2: Vậy nếu mình cho nó nhích từng chút một thì sao thầy?
+Người 1: Nếu bước trượt bằng một, bộ lọc sẽ nhích từng pixel một. Cách này giúp giữ lại tối đa thông tin không gian nhưng chi phí tính toán lại rất cao. Ngược lại, nếu ta chọn bước trượt lớn hơn một, ví dụ như bằng hai, bộ lọc sẽ nhảy cóc qua các khối pixel. Điều này làm giảm nhanh kích thước không gian, hay nói cách khác là giảm chiều dữ liệu, từ đó làm giảm đáng kể độ phức tạp tính toán.
 
-Slide 7: LỚP GỘP (POOLING LAYER) - NÉN VÀ GIẢM CHIỀU
-Người 1: Sau khi trích xuất đặc trưng bằng Lớp Tích chập, trạm dừng tiếp theo của dữ liệu sẽ là Lớp Gộp, tiếng Anh gọi là Pooling Layer. Nhiệm vụ chính của nó là lấy mẫu con để chắt lọc những thông tin quan trọng nhất.
-Người 2: Việc "lấy mẫu con" này có giống như mình nén bức ảnh cho nhẹ đi không thầy?
-Người 1: Đúng là như vậy! Lớp Gộp có ba vai trò chiến lược cực kỳ quan trọng: thứ nhất, nó giúp giảm nhanh kích thước không gian của bản đồ đặc trưng. Thứ hai, việc giảm kích thước này giúp tiết kiệm bộ nhớ và giảm khối lượng tính toán một cách đáng kể. Và thứ ba, nó giúp hạn chế tối đa rủi ro quá khớp bằng cách giảm mạnh số lượng tham số của mạng.
+Slide 7: THAM SỐ LỚP TÍCH CHẬP: PHẦN ĐỆM (ZERO PADDING)
+Người 1: Tuy nhiên, sau mỗi lớp tích chập, kích thước ảnh sẽ tự động bị thu nhỏ lại và các thông tin ở rìa bức ảnh rất dễ bị bỏ qua. Để khắc phục, ta dùng đến kỹ thuật bao bọc ảnh đầu vào bằng các viền giá trị không, gọi là Phần đệm.
+Người 2: Phần đệm này cụ thể là mình thêm ma trận số không vào đâu ạ?
+Người 1: Cơ chế của nó là thêm một ma trận các số không bao bọc xung quanh biên của ảnh gốc. Mục đích cốt lõi là giữ nguyên kích thước không gian, tức là chiều cao và chiều rộng, cho bản đồ đặc trưng đầu ra. Nhờ vậy, chúng ta có thể cho phép xây dựng các mạng xê-en-en sâu hơn mà không lo bị mất mát dữ liệu dần qua từng lớp.
 
-Slide 8: ĐẶC ĐIỂM TOÁN HỌC CỦA LỚP GỘP
-Người 2: Thưa thầy, Lớp Tích chập thì cần phải học các trọng số của bộ lọc, vậy Lớp Gộp có cần học tham số nào không ạ?
-Người 1: Một câu hỏi rất sắc sảo! Điểm khác biệt hoàn toàn với Lớp Tích chập là Lớp Gộp chỉ là một hàm toán học tĩnh, tức là nó không có bất kỳ trọng số hay độ lệch nào cần phải cập nhật trong quá trình học cả.
-Người 2: Vậy nó tính toán dựa trên quy tắc nào vậy thầy?
-Người 1: Có hai phương pháp phổ biến nhất. Đầu tiên là Gộp Cực đại, hay Max Pooling. Phương pháp này chỉ lấy giá trị lớn nhất trong vùng đang xét, nhờ đó giữ lại được các đặc trưng nổi bật nhất như viền hay góc sắc nét, và đây cũng là cách dùng phổ biến nhất hiện nay. Cách thứ hai là Gộp Trung bình, hay Average Pooling, tính bằng cách lấy giá trị trung bình cộng của vùng. Cách này làm mịn thông tin và thường làm mất đi chi tiết sắc nét, nên chủ yếu chỉ được dùng ở các lớp cuối cùng của mạng.
+Slide 8: LỚP GỘP (POOLING LAYER): NÉN VÀ GIẢM CHIỀU
+Người 1: Sau khi đi qua lớp tích chập, dữ liệu sẽ được đưa qua Lớp Gộp, tiếng Anh là Pooling Layer. Kỹ thuật này thực chất là lấy mẫu con nhằm chắt lọc những thông tin quan trọng nhất.
+Người 2: Lớp gộp này đóng vai trò chiến lược như thế nào trong toàn bộ mạng vậy thầy? Tại sao mình lại cần nén nó lại?
+Người 1: Nó mang ba vai trò chiến lược vô cùng quan trọng. Thứ nhất, nó làm giảm nhanh kích thước không gian của bản đồ đặc trưng. Thứ hai, nhờ việc giảm kích thước đó, mạng sẽ tiết kiệm được bộ nhớ và giảm khối lượng tính toán. Và thứ ba, quan trọng nhất, nó hạn chế tối đa rủi ro Quá khớp, hay Overfitting, bằng cách giảm mạnh số lượng tham số.
 
-Slide 9: HÀM KÍCH HOẠT (ACTIVATION FUNCTION)
-Người 1: Khối hình tiếp theo trong mạng xi-en-en là Hàm Kích hoạt. Nhiệm vụ của nó là đưa tính phi tuyến tính vào mạng, cho phép mô hình học được các đại diện dữ liệu phức tạp trong thực tế. Tiêu chuẩn hiện nay của Học sâu chính là hàm Rê-lu.
-Người 2: Hàm Rê-lu này có công thức toán học như thế nào và nó hoạt động ra sao hả thầy?
-Người 1: Công thức của nó rất đơn giản: Rê-lu của zét, bằng giá trị lớn nhất giữa không và zét. Về mặt cơ chế, nếu giá trị đầu vào là số âm, hàm sẽ biến nó thành số không, có nghĩa là nơ-ron đó sẽ không kích hoạt. Ngược lại, nếu giá trị là số dương, nó sẽ giữ nguyên giá trị tuyến tính ban đầu.
+Slide 9: ĐẶC ĐIỂM TOÁN HỌC: KHÔNG CÓ TRỌNG SỐ CẦN HỌC
+Người 1: Có một điểm đặc biệt thú vị ở Lớp Gộp: nó khác biệt hoàn toàn với Lớp Tích chập vì thực chất nó chỉ là một hàm toán học tĩnh. Tuyệt đối không có bất kỳ một trọng số hay hệ số lệch nào được cập nhật ở lớp này cả.
+Người 2: Vậy nó tính toán dựa trên quy tắc nào nếu không có trọng số ạ?
+Người 1: Có hai quy tắc phổ biến. Thứ nhất là Gộp Cực đại, hay Max Pooling. Cơ chế của nó đơn giản là lấy giá trị lớn nhất trong một vùng. Ưu điểm của phương pháp này là giữ lại được các đặc trưng nổi bật nhất như đường viền hay góc sắc nét, và đây cũng là phương pháp phổ biến nhất trong mạng xê-en-en hiện đại. Cách thứ hai là Gộp Trung bình, tức là lấy giá trị trung bình cộng của vùng. Kỹ thuật này sẽ làm mịn thông tin, làm mất đi các chi tiết sắc nét và thường chỉ được dùng ở các lớp cuối.
 
-Slide 10: TẠI SAO RELU THỐNG TRỊ MẠNG CNN HIỆN ĐẠI?
-Người 2: Công thức đơn giản chỉ là so sánh với số không như vậy, tại sao nó lại được coi là tiêu chuẩn và thống trị các mạng xi-en-en hiện đại vậy thầy?
-Người 1: Sự đơn giản đó lại chính là sức mạnh giúp nó khắc phục những điểm yếu chí mạng của mạng nơ-ron thế hệ cũ. Hàm Rê-lu mang lại ba ưu điểm cốt lõi. Thứ nhất là tính toán cực nhanh, vì nó không đòi hỏi các phép toán hàm mũ phức tạp, chỉ cần duy nhất một phép so sánh logic với số không.
-Người 2: Còn hai ưu điểm còn lại là gì ạ?
-Người 1: Thứ hai, nó giúp tránh hiện tượng triệt tiêu đạo hàm. Ở miền giá trị dương, đạo hàm của hàm Rê-lu luôn bằng một. Điều này giúp mô hình không bao giờ bị rơi vào vùng bão hòa, cho phép dòng lỗi truyền ngược mượt mà qua các lớp. Và cuối cùng, thực nghiệm đã chứng minh mạng sử dụng Rê-lu đạt được tốc độ hội tụ cao hơn, tức là học nhanh hơn gấp nhiều lần so với trước đây.
+Slide 10: HÀM KÍCH HOẠT (ACTIVATION FUNCTION): YẾU TỐ PHI TUYẾN
+Người 1: Cuối cùng trong cụm cơ bản này, ta phải nhắc đến Hàm Kích hoạt, với mục đích là đưa tính phi tuyến tính vào mạng. Yếu tố phi tuyến này chính là chìa khóa cho phép mô hình học được các đại diện dữ liệu vô cùng phức tạp.
+Người 2: Trong các mạng nơ-ron trước đây mình học nhiều hàm kích hoạt rồi. Vậy với xê-en-en thì hàm nào là tiêu chuẩn hả thầy?
+Người 1: Tiêu chuẩn của học sâu hiện nay chính là hàm Rê-lu. Công thức của nó được biểu diễn toán học rất ngắn gọn: rê-lu của zét, bằng, max của không và zét. Về cơ chế hoạt động, nếu đầu vào là một giá trị âm, nó sẽ lập tức biến thành số không, tức là nơ-ron đó không kích hoạt. Còn nếu giá trị đầu vào là dương, nó sẽ giữ nguyên giá trị tuyến tính đó. Đơn giản nhưng lại cực kỳ hiệu quả!
 
-Slide 11: TẠI SAO RELU THỐNG TRỊ MẠNG CNN HIỆN ĐẠI? (Tiếp theo)
-Người 1: Để nhấn mạnh lại lý do hàm Rê-lu thống trị kiến trúc mạng xi-en-en, chúng ta hãy nhìn vào đồ thị hàm số của nó so với các hàm kích hoạt cũ. Ở các hàm thế hệ cũ, khi giá trị đầu vào quá lớn hoặc quá nhỏ, đường cong sẽ nằm ngang, vùng này gọi là vùng bão hòa. Tại đây, đạo hàm gần như bằng không, gây ra hiện tượng triệt tiêu đạo hàm.
-Người 2: Có phải vì thế mà dòng lỗi không thể truyền ngược lại được để cập nhật trọng số không thầy?
-Người 1: Rất chính xác! Nhưng với hàm Rê-lu, ở miền giá trị dương, đồ thị là một đường chéo đi lên với đạo hàm luôn luôn bằng một. Điều này giúp mô hình không bao giờ bị bão hòa ở phần dương, cho phép dòng lỗi truyền ngược cực kỳ mượt mà. Nhờ vậy, thực nghiệm đã chứng minh mạng sử dụng Rê-lu đạt đến trạng thái hội tụ với tốc độ cao hơn gấp nhiều lần.
+Slide 11: TẠI SAO RELU THỐNG TRỊ MẠNG CNN HIỆN ĐẠI?
+Người 1: Chúng ta sẽ tiếp tục với một câu hỏi cốt lõi: Tại sao hàm Rê-lu lại thống trị các mạng xê-en-en hiện đại?. Lý do là nó khắc phục được các điểm yếu chí mạng của mạng nơ-ron thế hệ cũ thông qua ba ưu điểm tuyệt vời. Thứ nhất là tính toán cực nhanh, vì hàm này rất nhẹ, không đòi hỏi các phép toán hàm mũ phức tạp mà chỉ cần một phép so sánh logic đơn giản với số không.
+Người 2: Thế còn hai ưu điểm kia là gì thưa thầy?
+Người 1: Ưu điểm thứ hai là nó tránh được hiện tượng triệt tiêu đạo hàm. Ở miền giá trị dương, đạo hàm của hàm Rê-lu luôn bằng một, điều này giúp mô hình không bao giờ bị bão hòa và cho phép dòng lỗi truyền ngược diễn ra mượt mà. Nhờ có đặc tính đó, ta có ưu điểm thứ ba: thực nghiệm đã chứng minh mạng sử dụng hàm Rê-lu đạt đến trạng thái hội tụ với tốc độ cao hơn gấp nhiều lần.
 
-Slide 12: ĐIỀU CHUẨN (REGULARIZATION) - NGHỆ THUẬT ĐƠN GIẢN HÓA
-Người 1: Chúng ta bước sang một khái niệm mang tính sống còn khác: Điều chuẩn, hay Regularization. Thầy gọi đây là "Nghệ thuật đơn giản hóa".
-Người 2: Tại sao mình lại phải ép mô hình đơn giản hóa đi vậy thầy? Mô hình càng phức tạp học càng giỏi chứ ạ?
-Người 1: Không hẳn đâu em. Nếu để mạng học quá tự do, nó sẽ gặp rủi ro "học vẹt", tức là hiện tượng Quá khớp hay ô-vơ-phít-tinh (Overfitting). Nó chỉ nhớ thuộc lòng dữ liệu cũ mà không thể dự đoán dữ liệu mới. Vì vậy, ta phải dùng kỹ thuật Điều chuẩn để ràng buộc mô hình lại. Hệ sinh thái này có bốn phương pháp chính: Thứ nhất là Dừng sớm. Thứ hai là hình phạt hàm mất mát e-lờ một và e-lờ hai. Thứ ba là Tăng cường dữ liệu. Và thứ tư, phổ biến nhất chính là Đrốp-ao (Dropout), tức là loại bỏ nơ-ron ngẫu nhiên.
+Slide 12: ĐIỀU CHUẨN (REGULARIZATION): NGHỆ THUẬT ĐƠN GIẢN HÓA
+Người 1: Sang slide mười hai, chúng ta sẽ làm quen với khái niệm Điều chuẩn, hay chính là nghệ thuật đơn giản hóa. Trong học sâu, việc ràng buộc mô hình, ép nó phải đơn giản hơn để loại bỏ rủi ro học vẹt, hay còn gọi là quá khớp, là một yếu tố sống còn.
+Người 2: Vậy mình có những kỹ thuật điều chuẩn nào để ép mô hình đơn giản lại ạ?
+Người 1: Hệ sinh thái kỹ thuật điều chuẩn trong mạng xê-en-en thường bao gồm bốn phương pháp chính. Một là Dừng sớm, bằng cách liên tục theo dõi sai số trên tập xác thực. Hai là E-lờ một và E-lờ hai, còn gọi là giảm trọng số, thông qua việc áp dụng hình phạt vào hàm mất mát. Ba là Tăng cường Dữ liệu, bằng cách nhân bản và làm méo ảnh. Bốn là Dờ-róp-ao, loại bỏ nơ-ron ngẫu nhiên, và đây cũng chính là kỹ thuật phổ biến nhất hiện nay.
 
 Slide 13: CHIẾN LƯỢC KHẮC PHỤC THIẾU HỤT DỮ LIỆU
-Người 2: Thưa thầy, ở phương pháp "Tăng cường dữ liệu", có phải là mình tự tạo thêm dữ liệu giả để máy học nhiều hơn đúng không ạ?
-Người 1: Đúng vậy, đây là chiến lược tuyệt vời để khắc phục sự thiếu hụt dữ liệu. Ta tạo ra các biến thể nhân tạo từ ảnh gốc bằng các phép biến đổi như: xoay, dịch chuyển, lật ngang lật dọc, hoặc thay đổi ánh sáng. Việc này ép mạng phải học các đặc trưng bất biến, dù vật thể ở góc độ nào nó cũng nhận ra.
-Người 2: Thế còn phương pháp "Dừng sớm" thì nó hoạt động lúc nào vậy thầy?
-Người 1: Trong quá trình huấn luyện, cơ chế Dừng sớm sẽ tự động theo dõi sai số trên tập xác thực, hay còn gọi là va-li-đây-sần lót (Validation Loss). Mọi thứ sẽ tự động cắt đứt ngay khi sai số này bắt đầu có dấu hiệu tăng ngược trở lại. Điểm uốn đó trên đồ thị chính là "Điểm Dừng Sớm" lý tưởng nhất, giúp ta lưu lại mô hình ở trạng thái tốt nhất trước khi nó bắt đầu học vẹt.
+Người 1: Khi đối mặt với bài toán thiếu hụt dữ liệu huấn luyện, ta sẽ áp dụng kết hợp hai chiến lược vô cùng hiệu quả.
+Người 2: Tăng cường dữ liệu có phải là mình tự tạo thêm ảnh giả từ tập ảnh thật để mạng học được nhiều hơn không thầy?
+Người 1: Hoàn toàn chính xác! Tăng cường dữ liệu sẽ tạo ra các biến thể nhân tạo từ tập dữ liệu gốc, ví dụ như xoay, dịch chuyển, lật ngang dọc hoặc thay đổi ánh sáng. Cách này ép mạng phải học các đặc trưng bất biến. Chiến lược thứ hai là Dừng sớm, đây là một cơ chế tự động cắt đứt quá trình huấn luyện ngay khi sai số trên tập xác thực bắt đầu tăng ngược trở lại, nhờ đó tránh được hiện tượng quá khớp.
 
 Slide 14: DROPOUT: SỨC MẠNH CỦA SỰ NGẪU NHIÊN
-Người 1: Bây giờ ta sẽ đi sâu vào kỹ thuật hiệu quả nhất mang tên Đrốp-ao (Dropout). Thầy gọi nó là "sức mạnh của sự ngẫu nhiên". Ở mỗi bước huấn luyện, mạng sẽ ngẫu nhiên tắt đi một tỷ lệ nơ-ron nhất định, không cho chúng hoạt động.
-Người 2: Ngẫu nhiên tắt đi như vậy thì mạng có bị lỗi không thầy? Tại sao mình lại tự làm hỏng cấu trúc mạng của mình ạ?
-Người 1: Đó mới là điều thú vị! Việc này nhằm mục đích chống lại sự đồng thích nghi. Khi một nơ-ron bị tước đi các nơ-ron "hàng xóm" quen thuộc, nó bị buộc phải tự trích xuất đặc trưng một cách độc lập thay vì dựa dẫm vào các nơ-ron khác.
-Người 2: À, em hiểu rồi! Giống như làm việc nhóm mà vắng một vài thành viên, thì những người còn lại bắt buộc phải nỗ lực tự làm tốt phần việc của mình đúng không thầy?
-Người 1: Một sự liên tưởng rất thông minh! Nhờ vậy, mạng trở nên trơ lì và tăng tính chống chịu với nhiễu dữ liệu. Về mặt toán học, Đrốp-ao tạo ra một hiệu ứng tổ hợp, mô phỏng việc tính trung bình của hàng triệu mạng nơ-ron thưa thớt. Thực tế cho thấy, kỹ thuật này giúp cải thiện từ một đến hai phần trăm độ chính xác tổng quát hóa trên các dữ liệu hoàn toàn mới.
+Người 1: Bây giờ, ta đi sâu vào kỹ thuật Dờ-róp-ao, một minh chứng kinh điển cho sức mạnh của sự ngẫu nhiên. Kỹ thuật này hoạt động bằng cách ngẫu nhiên "tắt" đi một tỷ lệ nơ-ron nhất định trong mỗi bước huấn luyện.
+Người 2: Việc tắt ngẫu nhiên nơ-ron như vậy chẳng phải sẽ làm mô hình hoạt động kém đi sao ạ?
+Người 1: Thoạt nghe thì đúng là như vậy, nhưng thực ra kỹ thuật mang tính phá hủy này lại có bốn tác dụng vô cùng tuyệt vời. Thứ nhất, nó chống đồng thích nghi, các nơ-ron bị tước đi sự hỗ trợ từ "hàng xóm" nên buộc phải tự trích xuất đặc trưng một cách độc lập. Thứ hai, nó tăng tính chống chịu, giúp mạng trở nên trơ lì với nhiễu dữ liệu. Thứ ba, nó tạo ra hiệu ứng tổ hợp, mô phỏng việc tính trung bình của hàng triệu mạng nơ-ron thưa thớt. Cuối cùng, hiệu quả thực tế của nó là giúp cải thiện từ một phần trăm đến hai phần trăm độ chính xác tổng quát hóa trên các tập dữ liệu hoàn toàn mới.
 
 Slide 15: TỔNG KẾT TIẾT 1: HÀNH TRÌNH CỦA KIẾN TRÚC CNN
-Người 1: Để kết thúc tiết học đầu tiên, chúng ta cùng nhìn lại lưu đồ tổng kết hành trình của mạng xi-en-en, từ những điểm ảnh thô sơ ban đầu cho đến khi ra được tri thức phân loại. Hành trình này đi qua sáu trạm dừng.
-Người 2: Đó là những trạm nào vậy thầy?
-Người 1: Trạm 1 là Ảnh Đầu Vào, nơi ta quyết định chuyển sang kết nối Cục bộ để khắc phục sự bùng nổ tham số. Trạm 2 là Khối Tích Chập, dùng màng lọc để nhận diện đặc trưng từ đường nét tiến tới hình khối. Trạm 3 là Hàm Rê-lu, giúp kích hoạt phi tuyến và tránh triệt tiêu đạo hàm. Trạm 4 là Khối Gộp, giúp giảm chiều dữ liệu và chặn đứng quá khớp từ trong trứng nước. Trạm 5 là Đrốp-ao, ép mô hình vươn tới tính tổng quát hóa tuyệt đối. Và trạm cuối cùng là lớp Kết nối Đầy đủ ở đầu ra, làm nhiệm vụ tính toán xác suất để phân loại chính xác bức ảnh.
-Người 2: Dạ vâng, em đã hình dung ra được toàn bộ vòng đời xử lý của một bức ảnh trong mạng xi-en-en rồi ạ!
-Người 1: Rất tốt! Chúng ta sẽ dừng tiết 1 ở đây. Các em hãy ôn bài thật kỹ nhé. Hẹn gặp lại các em trong tiết học tiếp theo!
+Người 1: Để khép lại tiết học đầu tiên, chúng ta cùng nhìn lại toàn bộ hành trình của kiến trúc xê-en-en, đi từ một điểm ảnh thô sơ đến tri thức phân loại. Em hãy thử tóm tắt lại các bước xử lý chính xem nào.
+Người 2: Dạ, đối với ảnh đầu vào, đầu tiên ta khắc phục sự bùng nổ tham số bằng cách chuyển sang kết nối cục bộ. Sau đó dữ liệu đi qua Khối Tích chập, dùng màng lọc để nhận diện các đặc trưng từ đường nét cho đến hình khối.
+Người 1: Rất tốt! Kế tiếp, ta dùng hàm Rê-lu để kích hoạt phi tuyến, tránh triệt tiêu đạo hàm. Dữ liệu sau đó được đưa qua Khối Gộp để giảm chiều, nhằm chặn đứng rủi ro quá khớp từ trong trứng nước. Cuối cùng, kỹ thuật Dờ-róp-ao sẽ ép mô hình vươn tới tính tổng quát hóa tuyệt đối, trước khi đi qua các lớp kết nối đầy đủ ở đầu ra để tính toán xác suất phân loại. Hôm nay các em đã nắm bài rất tốt, hẹn gặp lại các em ở tiết học thứ hai!
 

@@ -1,0 +1,79 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Ở tiết học trước, chúng ta đã nắm được những nền tảng cơ bản của mạng nơ-ron tích chập. Hôm nay, thầy trò ta sẽ bước sang Tiết 2 của Chương 7: Kiến trúc mạng nơ-ron tích chập (CNN) hiện đại. Chúng ta sẽ cùng khám phá kỷ nguyên của Mạng Sâu, đi từ sự tiến hóa của GoogLeNet, ResNet cho đến Xception và SENet.
+Người 2: Thưa thầy, các mạng này nghe tên rất lạ, có phải chúng là những mô hình "khổng lồ" và thông minh hơn rất nhiều so với các mạng cơ bản không ạ?
+
+Slide 2: TĂNG CƯỜNG DỮ LIỆU (DATA AUGMENTATION) VÀ KHẮC PHỤC MẤT CÂN BẰNG: KỸ THUẬT SMOTE
+Người 1: Đúng vậy, nhưng trước khi tìm hiểu cấu trúc của chúng, ta phải giải quyết bài toán dữ liệu trước. Hình 1 trên slide cho thấy kỹ thuật Tăng cường Dữ liệu, tiếng Anh gọi là Data Augmentation. Ta sẽ tạo ra các biến thể thực tế từ dữ liệu gốc như dịch chuyển, xoay, lật, hay thay đổi độ tương phản. Mục đích là để làm một kỹ thuật điều chuẩn mạnh mẽ, tăng kích thước tập huấn luyện nhằm giảm thiểu hiện tượng quá khớp, hay còn gọi là overfitting.
+Người 2: Dạ, thế nếu dữ liệu của mình bị lệch, kiểu như một lớp có quá nhiều ảnh còn một lớp lại quá ít ảnh thì sao ạ? Nó có làm sai lệch trọng số của mô hình không thầy?
+Người 1: Một câu hỏi rất sắc bén! Việc tập dữ liệu mất cân bằng sẽ làm sai lệch trọng số. Để khắc phục, ta dùng kỹ thuật SMOTE (ét-mờ-ô-tê-e). Đây là giải pháp sinh mẫu thiểu số tổng hợp, giúp tạo thêm các mẫu nhân tạo cho các lớp ít xuất hiện để cân bằng lại dữ liệu.
+
+Slide 3: MÔ-ĐUN INCEPTION: ĐỘT PHÁ MỞ RỘNG CHIỀU NGANG
+Người 1: Bây giờ ta sẽ đi vào kiến trúc đầu tiên, đó là Mô-đun Inception. Như Hình 2 minh họa, đây là một đột phá về việc mở rộng mạng theo chiều ngang. Tín hiệu đầu vào được đưa qua một cấu trúc đa đường, chia làm bốn lớp chạy song song với nhau.
+Người 2: Việc chia ra bốn đường như vậy có lợi ích gì đặc biệt không thầy?
+Người 1: Chắc chắn rồi! Nó giúp mô hình "nắm bắt đa tỷ lệ". Việc dùng các kích thước bộ lọc, hay kernel, đa dạng cho phép trích xuất các mẫu ở nhiều tỷ lệ hình ảnh khác nhau cùng một lúc. Cuối cùng, các bản đồ đặc trưng từ bốn nhánh này sẽ được "nối theo chiều sâu", tức là xếp chồng lại với nhau dọc theo chiều sâu để tạo thành một đầu ra tổng hợp.
+
+Slide 4: ĐỘNG LỰC THIẾT KẾ: SỨC MẠNH CỦA TÍCH CHẬP MỘT NHÂN MỘT
+Người 2: Em thấy trong mô-đun Inception sử dụng rất nhiều bộ lọc kích thước một nhân một. Bộ lọc nhỏ như vậy thì nắm bắt được đặc trưng gì ạ?
+Người 1: Đừng coi thường kích thước của nó! Việc sử dụng bộ lọc một nhân một phục vụ ba mục đích toán học cốt lõi trong mạng kiến trúc. Thứ nhất, nó giúp nắm bắt đặc trưng chiều sâu, tức là chụp lại các mẫu phân bố dọc theo chiều sâu, hay còn gọi là thông tin xuyên kênh, thay vì đặc trưng không gian. Thứ hai, nó hoạt động như một lớp thắt nút cổ chai.
+Người 2: Lớp thắt nút cổ chai có nghĩa là nó bóp nghẹt dữ liệu lại phải không thầy?
+Người 1: Gần đúng! Nó xuất ra số lượng bản đồ đặc trưng ít hơn so với đầu vào, qua đó giảm mạnh số chiều, cắt giảm chi phí tính toán cũng như số lượng tham số. Và mục đích thứ ba là tăng cường sức mạnh biểu diễn. Việc dùng mỗi cặp tích chập, ví dụ như cặp "một nhân một" kết hợp với "ba nhân ba", sẽ tương đương với việc quét một mạng nơ-ron hai lớp qua hình ảnh, thay vì chỉ dùng một lớp tuyến tính đơn thuần.
+
+Slide 5: KIẾN TRÚC TỔNG THỂ GOOGLENET
+Người 1: Dựa trên sức mạnh của Mô-đun Inception, các nhà khoa học đã tạo ra kiến trúc tổng thể GoogLeNet như ở Hình 3. Đặc trưng lớn nhất của nó là "Ngăn xếp Inception", bao gồm chín mô-đun Inception được xếp chồng lên nhau, xen kẽ với các lớp gộp để giúp giảm không gian.
+Người 2: Em thấy ở giữa mạng lại mọc ra các nhánh phụ. Chúng có tác dụng gì vậy thầy?
+Người 1: Đó là các Bộ phân loại phụ. Mạng quá sâu sẽ dễ gặp hiện tượng triệt tiêu đạo hàm, nên các bộ phân loại này được cắm vào giữa mạng để chống lại hiện tượng đó và đồng thời hỗ trợ điều chuẩn. Cuối cùng, ở cuối mạng, thay vì dùng các lớp kết nối đầy đủ khổng lồ dễ gây quá khớp, GoogLeNet dùng lớp Gộp trung bình toàn cục, viết tắt là Gờ-A-Pê, bằng cách tính trung bình từng bản đồ đặc trưng.
+
+Slide 6: THÁCH THỨC CỦA MẠNG CNN SIÊU SÂU: BÀI TOÁN TỐI ƯU HÓA
+Người 1: Sau khi tìm hiểu GoogLeNet, ta thấy việc tăng độ sâu của mạng dường như mang lại sức mạnh rất lớn. Tuy nhiên, ở slide 6, ta sẽ thấy thách thức của mạng CNN siêu sâu. Việc tăng độ sâu tạo ra những rào cản toán học nghiêm trọng, ngăn cản mô hình hội tụ. Biểu hiện rõ nhất là "nghịch lý độ sâu", khi thử nghiệm thực tế cho thấy mạng ba mươi tư lớp lại có tỷ lệ lỗi cao hơn mạng mười tám lớp có cùng cấu trúc. Và nguyên nhân không phải do quá khớp, mà là do tối ưu hóa thất bại.
+Người 2: Tại sao mô hình lại bị thất bại trong việc tối ưu hóa vậy thầy?
+Người 1: Vấn đề cốt lõi nằm ở hiện tượng triệt tiêu đạo hàm. Đạo hàm sẽ nhỏ dần khi lan truyền ngược, khiến trọng số ở các lớp đầu không được cập nhật và mạng không thể hội tụ. Do đó, ta có một nhu cầu cấp thiết là tìm ra một cơ chế thiết kế kiến trúc mới để tín hiệu gradient có thể đi xuyên qua hàng trăm lớp mạng một cách mượt mà, không bị suy giảm.
+
+Slide 7: RESNET: KHÁI NIỆM HỌC THẶNG DƯ (RESIDUAL LEARNING)
+Người 1: Và cơ chế mới đó chính là Kiến trúc ResNet với khái niệm Học thặng dư ở slide 7. Đây là nhà vô địch của cuộc thi I-L-S-V-R-C năm hai không mười lăm với mạng sâu tới một trăm năm mươi hai lớp, mà sai số top năm dưới ba phẩy sáu phần trăm.
+Người 2: Wow, sâu đến vậy thì làm sao họ giải quyết được vụ triệt tiêu đạo hàm ạ?
+Người 1: Cơ chế toán học của nó là dùng Kết nối tắt. Tín hiệu đầu vào ích sẽ được cộng trực tiếp vào đầu ra của lớp cao hơn. Thay vì bắt mạng học toàn bộ hàm hát của ích, mạng bị ép chỉ học hàm thặng dư: ép của ích bằng hát của ích trừ đi ích.
+Người 2: Việc cộng trực tiếp như thế có lợi ích gì cho việc tối ưu thưa thầy?
+Người 1: Lợi ích cực kỳ lớn! Nó mang lại khả năng "Khởi tạo nhận dạng", tức là ban đầu xuất ra bản sao của đầu vào, đồng thời tạo ra một "đường cao tốc" cho gradient. Luồng tín hiệu sẽ truyền đi cực nhanh, lan truyền ngược không bị suy giảm qua các lớp phi tuyến tính.
+
+Slide 8: SỨC MẠNH CỦA KHỐI THẶNG DƯ (RESIDUAL UNIT)
+Người 1: Để thấy rõ hơn, các em nhìn vào slide 8, so sánh sức mạnh của Khối thặng dư. Ở mạng sâu tiêu chuẩn, khi một lớp bị 'chết' hoặc chưa học được đặc trưng, nó sẽ chặn đứng toàn bộ luồng lan truyền ngược. Hậu quả là các lớp bên dưới không nhận được gradient, quá trình học dừng lại hoàn toàn.
+Người 2: Còn bên mạng thặng dư thì sao ạ? Mấy cái mũi tên cong cong bên phải là kết nối tắt đúng không thầy?
+Người 1: Chính xác! Mỗi khối thặng dư gồm hai lớp tích chập ba nhân ba, Batch Normalization và ReLU. Ưu điểm lớn nhất là nhờ kết nối tắt, tín hiệu có thể vượt qua các lớp đã "chết". Từ đó mang lại khả năng chống chặn gradient một cách hoàn hảo.
+
+Slide 9: KIẾN TRÚC RESNET-34 & XỬ LÝ SAI LỆCH KÍCH THƯỚC
+Người 1: Tuy nhiên, khi ráp các khối này lại thành Kiến trúc ResNet-34, ta lại gặp một vấn đề thực tế như ở slide 9: Xử lý sai lệch kích thước. Đoạn giữa của mạng là một ngăn xếp các khối thặng dư cực sâu. Vấn đề là sau mỗi vài module, số lượng bản đồ đặc trưng lại tăng gấp đôi, trong khi không gian lại giảm một nửa do bước trượt bằng hai.
+Người 2: Vậy thì kích thước đầu vào và đầu ra sẽ không khớp nhau, làm sao mình có thể thực hiện phép cộng trực tiếp của kết nối tắt được ạ?
+Người 1: Rất tinh ý! Để giải quyết, người ta áp dụng một lớp tích chập một nhân một có bước trượt bằng hai trực tiếp trên đường kết nối tắt, chính là nhánh đứt đoạn trong hình. Điều này giúp ép kích thước của đầu vào khớp hoàn toàn với đầu ra để có thể cộng lại với nhau.
+
+Slide 10: XCEPTION: TÍCH CHẬP TÁCH BIỆT THEO CHIỀU SÂU
+Người 1: Mô hình tiếp theo trong phần này là Xception, nằm ở slide 10. Điểm đặc biệt của nó là thay thế hoàn toàn mô-đun Inception bằng kỹ thuật Tích chập Tách biệt theo Chiều sâu do tác giả F. Chollet giới thiệu năm hai không mười sáu.
+Người 2: Tách biệt theo chiều sâu nghĩa là mạng sẽ học các đặc trưng theo hai bước riêng biệt hả thầy?
+Người 1: Đúng vậy em. Động lực là tách biệt hoàn toàn việc học mẫu không gian và mẫu xuyên kênh. Bước một gọi là Depthwise, tập trung vào không gian, ta áp dụng duy nhất một bộ lọc không gian độc lập cho từng kênh đầu vào riêng lẻ. Bước hai gọi là Pointwise, tập trung vào xuyên kênh, ta sử dụng tích chập một nhân một tiêu chuẩn để trộn và kết hợp các kênh lại với nhau.
+Người 2: Làm như vậy thì có lợi gì hơn so với cách học gộp chung ạ?
+Người 1: Kết quả là nó giúp giảm đáng kể số lượng tham số và khối lượng tính toán, nhưng vẫn làm tăng độ chính xác tổng thể của mô hình. Đó là một bước tiến rất tuyệt vời!
+
+Slide 11: SỰ KẾT HỢP VÀ TIẾN HÓA: INCEPTION-RESNET
+Người 1: Chúng ta tiếp tục với slide mười một, nói về sự kết hợp và tiến hóa của Inception-ResNet. Sau khi đã biết đến sự lợi hại của hai mạng trước, các nhà nghiên cứu đã thực hiện tối ưu hóa đa chiều để phá vỡ các giới hạn kiến trúc bằng cách kết hợp sức mạnh của chúng.
+Người 2: Việc kết hợp này có lấy được ưu điểm của cả hai không thưa thầy?
+Người 1: Hoàn toàn có! Nó lấy thế mạnh của GoogLeNet hay Inception là khai thác chiều ngang, trích xuất đặc trưng đa tỷ lệ hiệu quả nhờ các nhánh tích chập song song và tối ưu hóa tham số cục bộ. Đồng thời kết hợp thế mạnh của ResNet là khai thác chiều sâu, dùng Kết nối tắt để tạo đường truyền mượt mà cho gradient, khắc phục rào cản tối ưu hóa. Kết quả là mô hình Inception-vê-bốn hay Inception-ResNet đã đạt thành tựu giảm tỷ lệ lỗi top năm của ImageNet xuống sát mốc ba phần trăm, và tốc độ hội tụ nhanh hơn đáng kể so với mạng Inception thuần túy.
+
+Slide 12: CHÚ Ý VÀ HIỆU CHỈNH: MẠNG SENET (SQUEEZE-AND-EXCITATION)
+Người 1: Tiếp theo ở slide mười hai, ta đến với nhà vô địch I-L-S-V-R-C năm hai không mười bảy với tỷ lệ lỗi chỉ hai phẩy hai lăm phần trăm: mạng SENet. Thật ra, đây không phải là một mạng mới, mà là một mô-đun "cắm thêm" vô cùng linh hoạt.
+Người 2: Cắm thêm nghĩa là sao ạ? Có phải mình lấy nó đính kèm vào mạng nào cũng được không thầy?
+Người 1: Đúng vậy! Ta có thể đính kèm một Khối ét-e nhỏ gọn vào mọi mô-đun Inception hoặc ResNet hiện có để tạo thành SE-Inception và SE-ResNet. Triết lý của nó là "Chú ý" hay Attention, bỏ qua không gian, chỉ tập trung phân tích dọc theo chiều sâu của bản đồ đặc trưng. Mạng tự học xem các đặc trưng nào thường xuất hiện cùng nhau, từ đó khám phá tương quan và tự động đánh giá lại mức độ quan trọng của từng kênh.
+
+Slide 13: GIẢI PHẪU HỆ THỐNG: CẤU TRÚC CỐT LÕI CỦA KHỐI SE
+Người 1: Vậy bên trong Khối ét-e này có gì? Mời các em xem slide mười ba. Khối ét-e thực chất là một "vi mạng" hoạt động nội bộ, gồm ba lớp cơ bản. Đầu tiên là lớp Gộp trung bình toàn cục, dùng để tính toán mức độ kích hoạt trung bình cho toàn bộ từng bản đồ đặc trưng đầu vào.
+Người 2: Sau khi gộp xong thì dữ liệu sẽ đi đâu tiếp ạ?
+Người 1: Nó sẽ đi vào Lớp Ẩn dùng hàm ReLU, đây là bước Nén hay Squeeze. Tại đây, số lượng nơ-ron bị giảm mạnh, ví dụ giảm đi mười sáu lần, ép dữ liệu thành một vector nhúng đại diện cho phân phối đặc trưng tổng quát. Cuối cùng, tín hiệu qua Lớp Đầu ra dùng hàm Sigmoid, đây là bước Kích thích hay Excitation, để xuất ra một vector 'Hiệu chỉnh' với mỗi giá trị nằm trong khoảng từ không đến một.
+
+Slide 14: CƠ CHẾ HOẠT ĐỘNG CỦA KHỐI SE
+Người 1: Để hiểu rõ hơn chu trình này, ta xem slide mười bốn về cơ chế hoạt động của khối ét-e. Chu trình định chuẩn lại tầm quan trọng của các đặc trưng trải qua ba bước. BƯỚC 1 là Nén, nén thông tin không gian của mỗi bản đồ đặc trưng thành một vector chiều thấp duy nhất, buộc mạng học một biểu diễn tổng quát về sự kết hợp giữa các kênh. BƯỚC 2 là Kích thích, vector đi qua các lớp Dense và hàm Sigmoid để sinh ra một vector hiệu chỉnh chứa các giá trị tỷ lệ từ không đến một.
+Người 2: Và vector hiệu chỉnh đó chứa các giá trị từ không đến một, vậy bước thứ 3 nó sẽ làm gì với các giá trị này thưa thầy?
+Người 1: BƯỚC 3 chính là Hiệu chỉnh lại. Các bản đồ gốc sẽ được nhân chập với vector hiệu chỉnh. Khi đó, những đặc trưng quan trọng có điểm gần bằng một sẽ được Tăng cường, trong khi các đặc trưng nhiễu hay không liên quan sẽ bị Bóp nghẹt.
+
+Slide 15: TỔNG KẾT: BẢN ĐỒ TIẾN HÓA KIẾN TRÚC MẠNG CNN
+Người 1: Cuối cùng ở slide mười lăm, chúng ta cùng tổng kết lại Bản đồ Tiến hóa Kiến trúc Mạng CNN. Bảng này tóm tắt những tư tưởng cốt lõi định hình kỷ nguyên học sâu hiện đại cho bốn kiến trúc chính. GoogLeNet hay Inception dùng tích chập đa tỷ lệ song song và tích chập thắt nút cổ chai một nhân một, với động lực mở rộng chiều ngang hiệu quả hơn thay vì chỉ xếp chồng chiều sâu. ResNet dùng kết nối tắt để vượt rào cản tối ưu hóa là hiện tượng triệt tiêu đạo hàm, nhằm đẩy độ sâu lên mức cực đại.
+Người 2: Còn Xception và SENet thì sao ạ?
+Người 1: Xception sử dụng tích chập tách biệt theo chiều sâu nhằm tách rời hoàn toàn không gian toán học của đặc trưng không gian và đặc trưng chiều sâu. Còn SENet dùng cơ chế chú ý nhánh, với động lực không phân bổ trọng số mù quáng mà tự động định hướng sự tập trung vào các đặc trưng hữu ích nhất. Chặng đường tiến hóa của mạng CNN thật sự rất thú vị phải không các em? Bài học hôm nay kết thúc ở đây, chào các em!
+

@@ -48,12 +48,15 @@ tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
 +++++++++++++++++++++++++++++
 [làm slide]
 hãy tạo slide nội dung bài học cho tôi, từ tài liệu này. Đây là tiết 1/3 của buổi học. Trên slide đầu tiên cần có tiêu đề Tiết 1/3. Tổng số slide là 15, nội dung đúng y chang với tài liệu này (nội dung slide_Module_3_Tiết_1.md). Nếu có hình ảnh hay bảng biểu minh họa thì lấy trong các tài liệu đính kèm. Không tạo ra các hình AI mà chỉ sử dụng các icon đơn giản. Thiết kế đơn giản mang tính học thuật. Phông nền trắng.
+
+[v2]
+Dựa trên nội dung trong file "ND slide Chương 7_Tiết 1.md" hãy tạo slide thuyết trình chi tiết tương ứng với từng slide trong này (có tổng 15 slide). Bám sát nội dung trong tài liệu này. Trong tiêu đề cần nêu rõ Tiết 1/3. Nếu cần hình ảnh minh họa hãy dùng trong các ebooks hoặc tài liệu. Thiết kế nền trắng, icon đơn giản, tính học thuật cao. Nếu có hình ảnh hay bảng biểu minh họa thì lấy trong các tài liệu đính kèm. Không tạo ra các hình AI mà chỉ sử dụng các icon đơn giản. Thiết kế đơn giản mang tính học thuật. Phông nền trắng.
 -----------------
 [làm infographic]
-hãy tạo infographic nội dung bài học cho tôi, từ tài liệu này. Đây là tiết 1/3 của buổi học. Trên tiêu đề cần có tiêu đề Tiết 1/3. (nội dung slide_Module_3_Tiết_1.md). 
+hãy tạo infographic nội dung bài học cho tôi, từ tài liệu này. Đây là tiết 1/3 của buổi học. Trên tiêu đề cần có tiêu đề Tiết 1/3. (nội dung ND slide Chương 7_Tiết 1.md). 
 ++++++++++++++++++++++++++++++
 [tạo script lời thuyết trình, chỉ chọn slide cần làm]
-hãy kiểm tra 15 slide trong file Ch6_T1_CNN_Architecture.pdf, hãy liệt kê nội dung trên từng slide, viết tiêu đề slide rồi sau đó nội dung bên trong, viết đúng thứ tự, làm cho slide 1-5 trước. Làm thật chính xác cho từng slide nhé.
+hãy kiểm tra 15 slide trong file Ch7_Phần 3_Efficient_Vision_AI.pdf, hãy liệt kê nội dung trên từng slide, viết tiêu đề slide rồi sau đó nội dung bên trong, viết đúng thứ tự, làm cho slide 1-5 trước. Làm thật chính xác cho từng slide nhé.
 -----------
 tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
 -------------
@@ -61,7 +64,7 @@ tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
 
 ++++++++++++++++++++
 [select slide, script.txt (cấu trúc đầu ra), các ebook môn học]
-tốt rồi, dựa trên nội dung trên từng slide trên, giờ tôi muốn viết kịch bản cho Chương 6, tiết 1 (từ nội dung các slide đã viết ở trên, Ch6_T1_CNN_Architecture.pdf) có cấu trúc đầu ra giống như trong file "script.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói.
+tốt rồi, dựa trên nội dung trên từng slide trên, giờ tôi muốn viết kịch bản cho Chương 7, tiết 3 (từ nội dung các slide đã viết ở trên, Ch7_Phần 3_Efficient_Vision_AI.pdf) có cấu trúc đầu ra giống như trong file "script.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói.
 
 ++++++++++++++++++++
 tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)

@@ -1,0 +1,84 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Hôm nay, chúng ta sẽ bước vào Chương 7, tìm hiểu về một số mô hình Deep Learning cho Thị giác máy tính. Trong tiết 1 của chương này, chúng ta sẽ tập trung khám phá sự khởi đầu và sức mạnh của độ sâu mạng, cụ thể là qua hai cột mốc lịch sử: mô hình AlexNet và mô hình VGG16.
+Người 2: Thưa thầy, "độ sâu mạng" ở đây có phải là việc mình tăng số lượng các lớp trong mạng nơ-ron lên nhiều lần không ạ? Việc làm cho mạng "sâu" hơn mang lại lợi ích gì thưa thầy?
+
+Slide 2: BỐI CẢNH: KỶ NGUYÊN CỦA CÁC MÔ HÌNH TIỀN HUẤN LUYỆN (PRETRAINED MODELS)
+Người 1: Câu hỏi rất hay! Để thấy rõ sức mạnh của độ sâu, chúng ta hãy nhìn vào bối cảnh cuộc thi I-L-S-V-R-C (ILSVRC) trên tập dữ liệu ImageNet. Đây là một thử thách vô cùng khắc nghiệt: yêu cầu phân loại một ngàn lớp đối tượng trên một tập dữ liệu khổng lồ với hàng triệu hình ảnh.
+Người 2: Hàng triệu hình ảnh cơ ạ? Chắc hẳn các mô hình phải có sự tiến hóa cực kỳ mạnh mẽ mới xử lý nổi khối lượng dữ liệu đó.
+Người 1: Đúng thế. Và sự bứt phá đã thực sự diễn ra. Chỉ trong vòng 6 năm, tỷ lệ lỗi top năm đã giảm mạnh từ hơn hai mươi sáu phần trăm xuống dưới hai phẩy ba phần trăm, tất cả là nhờ sự tiến hóa của mạng CNN. Ý nghĩa thực tiễn ở đây rất lớn: các mô hình chiến thắng này đã trở thành kiến trúc nền tảng. Thay vì phải huấn luyện lại từ đầu cực kỳ tốn thời gian, chúng ta có thể tái sử dụng chúng làm bộ trích xuất đặc trưng thông qua kỹ thuật Học chuyển giao, tức là Transfer Learning.
+
+Slide 3: 7.4. MÔ HÌNH ALEXNET (2012)
+Người 2: Vậy mô hình nào đã mở màn cho sự bứt phá ngoạn mục này và tạo ra cột mốc lịch sử thưa thầy?
+Người 1: Đó chính là mô hình AlexNet, ra đời năm hai không mười hai. Tác giả của nó là bộ ba nhà khoa học: Alex Krizhevsky, Ilya Sutskever và Geoffrey Hinton. AlexNet đã vô địch thử thách năm đó với tỷ lệ lỗi áp đảo chỉ mười bảy phần trăm, bỏ xa đối thủ thứ hai với tỷ lệ lỗi lên tới hai mươi sáu phần trăm.
+Người 2: Thành tựu thật ấn tượng! Vậy đặc điểm kiến trúc của nó có gì khác biệt so với các mạng trước đó ạ?
+Người 1: AlexNet thực chất kế thừa mạng Lê-nét-năm (LeNet-5) cổ điển nhưng ở quy mô lớn hơn và sâu hơn rất nhiều. Bước ngoặt lớn nhất của nó là kiến trúc đầu tiên dám xếp chồng trực tiếp các lớp tích chập lên nhau, thay vì bắt buộc xen kẽ một lớp gộp, hay lớp pooling, ngay sau mỗi lớp tích chập như trước kia.
+
+Slide 4: CÁC KỸ THUẬT ĐỘT PHÁ TRONG ALEXNET
+Người 2: Chỉ xếp chồng các lớp lên nhau thôi thì có đủ để tạo ra sự khác biệt lớn thế không thầy, hay mạng này còn bí quyết nào khác nữa ạ?
+Người 1: Khám phá rất nhạy bén! AlexNet còn mang trong mình bốn kỹ thuật đột phá. Thứ nhất là việc sử dụng hàm kích hoạt Rê-lu (ReLU) để tránh bão hòa Gradient, thay thế cho hàm Sigmoid hay Tanh để tăng tốc độ hội tụ lên rất nhiều. Thứ hai là kỹ thuật Đróp-ao (Dropout) với tỷ lệ năm mươi phần trăm áp dụng tại các lớp kết nối đầy đủ. Kỹ thuật này vô hiệu hóa ngẫu nhiên các nơ-ron để giảm hiện tượng Quá khớp, hay Overfitting.
+Người 2: Giống như bắt một số nơ-ron nghỉ ngơi để các nơ-ron khác phải làm việc chăm chỉ và độc lập hơn đúng không ạ? Còn hai kỹ thuật nữa là gì thưa thầy?
+Người 1: Chính xác. Kỹ thuật thứ ba là tăng cường dữ liệu, tức là Data Augmentation. Họ dịch chuyển, lật ngang và thay đổi ánh sáng của ảnh gốc để tạo ra nhiều ảnh mới, giúp mô hình tổng quát hóa tốt hơn. Cuối cùng là kỹ thuật chuẩn hóa phản hồi cục bộ, gọi tắt là L-R-N (LRN). Kỹ thuật này tạo sự kích hoạt cạnh tranh, giúp các bản đồ đặc trưng chuyên biệt hóa cao hơn.
+
+Slide 5: 7.1. MÔ HÌNH VGGNET (2014)
+Người 2: Vậy sau sự bùng nổ của AlexNet thì kiến trúc mạng tiếp tục phát triển theo hướng nào ạ?
+Người 1: Hai năm sau, vào năm hai không mười bốn, chúng ta chứng kiến sự ra đời của mô hình V-G-G-Net từ nhóm V-G-G của Đại học Oxford, do Karen Simonyan và Andrew Zisserman phát triển. Mô hình này đã xuất sắc giành ngôi Á quân của thử thách năm đó. Đặc điểm của V-G-G là một kiến trúc cổ điển, cực kỳ đơn giản và đi theo một mạch thẳng.
+Người 2: Đơn giản mà lại tạo ra sức mạnh lớn sao thầy? Điểm nhấn của sự đơn giản đó nằm ở đâu ạ?
+Người 1: Điểm nhấn tuyệt vời của V-G-G là họ từ bỏ các bộ lọc kích thước lớn. Toàn bộ mạng chỉ sử dụng các bộ lọc kích thước siêu nhỏ là ba nhân ba, nhưng bù lại, số lượng bộ lọc lại rất lớn. Họ xếp chồng liên tiếp hai hoặc ba lớp tích chập này rồi mới đến một lớp gộp, đẩy độ sâu của mạng lên tới mười sáu hoặc mười chín lớp. Nhờ vậy, dù khối lượng tính toán lớn, V-G-G-16 vẫn là một mạng trích xuất đặc trưng cực kỳ mạnh mẽ, đặc biệt được ứng dụng vô cùng rộng rãi trong kỹ thuật Học chuyển giao ngày nay.
+
+Slide 6: PHÂN TÍCH CHI TIẾT KIẾN TRÚC VGG16
+Người 1: Tiếp tục với mô hình V-G-G-mười sáu (VGG16), chúng ta hãy đi sâu vào phân tích chi tiết kiến trúc của nó. Mạng này có tổng cộng mười sáu lớp có trọng số, bao gồm mười ba lớp tích chập, hay convolutional layers, và ba lớp kết nối đầy đủ, tức là fully connected layers.
+Người 2: Cấu trúc của mười ba lớp tích chập này được tổ chức như thế nào ạ? Trông có vẻ khá đồ sộ thưa thầy.
+Người 1: Đúng vậy. Chúng được chia làm năm khối. Kết thúc mỗi khối luôn là một lớp gộp cực đại, hay max pooling, với kích thước hai nhân hai và bước trượt, tức là stride, bằng hai. Điều này giúp giảm một nửa không gian ảnh. Cùng lúc đó, số lượng kênh sẽ được nhân đôi sau mỗi lớp gộp, từ sáu mươi tư, lên một trăm hai mươi tám, hai trăm năm mươi sáu, và cuối cùng là năm trăm mười hai. Sự gia tăng này giúp mạng tăng cường năng lực trích xuất các đặc trưng phức tạp.
+
+Slide 7: SỨC MẠNH CỦA BỘ LỌC NHỎ 3 X 3 TRONG VGG
+Người 2: Việc chỉ dùng bộ lọc kích thước nhỏ là ba nhân ba như thầy nói ở slide trước thì mang lại sức mạnh gì đặc biệt cho V-G-G ạ? Tại sao họ lại từ bỏ hoàn toàn các bộ lọc lớn mười một nhân mười một hay năm nhân năm của AlexNet?
+Người 1: Đây là một quyết định vô cùng thông minh để tối ưu hóa vùng cảm nhận, hay Receptive Field. Thực chất, khi em xếp chồng hai lớp ba nhân ba lên nhau, vùng cảm nhận sẽ tương đương với một lớp năm nhân năm. Xếp chồng ba lớp thì tương đương một lớp bảy nhân bảy.
+Người 2: À, em hiểu rồi! Thay vì dùng một lớp dày thì mình chia nhỏ nó ra. Việc này giúp giảm số lượng tham số cần huấn luyện đúng không thầy?
+Người 1: Hoàn toàn chính xác! Việc giảm số lượng tham số là một lợi ích lớn. Hơn nữa, việc dùng nhiều lớp tích chập nhỏ cho phép ta chèn nhiều hàm kích hoạt Rê-lu (ReLU) hơn vào giữa chúng. Điều này giúp tăng cường tính phi tuyến, giúp mô hình học được các biểu diễn phức tạp và có tính phân biệt cao hơn rất nhiều so với dùng một lớp lớn.
+
+Slide 8: THÁCH THỨC CỦA VGG: BÙNG NỔ THAM SỐ VÀ TÍNH TOÁN
+Người 2: V-G-G-mười sáu có vẻ rất ưu việt, nhưng với độ sâu mười sáu lớp và số lượng kênh lên tới năm trăm mười hai như vậy, liệu nó có gặp rào cản nào khi sử dụng trong thực tế không thầy?
+Người 1: Có chứ em, thách thức lớn nhất của V-G-G chính là sự bùng nổ về tham số và khối lượng tính toán. Tổng số tham số của mạng lên tới khoảng một trăm ba mươi tám triệu, tức là gấp hơn hai lần so với AlexNet. Phần lớn trong số đó lại tập trung ở các lớp kết nối đầy đủ nằm ở cuối mạng.
+Người 2: Với số lượng tham số khổng lồ như thế thì chắc chắn chi phí tính toán cũng không hề nhỏ đúng không ạ?
+Người 1: Đúng thế. V-G-G đòi hỏi tới mười lăm phẩy ba tỷ phép toán cho mỗi một lần dự đoán. Điều này gây khó khăn rất lớn khi triển khai trên các thiết bị yếu hoặc trong các ứng dụng yêu cầu thời gian thực. Chưa kể, vì cấu trúc quá sâu và đi theo một mạch thẳng, mạng rất khó hội tụ khi huấn luyện. Tác giả ban đầu thậm chí phải huấn luyện một mạng nông trước để mượn trọng số khởi tạo, sau đó mới huấn luyện mạng sâu hoàn chỉnh.
+
+Slide 9: TỔNG HỢP: ALEXNET VS. VGG16
+Người 1: Để hình dung rõ hơn sự tiến hóa, chúng ta cùng tổng hợp và so sánh lại hai mô hình AlexNet và V-G-G-mười sáu nhé.
+Người 2: Em thấy rõ nhất là sự khác biệt về độ sâu. AlexNet chỉ có tám lớp trọng số, trong khi V-G-G-mười sáu có tới mười sáu lớp. Kích thước bộ lọc cũng thay đổi từ lớn như mười một nhân mười một, năm nhân năm trong AlexNet xuống siêu nhỏ, đồng nhất ba nhân ba trong V-G-G-mười sáu.
+Người 1: Sự quan sát rất tốt. Chính sự gia tăng độ sâu này làm số lượng tham số tăng vọt từ khoảng sáu mươi triệu ở AlexNet lên khoảng một trăm ba mươi tám triệu ở V-G-G-mười sáu. Về hàm kích hoạt, nếu AlexNet là mô hình tiên phong bắt đầu áp dụng hàm Rê-lu (ReLU), thì V-G-G-mười sáu đã sử dụng Rê-lu một cách dày đặc. Cuối cùng, triết lý thiết kế cũng có sự chuyển dịch: AlexNet dùng các lớp gộp xen kẽ liên tục, còn V-G-G-mười sáu sử dụng các khối tích chập xếp chồng liên tiếp lên nhau.
+
+Slide 10: NGUYÊN LÝ HỌC CHUYỂN GIAO: PHÂN CẤP ĐẶC TRƯNG
+Người 2: Ở đầu tiết học, thầy có nhắc đến việc dùng các mô hình này để "Học chuyển giao". Vậy khi áp dụng Học chuyển giao, máy tính thực sự học được điều gì từ các mô hình đã được huấn luyện sẵn này ạ?
+Người 1: Đó là câu hỏi chạm đến cốt lõi của kỹ thuật Học chuyển giao. Khi được huấn luyện trên một tập dữ liệu lớn như ImageNet, mô hình học được một hệ thống bộ phát hiện đặc trưng phân cấp vô cùng mạnh mẽ. Ở các lớp thấp nhất, mạng học được các cấu trúc cơ bản mang tính phổ quát cho mọi hình ảnh như góc, cạnh, màu sắc, hay đường nét.
+Người 2: Vậy càng đi sâu vào các lớp cao hơn, mạng sẽ học được những đặc trưng cụ thể hơn của đồ vật đúng không thầy?
+Người 1: Chính xác! Ở các lớp giữa, mạng sẽ kết hợp các đường nét từ lớp thấp thành các hình khối, họa tiết đơn giản. Và ở các lớp cao nhất, mạng sẽ học được các đặc trưng phức tạp mang tính đặc thù của đối tượng, ví dụ như hình dạng của mắt chó, bánh xe, hay cánh hoa. Chút nữa ở tiết tiếp theo, chúng ta sẽ xem cách lấy các đặc trưng này ra để sử dụng.
+
+Slide 11: ỨNG DỤNG VGG16 & ALEXNET TRONG THỰC TIỄN
+Người 1: Chúng ta đã hiểu tại sao V-G-G-mười sáu lại mạnh mẽ như vậy. Giờ hãy xem ứng dụng của nó trong thực tiễn. Ưu điểm lớn nhất của các đặc trưng do V-G-G-mười sáu trích xuất là tính ổn định và tính phân biệt cực kỳ xuất sắc. Thay vì phải tự huấn luyện lại từ con số không, chúng ta hoàn toàn có thể kế thừa bộ trọng số đã được tối ưu hóa sẵn trên các siêu máy tính.
+Người 2: Vậy làm sao để tải được bộ trọng số đó về máy của mình ạ? Có phức tạp không thưa thầy?
+Người 1: Rất đơn giản em ạ. Các thư viện Deep Learning hiện đại như Keras đã cung cấp sẵn kiến trúc V-G-G-mười sáu trong module Keras Applications. Chỉ với một vài dòng code, em đã có thể tải và tái sử dụng trực tiếp mô hình này cùng bộ trọng số "i-mết-nét" (imagenet) để làm Mạng xương sống, hay Backbone, cho bài toán của riêng mình.
+
+Slide 12: TRIỂN KHAI TRANSFER LEARNING VỚI VGG16
+Người 2: Cụ thể các bước triển khai kỹ thuật Học chuyển giao với V-G-G-mười sáu sẽ diễn ra như thế nào thưa thầy?
+Người 1: Chúng ta sẽ đi qua ba bước chính. Bước một là Tải mô hình cơ sở. Ta sẽ gọi hàm V-G-G-mười sáu và thiết lập cấu hình tải bộ trọng số chuẩn bằng cách gán tham số weights bằng "i-mết-nét".
+Người 2: Sau khi tải xong thì mình đưa luôn ảnh mới vào để phân loại ạ?
+Người 1: Khoan đã! Vì bài toán mới của ta không có một ngàn lớp như ImageNet, nên ta sang bước hai: Cắt bỏ phần đầu. Ta dùng lệnh in-cơ-lút tốp bằng phôn (include_top=False) để bỏ qua các lớp kết nối đầy đủ ở đỉnh mạng, chỉ giữ lại phần thân để trích xuất đặc trưng. Cuối cùng, bước ba là Thiết kế Đầu phân loại mới. Ta thêm lớp G-lô-bô a-vơ-rết pu-ling hai đê (GlobalAveragePooling2D) để chuyển bản đồ đặc trưng hai chiều thành mảng một chiều. Sau đó, gắn thêm một lớp kết nối đầy đủ Dense sử dụng hàm Softmax, với số lượng nơ-ron bằng chính số lớp của bài toán mới.
+
+Slide 13: GIAI ĐOẠN 1: ĐÓNG BĂNG TRỌNG SỐ (FREEZING LAYERS)
+Người 2: Thiết kế xong phần Đầu mới thì ta bắt đầu bấm nút huấn luyện ngay được chưa ạ?
+Người 1: Chưa đâu em, ta phải trải qua Giai đoạn một gọi là Đóng băng trọng số. Đây là quá trình ta khóa các trọng số của mô hình cơ sở V-G-G-mười sáu lại. Trong code, ta thiết lập lệnh layer chấm trên-nơ-bồ bằng phôn (layer.trainable = False) để chúng không bị thay đổi.
+Người 2: Mục đích của việc "đóng băng" này là để làm gì thưa thầy?
+Người 1: Mục đích cốt lõi là giữ nguyên vẹn khối tri thức khổng lồ mà mạng đã học được từ trước. Nhờ vậy, thuật toán hạ gradient sẽ chỉ tập trung cập nhật các trọng số mới được khởi tạo ngẫu nhiên ở phần Đầu phân loại mới nằm trên cùng. Điều này đảm bảo mô hình hội tụ rất nhanh, tiết kiệm tài nguyên tính toán và đặc biệt là tránh được hiện tượng quá khớp, tức là overfitting.
+
+Slide 14: GIAI ĐOẠN 2: TINH CHỈNH (FINE-TUNING)
+Người 1: Sau khi lớp phân loại trên cùng đã đi vào ổn định, chúng ta sẽ chuyển sang Giai đoạn hai: Tinh chỉnh, hay Fine-Tuning. Lúc này, ta sẽ mở khóa một vài lớp tích chập ở tầng cao nhất của V-G-G-mười sáu bằng lệnh layer chấm trên-nơ-bồ bằng tru (layer.trainable = True), rồi tiếp tục huấn luyện toàn bộ mạng.
+Người 2: Việc mở khóa này mang lại lợi ích gì so với việc cứ đóng băng mãi mãi ạ?
+Người 1: Việc này cho phép các bộ lọc đặc trưng cấp cao tự điều chỉnh nhẹ nhàng, giúp mô hình thích ứng sâu hơn với những đặc thù riêng của tập dữ liệu mới. Tuy nhiên, có một lưu ý cực kỳ quan trọng: ở giai đoạn này, bắt buộc em phải giảm tốc độ học, tức là learning rate, xuống mức rất nhỏ.
+Người 2: Nếu mình vô tình để tốc độ học lớn thì sao thưa thầy?
+Người 1: Khi đó, một bước nhảy gradient lớn sẽ giáng xuống, làm hỏng và phá hủy hoàn toàn các trọng số tinh tế mà ta đã cất công mượn từ mô hình tiền huấn luyện!
+
+Slide 15: TỔNG KẾT TIẾT 1
+Người 1: Để tổng kết lại Tiết 1 ngày hôm nay, chúng ta đã đi qua hai cột mốc lớn. Thứ nhất là AlexNet năm hai không mười hai, mở đầu kỷ nguyên Deep Learning hiện đại, khẳng định sức mạnh của mạng Xê-en-en (CNN) sâu kết hợp cùng hàm Rê-lu và Dropout. Thứ hai là V-G-G-mười sáu năm hai không mười bốn, tiên phong cho thiết kế mạng dạng khối đồng nhất, chứng minh sức mạnh biểu diễn khổng lồ của việc xếp chồng các bộ lọc siêu nhỏ ba nhân ba.
+Người 2: Dạ vâng, dù V-G-G-mười sáu khá nặng về tính toán nhưng nhờ kỹ thuật Học chuyển giao gồm Đóng băng và Tinh chỉnh, nó vẫn giải quyết hoàn hảo bài toán thiếu dữ liệu trong thực tiễn đúng không thầy? Vậy tiết sau mình sẽ học gì tiếp theo ạ?
+Người 1: Chính xác! Và hành trình của chúng ta chưa dừng lại. Ở Tiết 2, thầy trò ta sẽ tiếp tục khám phá sự đột phá về thiết kế đa tỷ lệ của mạng In-xép-sần Vê ba (Inception V3), cũng như cách giải quyết lỗi triệt tiêu đạo hàm cho các mạng cực sâu như Rét-nét (ResNet). Tiết học hôm nay kết thúc ở đây, chào các em!
+

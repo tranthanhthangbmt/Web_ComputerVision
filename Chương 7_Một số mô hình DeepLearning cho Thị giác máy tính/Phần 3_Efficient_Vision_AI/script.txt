@@ -1,0 +1,84 @@
+﻿Slide 1: CHƯƠNG 7. MỘT SỐ MÔ HÌNH DEEP LEARNING CHO THỊ GIÁC MÁY TÍNH
+Người 1: Chào các em. Ở các tiết trước của Chương 7, chúng ta đã tìm hiểu về các mạng tích chập kinh điển như V-G-G hay ResNet. Hôm nay, chúng ta sẽ bước sang tiết cuối cùng của chương: Tiết 3 - Tối ưu hóa cho thiết bị di động và Tổng kết. Nội dung chính hôm nay sẽ gồm ba phần: Tìm hiểu mạng tinh gọn MobileNet cho hệ thống Trí tuệ nhân tạo biên (Edge AI), ứng dụng Học chuyển giao (Transfer Learning), và cuối cùng là tổng kết lại hành trình tiến hóa của các kiến trúc mạng nơ-ron tích chập.
+Người 2: Dạ thưa thầy, cụm từ "tối ưu hóa cho thiết bị di động" có phải là mình làm cách nào đó để các mô hình trí tuệ nhân tạo có thể chạy mượt mà ngay trên điện thoại thông minh của mình không ạ?
+
+Slide 2: SỰ DỊCH CHUYỂN SANG EDGE COMPUTING
+Người 1: Hoàn toàn chính xác! Đó chính là xu hướng dịch chuyển sang điện toán biên, hay Edge Computing. Tuy nhiên, ở đây chúng ta luôn phải đối mặt với một "Nguyên lý đánh đổi" giữa độ chính xác và tài nguyên tính toán. Các mạng kinh điển tuy có độ chính xác cao nhưng dung lượng và số phép toán lại quá khổng lồ. Việc chạy chúng trực tiếp trên thiết bị di động hay I-O-T là điều bất thi.
+Người 2: Vậy là mình phải tạo ra một mô hình mới nhẹ hơn, chấp nhận việc nó bớt thông minh đi một chút để đổi lấy tốc độ xử lý nhanh hơn đúng không ạ?
+Người 1: Đúng vậy em, và đó là mục tiêu cốt lõi của kiến trúc MobileNet do Google phát triển. Triết lý ở đây là chấp nhận hy sinh một phần rất nhỏ độ chính xác để có thể giảm thiểu theo cấp số nhân khối lượng tham số và phép toán. Từ đó đạt được sự cân bằng tối ưu giữa kích thước mô hình nhỏ và tốc độ suy luận nhanh.
+
+Slide 3: TÍCH CHẬP TÁCH BIỆT CHIỀU SÂU (DEPTHWISE SEPARABLE CONVOLUTION)
+Người 2: Làm sao họ có thể giảm theo cấp số nhân được vậy thầy? Có bí quyết toán học nào đặc biệt ở đây không ạ?
+Người 1: Bí quyết nằm ở một phép toán mang tên "Tích chập tách biệt chiều sâu". Thay vì gộp chung mọi thứ, nó chia quá trình trích xuất đặc trưng thành hai bước độc lập. Bước một là Tích chập chiều sâu, đóng vai trò lọc không gian, áp dụng một bộ lọc kích thước ba nhân ba cho từng kênh đầu vào riêng biệt. Bước hai là Tích chập điểm, sử dụng một lớp lọc kích thước một nhân một để kết hợp tuyến tính đầu ra của bước một dọc theo chiều sâu.
+Người 2: Em hiểu rồi, nghĩa là họ tách việc học đặc trưng hình ảnh theo không gian và việc học đặc trưng chéo giữa các kênh màu ra làm hai bước riêng biệt đúng không thầy?
+Người 1: Rất thông minh! Đó chính là nguyên lý cốt lõi giúp kiến trúc này đạt được sự tinh gọn tối đa.
+
+Slide 4: ĐỊNH LƯỢNG HIỆU NĂNG: TỐI ƯU HÓA ĐỘ PHỨC TẠP
+Người 1: Để thấy rõ sự tối ưu này, ta hãy nhìn vào công thức tỷ lệ giảm tính toán. Tỷ lệ này được tính bằng một phần en-nờ cộng với một phần ca bình phương, trong đó ca là kích thước của bộ lọc. Vì vậy, khối lượng tính toán được giảm tỷ lệ thuận với ca bình phương. Nếu dùng bộ lọc ba nhân ba, ta sẽ giảm được từ tám đến chín lần tính toán so với tích chập tiêu chuẩn, và số lượng tham số chỉ tăng theo dạng tuyến tính chứ không tăng bậc hai.
+Người 2: Giảm từ tám đến chín lần cơ ạ! Vậy nếu mang lên bàn cân so sánh thực tế với mạng V-G-G mười sáu mình học hôm trước thì kết quả thế nào thưa thầy?
+Người 1: Sự khác biệt là một trời một vực. Mạng V-G-G mười sáu cần đến gần một trăm ba mươi tám triệu tham số và hơn mười lăm tỷ phép toán. Trong khi đó, MobileNet phiên bản 1 chỉ có bốn phẩy hai triệu tham số và khoảng năm trăm sáu mươi chín triệu phép toán. Kích thước nhỏ hơn hàng chục lần nhưng MobileNet phiên bản 1 vẫn đạt độ chính xác top 1 lên tới bảy mươi phẩy sáu phần trăm.
+
+Slide 5: MOBILENETV2: KHỐI THẮT CỔ CHAI ĐẢO NGƯỢC (INVERTED RESIDUALS)
+Người 2: Tuyệt vời quá! Vậy tiến sang phiên bản MobileNet V2 thì họ có nâng cấp thêm công nghệ gì mới không thầy?
+Người 1: Ở MobileNet V2, họ đã thiết kế lại hoàn toàn luồng dữ liệu bằng một cấu trúc gọi là "Khối thắt cổ chai đảo ngược", kết hợp với các kết nối tắt để bảo toàn tối đa thông tin. Khối này sẽ đi qua ba bước. Bước một là Mở rộng, dùng tích chập một nhân một để tăng số lượng kênh lên, điều này làm ngược lại hoàn toàn với cách làm của mạng ResNet.
+Người 2: Tăng kênh lên rồi sau đó mình xử lý tiếp như thế nào ạ?
+Người 1: Sau đó ta chuyển sang Bước hai: Trích xuất, bằng cách áp dụng tích chập chiều sâu ba nhân ba trên không gian kênh vừa được mở rộng. Cuối cùng là Bước ba: Thu hẹp, tiếp tục dùng tích chập một nhân một để nén số kênh lại. Ở bước ba này có một chi tiết cực kỳ quan trọng, nó là một nút thắt tuyến tính, nghĩa là ta tuyệt đối không sử dụng hàm kích hoạt phi tuyến tính ở cuối cùng để tránh việc làm phá hủy hay thất thoát thông tin.
+
+Slide 6: HỆ SINH THÁI MẠNG TINH GỌN (LIGHTWEIGHT NETWORKS)
+Người 1: Như các em thấy, MobileNet là một đại diện xuất sắc cho thiết bị di động. Nhưng thế giới của mạng nơ-ron tinh gọn không chỉ có vậy. Hôm nay thầy sẽ giới thiệu thêm cho các em ba kiến trúc phổ biến khác trong hệ sinh thái này.
+Người 2: Dạ, các mạng đó là gì và nó có điểm gì đặc biệt so với MobileNet thưa thầy?
+Người 1: Đầu tiên là mạng C-S-P-Net. Nó có cấu trúc khá giống DenseNet mà ta đã học, nhưng điểm hay là nó thực hiện phân tách luồng dữ liệu. Một phần dữ liệu đầu vào sẽ được nối thẳng đến đầu ra, bỏ qua hoàn toàn các phép tính phức tạp bên trong khối. Tiếp theo là ShuffleNet, mạng này bổ sung thêm cơ chế "trộn kênh" giữa các tích chập nhóm, giúp thông tin giao tiếp chéo với nhau mà không làm tăng chi phí tính toán. Cuối cùng là SqueezeNet, sử dụng module đặc trưng tên là "Fire" với tỷ lệ nén kênh cực cao để ép dung lượng bộ nhớ xuống mức tối thiểu.
+
+Slide 7: MA TRẬN QUYẾT ĐỊNH: LỰA CHỌN MÔ HÌNH PHÙ HỢP
+Người 2: Có nhiều kiến trúc như vậy thì khi đi làm thực tế, làm sao em biết chọn mô hình nào cho đúng bài toán của mình ạ?
+Người 1: Đó là lúc em cần dùng đến "Ma trận quyết định". Phải nhớ rằng không có mạng C-N-N nào là hoàn hảo tuyệt đối. Nếu dự án của em bị ràng buộc khắt khe về băng thông và bộ nhớ, ví dụ làm app điện thoại hay I-O-T, em bắt buộc phải dùng MobileNet hoặc SqueezeNet để tối ưu hóa tham số.
+Người 2: Thế nếu sếp em yêu cầu độ chính xác phải là cao nhất có thể, bất chấp thiết bị thì sao thầy?
+Người 1: Khi ưu tiên tối đa hóa độ chính xác, em hãy chọn EfficientNet hoặc các phiên bản ResNeXt lớn. Còn nếu xét về môi trường chạy, muốn chạy nhanh trên C-P-U thì nên dùng Inception V3 vì cấu trúc đa nhánh của nó tối ưu đa luồng rất tốt. Ngược lại, nếu chạy trên hệ thống G-P-U mạnh mẽ, hãy chọn họ ResNet vì luồng dữ liệu thẳng, đồng nhất của nó sẽ phát huy tối đa sức mạnh tính toán mảng song song.
+
+Slide 8: EFFICIENTNET: QUY LUẬT MỞ RỘNG KÉP (COMPOUND SCALING)
+Người 1: Thầy vừa nhắc đến EfficientNet cho độ chính xác cao. Bí quyết của mạng này nằm ở phương pháp "Quy luật mở rộng kép". Bình thường, để làm mạng mạnh hơn, người ta chỉ mở rộng một chiều. Nhưng EfficientNet thực hiện mở rộng đồng thời cả ba chiều: Chiều sâu, Chiều rộng và Độ phân giải.
+Người 2: Công thức để mở rộng đồng thời cả ba cái này có phức tạp không thưa thầy?
+Người 1: Họ sử dụng một cơ chế ngân sách tính toán, ký hiệu là phi. Nếu ngân sách phi này tăng thêm một, thì số lượng phép toán sẽ tăng tỷ lệ thuận với hai mũ phi. Kích thước mạng sẽ được mở rộng theo tỷ lệ: an-pha mũ phi, bê-ta mũ phi, và gam-ma mũ phi. Thông qua tìm kiếm lưới, họ xác định được bộ thông số vàng là an-pha bằng một phẩy hai, bê-ta bằng một phẩy một và gam-ma bằng một phẩy một. Dựa vào công thức này, Google đã tạo ra một họ mô hình từ B không đến B bảy cực kỳ mạnh mẽ.
+
+Slide 9: TƯƠNG QUAN: ĐỘ CHÍNH XÁC, THAM SỐ & THỜI GIAN SUY LUẬN
+Người 2: Lý thuyết là vậy, nhưng đem lên bàn cân thực tế thì các mạng này thể hiện ra sao ạ?
+Người 1: Nhìn vào bảng tương quan này em sẽ thấy rõ. Về mặt tốc độ, MobileNet V2 vô địch với khối lượng tham số cực nhỏ, chỉ ba phẩy năm triệu, cho tốc độ suy luận trên C-P-U cực nhanh ở mức hai mươi lăm phẩy chín mili-giây. Ngược lại, về độ chính xác, EfficientNet B bảy áp đảo tất cả với độ chính xác top 1 lên tới tám mươi tư phẩy ba phần trăm và top 5 là chín mươi bảy phần trăm.
+Người 1: Nhưng em phải nhớ một ghi chú quan trọng: mô hình lớn hơn thường chính xác hơn, nhưng không phải lúc nào cũng tối ưu về phần cứng. Điển hình là EfficientNet B hai, nó nhỏ gọn hơn Inception V ba khá nhiều nhưng lại mang lại độ chính xác cao hơn hẳn.
+
+Slide 10: HỌC CHUYỂN GIAO: TRIẾT LÝ “ĐỨNG TRÊN VAI NGƯỜI KHỔNG LỒ”
+Người 2: Thưa thầy, mấy mạng lớn như EfficientNet chắc phải huấn luyện tốn kém lắm. Nếu em có một bài toán nhận diện mới, em có nên tự xây mạng và huấn luyện từ đầu không ạ?
+Người 1: Nếu em tự huấn luyện từ đầu, hay còn gọi là "Train from scratch", em sẽ cần một tập dữ liệu khổng lồ hàng triệu ảnh, tốn hàng tuần chạy máy chủ. Nó cực kỳ đắt đỏ và mô hình lại rất dễ bị quá khớp. Thay vào đó, trong thực tế ta sẽ dùng giải pháp Học chuyển giao, mang triết lý "Đứng trên vai người khổng lồ".
+Người 2: "Đứng trên vai người khổng lồ" nghĩa là mình mượn luôn mạng của Google để làm bài toán của mình ạ?
+Người 1: Chính xác! Ta sẽ tận dụng một mô hình C-N-N đã được huấn luyện sẵn, gọi là Pre-trained C-N-N, trên tập dữ liệu lớn như ImageNet. Quy trình rất thông minh: ta sẽ "khóa" hoàn toàn khối trích xuất đặc trưng của mạng cũ lại, giữ nguyên các trọng số. Sau đó, ta chỉ dạy cho một bộ phân loại mới ở cuối mạng cách chuyển đổi các đặc trưng bậc cao này để nhận diện tập dữ liệu mới của ta. Cách này giúp giải quyết bài toán cực kỳ nhanh và hiệu quả!
+
+Slide 11: CHIẾN LƯỢC KHAI THÁC MÔ HÌNH TIỀN HUẤN LUYỆN
+Người 1: Ở phần trước, chúng ta đã hiểu triết lý của Học chuyển giao. Vậy khi bắt tay vào làm thực tế, ta sẽ khai thác nó như thế nào? Slide này chỉ ra ba chiến lược chính, dựa trên việc ta quyết định "đóng băng" bao nhiêu trọng số cũ và "mở khóa" bao nhiêu trọng số để huấn luyện lại.
+Người 2: Thưa thầy, "đóng băng" ở đây có nghĩa là mình không cho máy tính thay đổi những kiến thức mà mô hình cũ đã học đúng không ạ?
+Người 1: Rất chính xác! Chiến lược đầu tiên là Đóng băng toàn bộ. Ta khóa toàn bộ các lớp trích xuất đặc trưng của mạng gốc và chỉ huấn luyện một lớp phân loại mới ở cuối cùng. Cách này đặc biệt hiệu quả khi tập dữ liệu mới của em có số lượng RẤT ÍT nhưng lại có độ tương đồng cao với dữ liệu gốc.
+Người 2: Thế nếu em có nhiều dữ liệu hơn một chút thì sao thầy? Em có nên mở khóa thêm để mô hình học tốt hơn không ạ?
+Người 1: Lúc đó em sẽ dùng chiến lược thứ hai: Tinh chỉnh một phần. Em sẽ mở khóa thêm một vài lớp tích chập sâu nhất cùng với lớp cuối để mô hình học được các đặc trưng cụ thể của bài toán. Cuối cùng, nếu em có một tập dữ liệu khổng lồ, em có thể dùng chiến lược Tinh chỉnh toàn bộ, tức là mở khóa và huấn luyện lại toàn bộ mạng. Nhưng hãy cẩn thận, nếu dữ liệu không đủ nhiều mà dùng cách này, mô hình sẽ gặp nguy cơ quá khớp cực kỳ lớn!
+
+Slide 12: ỨNG DỤNG THỰC TIỄN: PHÁT HIỆN ĐỐI TƯỢNG (OBJECT DETECTION)
+Người 1: Bây giờ, chúng ta sẽ xem xét một ứng dụng cực kỳ phổ biến của mạng C-N-N trong thực tiễn: Bài toán Phát hiện đối tượng. Hiện tại có hai trường phái chính là Mô hình Hai giai đoạn và Mô hình Một giai đoạn.
+Người 2: Dạ, hai trường phái này khác biệt nhau ở điểm cốt lõi nào thưa thầy?
+Người 1: Khác biệt nằm ở ưu tiên của chúng. Mô hình Hai giai đoạn, tiêu biểu là mạng Faster R-C-N-N, đặt ưu tiên vào độ chính xác tối đa. Nó sử dụng một Mạng đề xuất vùng, gọi tắt là R-P-N, để tạo ra các vùng có khả năng chứa đối tượng trước, rồi sau đó mới tiến hành phân loại. Trong khi đó, Mô hình Một giai đoạn như S-S-D hay YOLO lại ưu tiên tốc độ thời gian thực. Với triết lý "Nhìn một lần", ảnh đầu vào đi qua mạng C-N-N sẽ trực tiếp dự đoán đồng thời vị trí hộp giới hạn và nhãn của đối tượng.
+Người 2: Ưu tiên tốc độ thì rất hợp với thiết bị di động thầy nhỉ? Vậy có mô hình nào tối ưu riêng cho điện thoại không ạ?
+Người 1: Có chứ em! Người ta đã tạo ra S-S-D-Lite. Nó là sự kết hợp hoàn hảo giữa mạng xương sống tinh gọn MobileNet V2 mà ta vừa học, kết hợp với cơ chế phát hiện của S-S-D, giúp tối ưu hóa triệt để cho việc chạy trực tiếp trên thiết bị di động.
+
+Slide 13: VÒNG ĐỜI MÔ HÌNH: ĐƯA DEEP LEARNING VÀO THỰC TIỄN
+Người 1: Để đưa một mô hình trí tuệ nhân tạo như vậy vào ứng dụng thực tế, không phải cứ huấn luyện xong là mang đi dùng được ngay. Chúng ta phải đi qua một vòng đời gồm bốn bước.
+Người 2: Bước đầu tiên chắc chắn là phải làm cho mô hình nhẹ đi để đưa lên thiết bị đúng không thầy?
+Người 1: Đúng vậy! Bước một là Tối ưu hóa. Ta dùng các kỹ thuật như Lượng tử hóa hay Cắt tỉa để giảm dung lượng bộ nhớ. Bước hai là chuẩn bị Hạ tầng, em phải quyết định xem sẽ dùng A-P-I đám mây, máy chủ nội bộ, hay đưa trực tiếp xuống thiết bị biên hay còn gọi là Edge. Bước ba là tích hợp vào ứng dụng để tiến hành Suy luận theo thời gian thực.
+Người 2: Vậy bước bốn là gì ạ? Em tưởng chạy được trên ứng dụng là xong dự án rồi chứ thầy?
+Người 1: Đó là sai lầm mà nhiều kỹ sư mắc phải. Bước bốn: Giám sát, là cực kỳ quan trọng. Khi chạy thực tế, dữ liệu có thể bị thay đổi hoặc suy giảm chất lượng theo thời gian, gọi là Data drift. Ta phải liên tục theo dõi và tiến hành tinh chỉnh lại mô hình khi cần thiết để giữ vững hiệu suất.
+
+Slide 14: CÂU HỎI TỰ ĐÁNH GIÁ KIẾN THỨC
+Người 1: Để khép lại bài học, thầy có bốn câu hỏi trọng tâm giúp các em tự đánh giá lại những gì mình đã tiếp thu. Thứ nhất: Phân biệt cơ chế và chi phí giữa Tích chập tiêu chuẩn và Tích chập tách biệt chiều sâu. Thứ hai: Vai trò của ba bước trong khối "Thắt cổ chai đảo ngược" của MobileNet V2 là gì?
+Người 2: Dạ vâng, hai câu đầu thì liên quan đến cách tối ưu phép toán và bảo toàn thông tin. Còn hai câu sau thì sao ạ?
+Người 1: Câu thứ ba yêu cầu các em trình bày sự khác biệt giữa quy mô đơn chiều và quy luật mở rộng kép của mạng EfficientNet. Và câu cuối cùng: Khi nào nên "Đóng băng trọng số" và khi nào nên "Tinh chỉnh toàn bộ" trong Học chuyển giao? Các em hãy tự ghi chú lại và trả lời để thực sự nắm vững kiến thức nhé.
+
+Slide 15: TỔNG KẾT: DẤU ẤN LỊCH SỬ KIẾN TRÚC CNN
+Người 1: Slide cuối cùng này chính là bức tranh toàn cảnh, tóm tắt lại trục thời gian tiến hóa vĩ đại của mạng nơ-ron tích chập. Chúng ta đã đi từ V-G-G và AlexNet - những viên gạch khởi nguyên chứng minh sức mạnh của học sâu.
+Người 2: Sau đó là đến mạng Inception tối ưu không gian bằng đa nhánh và mạng ResNet đột phá về chiều sâu nhờ các kết nối tắt, đúng không thưa thầy?
+Người 1: Rất nhớ bài! Và thời đại hiện nay, chúng ta đang ở trong kỷ nguyên di động và hiệu năng với MobileNet và EfficientNet, tập trung vào phân tách chiều sâu tính toán và hệ thống hóa toán học các công thức mở rộng. Cuối cùng, triết lý hiện đại mà thầy muốn chốt lại chính là "Học Chuyển Giao". Ngày nay, khi giải quyết các bài toán AI thực tiễn, ta không bao giờ bắt đầu từ con số không, mà luôn kế thừa và đứng trên vai những kiến trúc kinh điển này. Bài học của chúng ta đến đây là kết thúc. Chúc các em học tốt!
+

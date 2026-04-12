@@ -1,0 +1,87 @@
+Dựa trên nội dung đề cương và các bài giảng của **Chương 8: Dự đoán chuyển động (Motion Estimation)**, tôi đã thiết kế một outline chi tiết cho 2 phần thực hành (tương ứng với 2 file Jupyter Notebook). 
+
+Khung thực hành này được thiết kế theo nguyên tắc **"Từ cổ điển đến hiện đại"**: 
+*   **Thực hành 8.1 (3 tiết đầu):** Tập trung vào các thuật toán Thị giác máy tính truyền thống (OpenCV, SSD, Lucas-Kanade, Horn-Schunck, Farneback, Affine/Homography).
+*   **Thực hành 8.2 (3 tiết sau):** Tập trung vào ứng dụng Học sâu (Deep Learning) để giải quyết các bài toán chuyển động và bám vết (RAFT, YOLO, DeepSORT, Video Object Segmentation).
+
+Dưới đây là thiết kế chi tiết:
+
+---
+
+### 📓 JUPYTER NOTEBOOK 1: THỰC HÀNH 8.1 - ƯỚC LƯỢNG CHUYỂN ĐỘNG & LUỒNG QUANG HỌC TRUYỀN THỐNG
+**Mục tiêu:** Nắm vững cách máy tính hiểu sự dịch chuyển của điểm ảnh qua các khung hình và cách trích xuất luồng quang học bằng OpenCV.
+
+**1. Khởi tạo môi trường và Xử lý dữ liệu Video cơ bản**
+*   1.1. Import các thư viện cốt lõi (`cv2`, `numpy`, `matplotlib`).
+*   1.2. Đọc video từ file hoặc webcam (`cv2.VideoCapture`).
+*   1.3. Viết hàm tiện ích: Trích xuất các khung hình (frames) liên tiếp, chuyển đổi ảnh màu sang ảnh xám (grayscale) để tối ưu tính toán.
+
+**2. Theo dõi điểm đặc trưng rời rạc (Sparse Optical Flow) với Lucas-Kanade**
+*   2.1. Phát hiện các điểm góc tốt để theo dõi bằng `cv2.goodFeaturesToTrack` (Shi-Tomasi corner detector).
+*   2.2. Áp dụng thuật toán Lucas-Kanade qua hàm `cv2.calcOpticalFlowPyrLK` để tính toán sự dịch chuyển của các điểm này qua 2 khung hình.
+*   2.3. Vẽ quỹ đạo (trajectory) của các điểm đang di chuyển lên video.
+*   2.4. *Thảo luận:* Quan sát hiện tượng mất dấu (tracking loss) khi đối tượng bị che khuất hoặc di chuyển quá nhanh.
+
+**3. Luồng quang học dày đặc (Dense Optical Flow) với thuật toán Farneback**
+*   3.1. Tính toán vector vận tốc $(u, v)$ cho *mọi điểm ảnh* bằng `cv2.calcOpticalFlowFarneback`.
+*   3.2. Chuyển đổi ma trận vector $(u, v)$ sang tọa độ cực (Magnitude, Angle).
+*   3.3. Trực quan hóa Luồng quang học bằng không gian màu HSV (Góc di chuyển $\rightarrow$ Kênh H; Vận tốc $\rightarrow$ Kênh V).
+*   3.4. So sánh sự khác biệt giữa Sparse (Lucas-Kanade) và Dense (Farneback).
+
+**4. Ước lượng Chuyển động Tham số (Parametric Motion: Affine & Homography)**
+*   4.1. Trích xuất và so khớp đặc trưng cục bộ (SIFT/SURF + BFMatcher/FLANN) giữa 2 khung hình.
+*   4.2. Tính toán ma trận biến đổi Affine (6 DoF) hoặc Homography (8 DoF) bằng `cv2.findHomography` với RANSAC để loại bỏ nhiễu.
+*   4.3. Ứng dụng biến đổi ảnh (`cv2.warpPerspective`) để dóng hàng (align) khung hình t+1 khớp với khung hình t.
+
+**5. Ứng dụng thực tiễn: Ổn định Video (Video Stabilization) cơ bản**
+*   5.1. Tính toán chuyển động nền toàn cục (Background motion) qua từng khung hình.
+*   5.2. Tính toán quỹ đạo trơn tru (Motion Smoothing) bằng cách lấy trung bình trượt (Moving Average) để triệt tiêu các rung lắc tần số cao.
+*   5.3. Bù trừ chuyển động và cắt viền (Crop/Zoom) để xử lý vùng biên bị khuyết đen (Artifacts).
+
+**6. Bài tập thực hành (Sinh viên tự code)**
+*   **Bài tập 1:** Cung cấp 1 video giao thông. Yêu cầu sinh viên dùng Lucas-Kanade để đếm số lượng ô tô đi qua một vạch kẻ ảo.
+*   **Bài tập 2:** Cung cấp 1 video quay bằng điện thoại bị rung. Yêu cầu sinh viên hoàn thiện pipeline Ổn định Video để xuất ra video mượt mà.
+
+---
+
+### 📓 JUPYTER NOTEBOOK 2: THỰC HÀNH 8.2 - DEEP LEARNING CHO LUỒNG QUANG HỌC VÀ THEO DÕI ĐỐI TƯỢNG (TRACKING)
+**Mục tiêu:** Áp dụng sức mạnh của Mạng Nơ-ron (CNN, RNN) để giải quyết các hạn chế của phương pháp truyền thống (như che khuất, biến dạng) và thực hiện bám vết đối tượng đa mục tiêu.
+
+**1. Khởi tạo môi trường Deep Learning và Tải Pre-trained Models**
+*   1.1. Import `torch`, `torchvision` (hoặc `tensorflow`).
+*   1.2. Giới thiệu Hugging Face / Torch Hub để tải trọng số mô hình đã được huấn luyện sẵn (Pre-trained models).
+*   1.3. Định nghĩa các hàm chuẩn hóa ảnh (Transforms) phù hợp với đầu vào của Mạng Nơ-ron.
+
+**2. Luồng quang học độ chính xác cao với kiến trúc RAFT**
+*   2.1. Tải mô hình RAFT (Recurrent All-Pairs Field Transforms) từ `torchvision.models.optical_flow`.
+*   2.2. Viết hàm suy luận (Inference): Đưa cặp khung hình qua mạng RAFT để lấy Tensor luồng quang học.
+*   2.3. Trực quan hóa kết quả đầu ra.
+*   2.4. *Thực nghiệm:* Cho mô hình chạy trên 1 video có điều kiện ánh sáng khó hoặc che khuất nhiều để chứng minh sự vượt trội của RAFT so với Farneback (ở phần 8.1).
+
+**3. Bài toán tiền đề: Phát hiện đối tượng (Object Detection) trên Video**
+*   3.1. Load một mô hình Object Detection nhẹ (như YOLOv5/YOLOv8 hoặc Faster R-CNN/MobileNet).
+*   3.2. Viết vòng lặp chạy Detection trên từng khung hình của Video.
+*   3.3. Vẽ Hộp giới hạn (Bounding Box) và xuất ra tọa độ. Nhận xét về hiện tượng đối tượng bị "nhấp nháy" hoặc mất nhãn ID giữa các frame nếu chỉ dùng Detection đơn thuần.
+
+**4. Theo dõi đa đối tượng (Multi-Object Tracking) với DeepSORT**
+*   4.1. Cài đặt và tích hợp thư viện DeepSORT (hoặc mã nguồn SORT cơ bản).
+*   4.2. **Giai đoạn 1:** Cập nhật vị trí bằng Bộ lọc Kalman (Kalman Filter).
+*   4.3. **Giai đoạn 2:** Đo lường sự tương đồng về ngoại hình bằng mô hình Deep Learning (Re-ID model).
+*   4.4. **Giai đoạn 3:** Ánh xạ dữ liệu bằng thuật toán Hungarian.
+*   4.5. Thực thi và vẽ quỹ đạo (track trajectory) giữ nguyên ID của từng người/xe trong video.
+
+**5. Chuyển động phân lớp & Phân đoạn Video (Video Object Segmentation - VOS)**
+*   5.1. Khái niệm về mặt nạ Alpha (Alpha Mask) và trích xuất thực thể ra khỏi nền (Background Subtraction / Layered Motion).
+*   5.2. Sử dụng một mô hình Instance Segmentation (như Mask R-CNN) để phân đoạn đối tượng trên từng frame.
+*   5.3. Kết hợp Segmentation mask với Tracking ID để đổi màu (Colorize) hoặc làm mờ nền (Background blur) theo thời gian thực (Giống hiệu ứng gọi Video Call).
+
+**6. Bài tập thực hành tổng hợp (Định hướng Đồ án)**
+*   **Bài tập 1 (Theo dõi xe):** Sử dụng video Flycam ngã tư đường. Hãy dùng YOLO + DeepSORT để vẽ quỹ đạo di chuyển của các xe và tính toán (giả lập) vận tốc của chúng.
+*   **Bài tập 2 (Hiệu ứng điện ảnh):** Dùng Mask R-CNN tách một người đang nhảy múa trong video ra khỏi nền, và chèn luồng quang học (Optical flow HSV image từ mạng RAFT) làm nền phía sau (Background Replacement).
+
+---
+
+**💡 Lưu ý khi xây dựng file Jupyter thực tế:**
+*   Sử dụng xen kẽ các ô **Markdown** để giải thích lại lý thuyết một cách ngắn gọn trước mỗi hàm code (Ví dụ: Chèn công thức Phương trình ràng buộc độ sáng trước khi gọi hàm Farneback).
+*   Cung cấp sẵn các file video sample chuẩn (một video quay giao thông tĩnh, một video quay cầm tay bị rung lắc, một video có người đi bộ đan chéo nhau) trong thư mục `data/` đi kèm để sinh viên dễ dàng chạy demo.
+*   Bạn có thể sử dụng widget `ipywidgets` hoặc thư viện `cv2.imshow` (nếu chạy local) / `cv2_imshow` (nếu chạy trên Colab) để hiển thị video trực tiếp trên notebook.

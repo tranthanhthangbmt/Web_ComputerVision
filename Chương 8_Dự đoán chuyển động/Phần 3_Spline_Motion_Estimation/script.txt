@@ -1,0 +1,84 @@
+﻿Slide 1: TRANG TIÊU ĐỀ: TIẾT 3/6 - CHƯƠNG 8: DỰ ĐOÁN CHUYỂN ĐỘNG (MOTION ESTIMATION)
+Người 1: Chào các em. Chào mừng các em quay trở lại với tiết học thứ 3 của Chương 8. Hôm nay, chúng ta sẽ đi sâu vào một chủ đề cực kỳ thú vị và mang tính ứng dụng cao trong Thị giác máy tính: Dự đoán chuyển động. Trọng tâm của bài hôm nay là Chuyển động dạng Spline và cách chúng ta sẽ tích hợp nó vào Đồ án thực hành.
+Người 2: Dạ thưa thầy, em thấy trên slide có chia làm 4 phần. Mình sẽ đi qua những nội dung cụ thể nào ạ?
+Người 1: Đúng vậy, lộ trình bài học của chúng ta gồm 4 trạm kiểm soát. Đầu tiên, ta sẽ mổ xẻ sự sụp đổ của các mô hình toán học toàn cục. Thứ hai, ta sẽ khám phá giải pháp mang tên Spline với mạng lưới điểm điều khiển. Thứ ba, ta sẽ xem công nghệ này cứu cánh ngành y tế ra sao qua việc đăng ký ảnh em-rờ-ai (MRI). Và cuối cùng là phần thực chiến, demo thuật toán và kết hợp nó với quy trình Hát-Ô-Gờ cộng ét-vê-mờ (HOG+SVM) mà ta đã học.
+ 
+Slide 2: GIỚI HẠN CỦA MÔ HÌNH TOÀN CỤC & NHU CẦU BIẾN DẠNG CỤC BỘ
+Người 1: Chúng ta bắt đầu với phần 1. Các em hãy nhớ lại các mô hình tham số toàn cục như A-phin (Affine) hay Hô-mô-gờ-ra-phi (Homography). Chúng dùng chung một bộ tham số gồm sáu đến tám bậc tự do cho toàn bộ bức ảnh.
+Người 2: Em nhớ là nó giúp mình dịch chuyển, xoay, hay thu phóng cả một bức ảnh. Như vậy là rất tốt rồi mà thầy, tại sao lại gọi là "sụp đổ" ạ?
+Người 1: Nó rất tốt, nhưng chỉ đúng với "vật thể rắn" - tức là những thứ không bị biến dạng, ví dụ như em di chuyển một viên gạch. Nhưng thực tế không gian 3 chiều thì sao? Hãy tưởng tượng em đang quay video một khuôn mặt đang cười, hay một chiếc áo đang tung bay trong gió. Cơ mặt co giãn không đồng đều, quần áo sinh ra các nếp gấp. Viên gạch thì không biết nhăn nhúm!
+Người 2: À, em hiểu rồi! Khuôn mặt cười thì má nhô lên nhưng trán lại ít chuyển động. Ta không thể lấy một công thức áp dụng chung cho cả khuôn mặt được.
+Người 1: Chính xác! Đó là lúc chúng ta cần một sự biến dạng đàn hồi, hay Elastic Deformation. Ta cần tùy biến trường chuyển động riêng rẽ cho từng khu vực nhỏ lẻ trên đối tượng.
+ 
+Slide 3: KHÁI NIỆM CHUYỂN ĐỘNG DẠNG SPLINE (SPLINE-BASED MOTION)
+Người 1: Để giải quyết bài toán "biến dạng cục bộ" đó, giải pháp mang tên Spline ra đời mang theo một triết lý hoàn toàn mới. Thay vì tính toán vector vận tốc cho hàng triệu điểm ảnh - một việc làm vắt kiệt sức mạnh của CPU, hệ thống giờ đây chỉ theo dõi một mạng lưới thưa thớt.
+Người 2: Mạng lưới thưa thớt này trông như thế nào ạ? Nó giống như mắt lưới của một cái võng không thầy?
+Người 1: Một ví dụ rất trực quan! Em hãy tưởng tượng bức ảnh của chúng ta được in lên một tấm cao su đàn hồi. Sau đó, em dùng một vài chiếc đinh ghim để ghim tấm cao su đó lại theo dạng lưới. Mạng lưới này gọi là lưới điều khiển Spline 2 chiều. Và những chiếc đinh ghim chính là các "Điểm điều khiển", hay Control Vertices. Mọi sự co giãn của tấm cao su giờ đây hoàn toàn bị chi phối bởi việc em kéo các chiếc đinh ghim này đi đâu.
+ 
+Slide 4: CƠ CHẾ HOẠT ĐỘNG CỦA ĐIỂM ĐIỀU KHIỂN
+Người 1: Hãy nhìn vào sơ đồ 3 bước trên slide để xem lưới điểm điều khiển này hoạt động ra sao. Bước 1 là Tính toán Nốt (Node). Thuật toán chỉ cần giải phương trình để tìm ra sự dịch chuyển của các đinh ghim thôi. Vì số lượng đinh ghim rất ít so với hàng triệu điểm ảnh, chi phí tính toán được tối ưu cực kỳ mạnh mẽ.
+Người 2: Nhưng thầy ơi, mình chỉ biết đinh ghim di chuyển đi đâu. Thế còn những điểm ảnh nằm lọt thỏm ở giữa các ô lưới thì sao ạ? Ai sẽ kéo chúng đi?
+Người 1: Chuyển sang Bước 2: Phân bổ trọng số. Bất kỳ một điểm ảnh nào nằm trong ô lưới sẽ chịu tác động từ các đinh ghim bao quanh nó. Đinh ghim nào càng gần điểm ảnh, lực kéo của nó lên điểm ảnh đó càng mạnh. Giống như lực hấp dẫn vậy. Cuối cùng ở Bước 3 là Tái cấu trúc ảnh. Vị trí mới của mọi điểm ảnh sẽ được tính toán và định hình hoàn toàn dựa trên sự dịch chuyển của các đinh ghim và lực kéo này.
+ 
+Slide 5: LƯỚI BIẾN DẠNG & NỘI SUY MƯỢT MÀ (SMOOTH INTERPOLATION)
+Người 2: Em có một thắc mắc. Nếu các khu vực bị kéo đi với lực mạnh yếu khác nhau, thì bức ảnh có bị rách ra hay các vùng ảnh có bị xô lệch, đè lên nhau không ạ?
+Người 1: Câu hỏi tuyệt vời! Đó chính là sự khác biệt ăn tiền của Spline. Nếu chúng ta dùng phương pháp chia khối ô vuông cứng nhắc truyền thống, kết quả nhận được chắc chắn sẽ bị đứt gãy, xuất hiện lỗ hổng và chồng chéo lên nhau. Nhưng Spline là biến dạng đàn hồi. Hàm nội suy của nó giúp hình ảnh uốn cong một cách mượt mà, trơn tru tuyệt đối.
+Người 1: Điều này mang ý nghĩa sống còn trong ứng dụng Y tế. Khi bác sĩ theo dõi hình ảnh nội tạng đang co bóp như nhịp đập của tim hay lá phổi đang hô hấp, hàm nội suy Spline đảm bảo tính liên tục của không gian vật lý, giữ cho toàn bộ cấu trúc mô mềm của bệnh nhân được nguyên vẹn trên màn hình, không hề có sự đứt gãy ảnh nào xảy ra.
+ 
+Slide 6: TỐI ƯU HÓA 2D: CẤU TRÚC PHÂN CẤP QUADTREE SPLINE
+Người 1: Ở slide trước, ta đã thấy sức mạnh của việc dùng lưới Spline. Tuy nhiên, nó sinh ra một bài toán hóc búa: Nếu ta chia mắt lưới quá thưa, ta sẽ bỏ lỡ các chi tiết chuyển động nhỏ. Nhưng nếu chia mắt lưới quá dày trên toàn bộ bức ảnh, bộ nhớ máy tính sẽ bị quá tải. Làm sao để giải quyết sự đánh đổi này đây?
+Người 2: Em nghĩ giống như khi mình xem bản đồ Google Maps ấy ạ. Ở những khu vực đồi núi hoang vắng thì họ chỉ hiển thị một mảng màu xanh lớn, còn khi lướt vào trung tâm thành phố đông đúc thì bản đồ tự động chia nhỏ ra thành từng con hẻm. Mình có áp dụng cơ chế tương tự được không thầy?
+Người 1: Một sự liên tưởng tuyệt vời! Đó chính xác là cách hoạt động của Cấu trúc phân cấp Quadtree, hay còn gọi là Cây Tứ phân. Thuật toán sẽ quét qua bức ảnh. Ở những vùng nền tĩnh, ít thay đổi, nó giữ nguyên các ô lưới hình vuông cực lớn. Nhưng khi phát hiện một khu vực có chuyển động cực kỳ phức tạp hoặc có độ dốc gradient màu sắc cao, hệ thống sẽ tự động kích hoạt đệ quy, chém ô vuông lớn đó thành 4 ô vuông nhỏ hơn. Nó cứ chia nhỏ liên tục như vậy cho đến khi bắt trọn được chi tiết chuyển động thì thôi.
+ 
+Slide 7: MỞ RỘNG 3D: KHÔNG GIAN THỂ TÍCH VỚI OCTREE SPLINE
+Người 2: Dạ thưa thầy, Quadtree là mình đang cắt các ô hình vuông trên một bức ảnh phẳng hai chiều. Giả sử sau này tụi em làm việc với video 3D của máy quét y tế thì sao ạ? Ảnh lúc đó là một khối không gian cơ mà?
+Người 1: Rất nhạy bén! Khi bước sang thế giới 3 chiều, đầu vào của chúng ta không còn là các điểm ảnh Pixel phẳng với toạ độ x, y nữa, mà là các điểm ảnh khối, gọi là Voxel, với toạ độ x, y, z. Lúc này, ta sẽ nâng cấp từ Quadtree lên thành Octree, tức là Cây Bát phân.
+Người 1: Hãy hình dung em đang có một khối Rubik lớn. Khi phát hiện chuyển động phức tạp bên trong khối Rubik đó, thuật toán sẽ bổ đôi nó theo cả 3 trục chiều dài, chiều rộng và chiều sâu, tạo thành 8 khối lập phương nhỏ hơn ở bên trong. Cấu trúc Octree này là vũ khí bắt buộc phải có khi các em phân tích dữ liệu độ sâu từ cụm cảm biến Li-đa (LiDAR) trên xe tự lái, hoặc máy quét chụp cắt lớp trong bệnh viện.
+ 
+Slide 8: ỨNG DỤNG THỰC TIỄN: ĐĂNG KÝ ẢNH Y TẾ (MEDICAL REGISTRATION)
+Người 1: Nói đến bệnh viện, chúng ta hãy xem ngay ứng dụng sống còn của công nghệ này: Đăng ký ảnh y tế, hay còn gọi là Medical Registration. Nhiệm vụ điển hình nhất là căn chỉnh não bộ từ ảnh chụp cộng hưởng từ em-rờ-ai (MRI).
+Người 2: Căn chỉnh não bộ là mình làm gì vậy thầy?
+Người 1: Trong y khoa có một thứ gọi là Brain Atlas - tức là Bản đồ não chuẩn mực của con người. Khi có ảnh chụp não của một bệnh nhân mới, bác sĩ cần "khớp" bức ảnh đó vào cái Bản đồ chuẩn kia để xác định chính xác tọa độ của khối u nằm ở đâu. Vấn đề là kích cỡ hộp sọ và nếp nhăn não của mỗi cá nhân là độc nhất vô nhị.
+Người 2: À, em hiểu rồi! Mình không thể dùng phép thu phóng thông thường vì não chỗ thì phình ra, chỗ thì lõm vào. Mình phải dùng lưới Spline biến dạng đàn hồi để "kéo dãn" ảnh não bệnh nhân cho khớp từng ngóc ngách với bản đồ chuẩn!
+Người 1: Chính xác 100%! Không chỉ với não, mà đối với các cấu trúc 3 chiều cực kỳ phức tạp như bề mặt đốt sống lưng, ta sẽ dùng ngay cái mạng lưới Octree Spline 3D vừa học ở slide trước để phân tích và căn chỉnh.
+ 
+Slide 9: KHÁM PHÁ CÔNG NGHỆ: DEMO THUẬT TOÁN TRỰC TIẾP (CLO1)
+Người 1: Sau khi đã hiểu lý thuyết, chúng ta sẽ xắn tay áo lên để vào phần thực chiến. Ở phần demo trên lớp, chúng ta sẽ code trực tiếp trên môi trường Python kết hợp với thư viện OpenCV chạy trên nền tảng Jupyter hoặc Google Colab.
+Người 2: Mình sẽ viết những đoạn mã nào trong phần này thưa thầy?
+Người 1: Cấu trúc mã nguồn sẽ có 2 module chính. Module số 1 tập trung vào Chuyển động tham số toàn cục. Các em sẽ dùng hàm SIFT create (SIFT_create) hoặc SURF create (SURF_create) để trích xuất đặc trưng, sau đó dùng hàm find Homography để căn chỉnh. Module số 2 mới là lúc Spline tỏa sáng: ta sẽ dùng hàm tính luồng quang học Farneback của OpenCV, cụ thể là hàm cạc-o-tíc-cô-phờ-lâu phác-nơ-bách (calcOpticalFlowFarneback), để vẽ trực tiếp các mũi tên vận tốc chằng chịt trên video. Các em hãy chú ý quan sát sự thay đổi của mạng lưới khi thầy tinh chỉnh các siêu tham số nhé.
+ 
+Slide 10: HOẠT ĐỘNG LỚP HỌC: LÀM VIỆC NHÓM & ĐỒ ÁN
+Người 1: Và phần cuối cùng của buổi học hôm nay là thời gian dành cho Đồ án nhóm của các em. Nhiệm vụ đầu tiên là chốt danh sách tài liệu tham khảo học thuật và lập ngay một dàn ý, hay Outline chi tiết cho báo cáo kỹ thuật.
+Người 2: Nhóm tụi em đang phân chia công việc code. Có cần lưu ý gì đặc biệt không thầy?
+Người 1: Rất cần! Các nhóm phải thực hiện Kiểm tra chéo, tức là Cross-Check tiến độ lập trình của nhau. Phải soi thật kỹ xem mã nguồn của mình có bị "thắt cổ chai" ở khâu trích xuất đặc trưng làm video bị giật lag hay không. Thầy sẽ đi vòng quanh để Mentor, duyệt qua từng nhóm nhằm giải đáp cho các em về kiến trúc phần mềm cũng như định hướng kết quả thử nghiệm.
+Người 1: Hãy nhớ, mục tiêu tối thượng của đồ án này là giúp các em đạt được chuẩn đầu ra xi-eo-ô bốn (CLO4). Không chỉ là code giỏi, mà còn phải rèn luyện khả năng giao tiếp, làm việc nhóm và tổng hợp kiến thức chuyên sâu một cách hệ thống.
+ 
+Slide 11: TÍCH HỢP KIẾN THỨC: TỪ ẢNH TĨNH SANG VIDEO TRACKING
+Người 1: Bây giờ, chúng ta sẽ ghép nối những gì đã học vào thực tế đồ án. Các em đã biết cách phân lớp một bức ảnh tĩnh rồi đúng không? Nhưng nếu áp dụng mô hình đó – ví dụ như chạy bộ Hát-Ô-Gờ cộng Ét-vê-mờ (HOG + SVM) – cho một đoạn video có ba mươi khung hình mỗi giây, thì sao? Máy tính sẽ cực kỳ chật vật. Việc quét lại toàn bộ khung hình liên tục giống như em phải tìm lại khuôn mặt của một người bạn trong đám đông ở mỗi giây trôi qua vậy, chi phí tính toán là khổng lồ!
+Người 2: Thảo nào dạo trước em chạy thử code nhận diện trên video nó giật lag kinh khủng. Vậy giải pháp nâng cấp để video chạy mượt hơn là gì thưa thầy?
+Người 1: Đó là chuyển sang bài toán Theo dõi video, hay Video Tracking. Chìa khóa ở đây là tích hợp sức mạnh của "Ước lượng chuyển động". Thay vì quét lại toàn bộ ảnh, ta chỉ chạy mô hình HOG và SVM nặng nề đó đúng một lần ở khung hình đầu tiên, gọi là Frame 1, để tìm ra khung bao (Bounding Box) của đối tượng. Từ Frame 2 trở đi, ta dùng toán học về vector chuyển động để dự đoán xem cái khung đó đã dịch chuyển đi đâu. Nhờ thế, hệ thống đạt được tốc độ xử lý thời gian thực (Real-time).
+ 
+Slide 12: KIẾN TRÚC HỆ THỐNG ĐỀ XUẤT: FLOWCHART ĐỒ ÁN
+Người 2: Thầy có thể giải thích rõ hơn cách vòng lặp này hoạt động trên Sơ đồ thuật toán, hay Flowchart của đồ án không ạ?
+Người 1: Chắc chắn rồi! Hãy nhìn vào sơ đồ trên slide, nó được chia làm 3 khối nối tiếp nhau. Khối 1 là bước Khởi tạo ở thời điểm khung hình tê (Frame t). Ở bước này, ta làm công việc trích xuất đặc trưng HOG, đưa qua bộ phân lớp SVM và chốt được tọa độ Bounding Box ban đầu.
+Người 1: Tiếp theo là Khối 2: Ước lượng ở khung hình tiếp theo, tức là thời điểm tê cộng một (Frame t+1). Thuật toán lúc này chỉ khoanh vùng đúng khu vực bên trong Bounding Box để trích xuất ra một vector vận tốc, với hai thành phần là u và vê. Cuối cùng, Khối 3 là Cập nhật. Ta cầm cái Bounding Box cũ, dịch chuyển nó theo đúng tọa độ của vector u và vê vừa tính.
+Người 2: À, em hiểu rồi! Tức là ở Khối 3, bước Tracking, mình tuyệt đối không được gọi lại hàm phân loại SVM nữa đúng không thầy?
+Người 1: Quá chuẩn! Không gọi lại SVM chính là điểm mấu chốt. Vòng lặp cứ thế tiếp diễn cho các khung hình tê cộng hai, tê cộng ba... Bằng cách giảm thiểu tối đa thao tác phân loại nặng nề, chúng ta sẽ tối đa hóa được tốc độ khung hình, hay chỉ số FPS của video.
+ 
+Slide 13: ĐÁNH GIÁ NĂNG LỰC & CHUẨN ĐẦU RA (CLO)
+Người 1: Để hoàn thành tốt đồ án, các em cần bám sát các chuẩn đầu ra, gọi tắt là các xi-eo-ô (CLO). Thầy sẽ đánh giá dựa trên 3 khía cạnh. Thứ nhất là khía cạnh Lý thuyết, tương ứng với xi-eo-ô một và hai. Các em phải thấu hiểu nguyên lý toán học của biến đổi không gian. Khi hội đồng hỏi, em phải giải thích được tại sao bài toán này dùng mô hình A-phin, mà bài toán kia lại bắt buộc phải dùng Spline.
+Người 2: Dạ, thế còn phần chấm điểm code thực hành thì sao ạ? Em thấy trên slide có ghi dòng chữ màu đỏ là "Yêu cầu Live Demo".
+Người 1: Đúng vậy, đó là khía cạnh Thực chiến của xi-eo-ô ba. Các em phải code thành thạo bằng thư viện OpenCV, viết mã nguồn sạch (Clean Code) tối ưu hóa tốc độ, và bắt buộc phải mang máy tính lên chạy demo mượt mà trực tiếp trên lớp. Khía cạnh cuối cùng là Học thuật - xi-eo-ô bốn. Các em cần rèn luyện kỹ năng làm việc nhóm, viết báo cáo chuẩn định dạng của IEEE (Ai-tờ-ri-pồ-i), và biết cách phản biện logic bảo vệ quan điểm trong phiên Hỏi - Đáp cùng Hội đồng.
+ 
+Slide 14: TỔNG KẾT BUỔI 13: MA TRẬN PHÂN LOẠI CHUYỂN ĐỘNG
+Người 1: Trước khi khép lại, chúng ta hãy nhìn vào "Ma trận Phân loại Chuyển động". Đây là bảng tổng kết 3 mô hình từ dễ đến khó của ngày hôm nay.
+Người 2: Em xin phép tóm tắt thử được không ạ? Đầu tiên là Tịnh tiến, chỉ có hai bậc tự do. Bản chất của nó là chuyển động phẳng dọc ngang, giữ nguyên hình dạng, giống như trượt khối gỗ trên bàn. Nó hay được dùng để nén video ạ.
+Người 1: Rất tốt! Cấp độ thứ hai là mô hình Tham số như A-phin hay Hô-mô-gờ-ra-phi. Nó có sáu hoặc tám bậc tự do. Nó cho phép biến đổi toàn cục như xoay, thu phóng hay đổi góc nhìn. Đây là cốt lõi của công nghệ ổn định Video hoặc ghép ảnh toàn cảnh Pa-nô-ra-ma.
+Người 1: Cuối cùng là cấp độ khó nhất: Chuyển động cục bộ dạng Spline. Số bậc tự do của nó là đa biến, phụ thuộc vào số lượng điểm trên lưới. Với khả năng biến dạng đàn hồi và nội suy trơn tru, Spline chính là "chìa khóa vàng" trong việc đăng ký ảnh y tế, đặc biệt là căn chỉnh các nếp nhăn phức tạp của ảnh em-rờ-ai (MRI) não.
+ 
+Slide 15: MỞ KHÓA TIẾT 4: BÍ ẨN CỦA TRƯỜNG CHUYỂN ĐỘNG DÀY ĐẶC
+Người 1: Và bây giờ, thầy có một câu hỏi để "mở khóa" cho Tiết 4 tuần sau. Mô hình Spline giải quyết được biến dạng lớn nhờ một mạng lưới các điểm điều khiển thưa thớt. Nhưng... làm sao để chúng ta tính toán chính xác sự dịch chuyển vận tốc của TỪNG ĐIỂM ẢNH MỘT trên toàn bộ khung hình?
+Người 2: Tính toán chuyển động cho từng điểm ảnh một trong hàng triệu điểm ảnh ạ? Chà... bài toán này nghe có vẻ cần một khối lượng tính toán siêu khủng khiếp thầy nhỉ?
+Người 1: Nó rất phức tạp, và đó chính là bí ẩn của "Trường chuyển động dày đặc". Trong tiết tới, chúng ta sẽ giải mã nó qua 3 nội dung cực kỳ kinh điển: Một là Khái niệm Luồng quang học (Optical Flow). Hai là Giải mã Phương trình Ràng buộc Độ sáng. Và ba là, hai thuật toán nổi tiếng bậc nhất: Lu-cát - Ca-na-đê (Lucas-Kanade) và Hơn - Săn (Horn-Schunck).
+Người 1: Bài giảng hôm nay đến đây là kết thúc. Bây giờ chúng ta sẽ bước vào phiên Hỏi đáp - Q&A Session. Các nhóm có câu hỏi nào muốn đặt ra không?
+

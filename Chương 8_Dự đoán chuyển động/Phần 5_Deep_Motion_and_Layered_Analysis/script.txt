@@ -1,0 +1,79 @@
+﻿Slide 1: TRANG TIÊU ĐỀ
+Người 1: Chào các em. Chào mừng các em quay trở lại với môn học Thị giác máy tính. Hôm nay chúng ta sẽ bước vào Tiết 5 và 6 của Chương 8. Đây là phần tổng kết cực kỳ quan trọng, đánh dấu bước chuyển mình từ các công thức toán học truyền thống sang kỷ nguyên của Trí tuệ nhân tạo. Nội dung cốt lõi của bài học hôm nay sẽ xoay quanh việc ứng dụng Học sâu, hay Deep Learning, vào việc dự đoán Luồng quang và phân tích Chuyển động phân lớp. Cuối cùng, ta sẽ xem các kỹ thuật này được ứng dụng thế nào vào Nội suy khung hình, hay theo dõi đa đối tượng.
+Người 2: Thưa thầy, ở các tiết trước mình đã học cách dùng toán học để tính toán luồng quang rồi. Vậy sang bài này, Deep Learning sẽ "nhúng tay" vào công việc đó như thế nào ạ? Chắc hẳn là sẽ có những mạng nơ-ron chuyên dụng đúng không thầy?
+Người 1: Chính xác! Chúng ta sẽ được làm quen với ba mạng nơ-ron đình đám nhất trong lĩnh vực này là Phâu-nét (FlowNet), Xờ-pai-nét (SPyNet) và Ráp (RAFT). Cụ thể chúng hoạt động ra sao, chúng ta cùng sang Slide tiếp theo nhé.
+ 
+Slide 2: SỰ DỊCH CHUYỂN MÔ HÌNH (KỶ NGUYÊN DEEP LEARNING)
+Người 1: Trước khi nói về cái mới, ta phải hiểu vì sao cái cũ không còn đủ dùng. Các phương pháp truyền thống như Lu-cát - Ca-na-đê (Lucas-Kanade) phụ thuộc tuyệt đối vào một giả định gọi là "Độ sáng không đổi". Nghĩa là nó mặc định một điểm ảnh di chuyển từ khung hình này sang khung hình khác sẽ giữ nguyên màu sắc và độ sáng.
+Người 2: Ồ, thực tế thì làm sao mà độ sáng không đổi được ạ! Ví dụ như em đang quay video một chiếc xe ô tô chạy từ ngoài đường nắng gắt chui vào một đường hầm tối om, thế là thuật toán cũ sẽ bị "mù" luôn ở đoạn đó đúng không thầy?
+Người 1: Ví dụ của em cực kỳ sắc bén! Đúng vậy, phương pháp truyền thống sẽ thất bại thảm hại khi ánh sáng thay đổi, hoặc khi có vật thể này che khuất vật thể kia. Đó là lúc ta cần một "sự dịch chuyển mô hình" sang Deep Learning. Thay vì dùng các phương trình toán học khô khan, ta ném cho mạng nơ-ron một đống dữ liệu để nó tự học. Chỉ cần đưa vào một cặp hình ảnh, mạng học sâu sẽ tự động xuất ra một bản đồ chuyển động dày đặc từ đầu đến cuối với tốc độ thời gian thực.
+ 
+Slide 3: CÁC KIẾN TRÚC NỀN TẢNG (FLOWNET & SPYNET)
+Người 1: Để hiện thực hóa điều đó, các nhà nghiên cứu đã tạo ra Phâu-nét (FlowNet). Đây là mạng chập xê-en-en (CNN) đầu tiên dám giải quyết bài toán luồng quang một cách trọn vẹn từ đầu đến cuối. Tuy nhiên, vì là người tiên phong nên Phâu-nét khá cồng kềnh. Để khắc phục, mạng Xờ-pai-nét (SPyNet) đã ra đời với cấu trúc "Kim tự tháp không gian".
+Người 2: Cấu trúc Kim tự tháp không gian này có giống như việc mình nhìn một bức tranh từ xa để lấy bố cục tổng thể, rồi mới tiến lại gần để soi từng chi tiết nhỏ không thầy?
+Người 1: Hoàn toàn chính xác! Xờ-pai-nét hoạt động theo cơ chế từ thô đến tinh. Ở độ phân giải cực thấp, tức là trên đỉnh kim tự tháp, nó sẽ bắt những chuyển động lớn - ví dụ như việc em vung tay ném một quả bóng. Sau đó, nó đi dần xuống đáy kim tự tháp ở độ phân giải cao để tinh chỉnh những vi chuyển động, ví dụ như sự rung động của các ngón tay. Nhờ cách này, Xờ-pai-nét đạt hiệu suất rất cao nhưng lại có một thiết kế cực kỳ nhỏ gọn.
+ 
+Slide 4: ĐỘNG LỰC CHO KIẾN TRÚC HỒI QUY (RECURRENT)
+Người 2: Vậy nếu Xờ-pai-nét đã nhỏ gọn và hiệu quả thế rồi thì mình dừng lại ở đây được chưa ạ? Hay nó vẫn còn nhược điểm gì thưa thầy?
+Người 1: Vẫn còn một nhược điểm chí mạng ở cả Phâu-nét và Xờ-pai-nét, đó là chúng thuộc dạng kiến trúc Tiến thẳng, tiếng Anh là phít-pho-goắt (Feed-forward). Các mạng này chỉ quét qua dữ liệu đúng một lần duy nhất rồi đưa ra kết quả luôn. Hậu quả là tại các đường ranh giới sắc nét của vật thể, kết quả dự đoán thường bị lem nhem và lặp lại những lỗi vi mô.
+Người 2: Em hiểu rồi, giống như đi thi mà chỉ đọc đề đúng một lần rồi viết đáp án luôn, không thèm kiểm tra lại thì kiểu gì cũng sai sót. Vậy mình phải làm sao ạ?
+Người 1: Đó là lý do Kiến trúc Hồi quy ra đời. Thay vì tính toán một lần, nó sử dụng cơ chế lặp lại. Từ đặc trưng gốc, nó đi qua một khối cập nhật, tạo ra kết quả, rồi lại lấy kết quả đó đưa ngược vào để tự sửa sai. Nó mô phỏng y hệt cách thị giác con người hoạt động: nhìn lướt để định vị, sau đó tập trung ánh nhìn để làm nét đối tượng. Và cơ chế này là tiền đề cho siêu phẩm mang tên Ráp (RAFT) mà ta sẽ tìm hiểu ngay sau đây.
+ 
+Slide 5: KIẾN TRÚC MẠNG RAFT
+Người 1: Chào mừng các em đến với Ráp (RAFT) - cột mốc đỉnh cao về độ chính xác trong dự đoán luồng quang. Đầu vào của Ráp là một cặp ảnh đã được chuẩn hóa màu sắc. Còn đầu ra là một ten-xơ chứa các điểm ảnh chuyển động dày đặc theo phương u và phương vê.
+Người 2: Thầy vừa nói Ráp dùng cơ chế Hồi quy, vậy nó lặp đi lặp lại quá trình "tự sửa sai" như thế nào ạ?
+Người 1: Ráp sử dụng mười hai vòng lặp liên tục chạy qua một khối hồi quy có tên là cờ-ru (GRU). Hãy tưởng tượng thế này: em đang nặn một bức tượng đất sét. Lần lặp đầu tiên, em đắp ra hình dáng thô của bức tượng. Lần lặp thứ hai, thứ ba, em gọt giũa dần các góc cạnh. Cứ thế lặp lại mười hai lần, bức tượng trở nên tinh xảo đến từng chi tiết. Nhờ vậy, sai số của Ráp sẽ giảm dần và tiệm cận mức không, đặc biệt nó xử lý cực kỳ xuất sắc tại những phần ranh giới vật thể bị che khuất mà các thuật toán cũ phải bó tay.
+ 
+Slide 6: 8.5. CHUYỂN ĐỘNG PHÂN LỚP (LAYERED MOTION)
+Người 1: Sang phần tiếp theo, chúng ta sẽ tiếp cận một triết lý hoàn toàn mới mang tên "Chuyển động phân lớp". Triết lý này cho rằng: chuyển động trong video không phải là sự hỗn loạn của hàng triệu điểm ảnh rời rạc, mà bản chất nó là sự dịch chuyển của một số ít đối tượng nằm ở các độ sâu không gian khác nhau.
+Người 2: Em có thể hình dung nó giống như một sân khấu kịch không thầy? Tức là có tấm phông nền ở tít phía sau, rồi đến các đạo cụ ở giữa sân khấu, và cuối cùng là diễn viên đang đứng múa hát ở sát rampa ngay trước mặt khán giả?
+Người 1: Một sự liên tưởng tuyệt vời! Đó chính xác là cách giải pháp Phân lớp hoạt động. Hệ thống sẽ nhóm các điểm ảnh có chung quỹ đạo chuyển động lại thành các Lớp độc lập. Sau đó, máy tính sẽ tổng hợp hình ảnh theo thứ tự từ sau ra trước, tức là từ Hậu cảnh, qua Trung cảnh rồi mới đắp Tiền cảnh lên. Cách làm này giúp khắc phục hoàn toàn những nhiễu loạn cục bộ của luồng quang học truyền thống.
+ 
+Slide 7: CẤU TRÚC CỦA MỘT LỚP CHUYỂN ĐỘNG
+Người 2: Vậy nếu bóc tách một "lớp" trên sân khấu ảo đó ra, thì máy tính sẽ lưu trữ những thông tin gì ở bên trong ạ?
+Người 1: Mỗi mặt phẳng trong mô hình phân lớp được cấu thành từ ba ma trận cốt lõi. Thứ nhất là Bản đồ Cường độ, hay còn gọi là ảnh màu, nó lưu trữ kết cấu bề mặt, màu sắc và diện mạo nguyên bản của đối tượng. Thứ hai là Mặt nạ Alpha.
+Người 2: Mặt nạ Alpha này có giống với file ảnh PNG trong suốt mà dân thiết kế đồ họa hay dùng để tách nền không thầy?
+Người 1: Đúng thế! Nó là một lưới nhị phân để xác định ranh giới vật thể, trong đó các điểm ảnh màu đen đại diện cho phần trong suốt, tức là phần không thuộc về đối tượng đó. Và yếu tố thứ ba, cũng là yếu tố tạo nên sự sống động, chính là Chuyển động. Nó sử dụng mô hình Áp-phin với sáu tham số. Sáu tham số này sẽ quy định cách toàn bộ lớp hình ảnh đó tịnh tiến, xoay tròn, hoặc thu phóng to nhỏ.
+ 
+Slide 8: SỨC MẠNH PHÂN LỚP - CHINH PHỤC BÀI TOÁN CHE KHUẤT
+Người 1: Lợi ích lớn nhất của mô hình Phân lớp chính là giải quyết "trùm cuối" của xử lý video: Bài toán che khuất. Như ta đã biết, phương trình Độ sáng không đổi của các phương pháp truyền thống sẽ sụp đổ hoàn toàn khi vật ở tiền cảnh đè lên vật ở hậu cảnh, làm cho luồng quang bị đứt gãy.
+Người 2: Ví dụ như có một người đi bộ lướt ngang qua một chiếc ô tô đang đỗ. Lúc người đó che khuất chiếc xe, thuật toán cũ sẽ bị "lú" và mất dấu chiếc xe luôn đúng không ạ?
+Người 1: Chuẩn luôn! Nhưng với Chuyển động Phân lớp thì khác. Nhờ việc tách biệt không gian, hệ thống có một thứ gọi là "Bộ nhớ không gian". Nó sẽ nhớ nguyên vẹn thông tin lớp nền của chiếc ô tô ngay cả khi bị người đi bộ che lấp đi. Khi người đi bộ bước qua, chiếc xe lại hiện ra hoàn hảo mà hệ thống không hề bị mất dấu.
+ 
+Slide 9: ỨNG DỤNG SỐ 1 - NỘI SUY KHUNG HÌNH (FRAME INTERPOLATION)
+Người 1: Bây giờ, ta sẽ xem các nền tảng này được ứng dụng vào thực tế ra sao. Ứng dụng thứ nhất là Nội suy khung hình. Mục tiêu của nó là tạo ra các video quay chậm mượt mà, hoặc tăng tốc độ làm tươi cho màn hình bằng cách sinh ra các khung hình ảo.
+Người 2: Khung hình ảo tức là những khung hình vốn dĩ không được camera quay lại đúng không thầy? Máy tính sẽ "bịa" ra nó như thế nào ạ?
+Người 1: Máy tính sẽ dùng Luồng quang hai chiều. Nó lấy Khung hình ở thời điểm "tê" và Khung hình ở thời điểm "tê cộng một" để dự đoán ra Khung ảo nằm chính giữa, gọi là "tê cộng không phẩy năm". Dựa vào vận tốc, nó dời các điểm ảnh từ khung "tê" sang đúng tọa độ mới ở khung "tê cộng không phẩy năm".
+Người 2: Nhưng nhỡ hai vật thể chuyển động chéo qua nhau thì điểm ảnh mới tạo ra sẽ bị lem màu vào nhau thì sao ạ?
+Người 1: Rất tinh ý! Để ngăn hiện tượng bóng ma hoặc ô nhiễm màu khi vật thể đè lên nhau, người ta dùng một kỹ thuật gọi là "Sóp-mắc S-p-lát-ting" (Softmax Splatting) để xử lý triệt để phần bị che khuất.
+ 
+Slide 10: TỪ CHUYỂN ĐỘNG ĐIỂM ẢNH ĐẾN THỰC THỂ VIDEO
+Người 1: Slide thứ mười đánh dấu một bước nhảy vọt về nhận thức của trí tuệ nhân tạo. Khi chúng ta kết hợp được một ma trận vận tốc chính xác nhờ Học sâu, cộng với tư duy đa tầng không gian của Chuyển động Phân lớp, máy tính đã chính thức "thăng cấp".
+Người 2: "Thăng cấp" nghĩa là sao ạ?
+Người 1: Nghĩa là máy tính bắt đầu hiểu được các "thực thể" trọn vẹn trong video, thay vì chỉ nhìn thấy những điểm ảnh rời rạc sáng nhấp nháy trên màn hình. Việc máy tính thực sự "hiểu" được không gian và thời gian này là chìa khóa mở ra các ứng dụng cực kỳ cao cấp ở các slide tiếp theo, tiêu biểu là Theo dõi đối tượng và Phân đoạn đối tượng trong video.
+ 
+Slide 11: ỨNG DỤNG #2 - THEO DÕI ĐA ĐỐI TƯỢNG (DEEPSORT)
+Người 1: Chào mừng các em đến với phần ứng dụng. Ứng dụng đỉnh cao thứ hai mà chúng ta bàn tới hôm nay là Theo dõi Đa đối tượng, với một thuật toán rất nổi tiếng tên là Đíp-sọt (DeepSORT). Hãy tưởng tượng các em đang lập trình camera giám sát cho một ngã tư đông đúc. Thử thách ở đây là có hàng trăm người và xe cộ liên tục thay đổi kích thước khi đi xa dần, thay đổi hình dáng khi quay người, và liên tục che khuất lẫn nhau. Làm sao máy tính không bị "nhận nhầm" người này sang người khác?
+Người 2: Dạ thưa thầy, em nghĩ chắc nó phải nhớ được "mặt" hoặc "màu áo" của người đó đúng không ạ? Nhưng lỡ người đó đi khuất sau một chiếc xe buýt rồi mới ló ra thì sao?
+Người 1: Cực kỳ thực tế! Để giải quyết bài toán đó, Đíp-sọt thực hiện ba bước phối hợp vô cùng nhịp nhàng. Bước một là Dự đoán: Nó dùng một công cụ toán học kinh điển là "Bộ lọc Căn-man" (Kalman Filter) để đoán xem dựa trên vận tốc hiện tại, giây tiếp theo người đó sẽ bước tới tọa độ nào. Bước hai là Định danh: Lúc này Học sâu (Deep Learning) mới vào cuộc để trích xuất đặc trưng ngoại hình như em nói – nhớ màu áo, khuôn mặt. Và bước ba là Khớp nối: Nó dùng "Thuật toán Hung-ga-ri" (Hungarian algorithm) để ghép cặp tối ưu nhất giữa cái vị trí nó vừa đoán và hình ảnh nó vừa nhận diện được. Kết quả là ta có một quỹ đạo theo dõi liên tục, không bao giờ bị mất dấu dù đối tượng có bị che khuất tạm thời.
+ 
+Slide 12: ỨNG DỤNG #3 - PHÂN ĐOẠN ĐỐI TƯỢNG VIDEO (VOS)
+Người 1: Tiếp theo, ta có ứng dụng số ba: Phân đoạn đối tượng trong Video, viết tắt là Vê-Ô-Ét (VOS). Hiểu đơn giản, đây là bài toán tách nền cấp độ điểm ảnh nhưng là cho video chuyển động liên tục.
+Người 2: Cái này có giống như lúc mình gọi video call, mình dùng chức năng làm mờ hậu cảnh hoặc đổi background đằng sau không thầy? Nhưng em thấy đôi khi vung tay nhanh quá là cái viền bị lẹm luôn vào tay mình.
+Người 1: Chuẩn luôn, đó chính là một dạng phân đoạn video đấy! Điểm khó nhất là đối tượng liên tục thay đổi hình dáng, ví dụ như em đang vung tay. Máy tính giải quyết bằng cách tiếp cận "Không gian kết hợp Thời gian". Nó dùng các mạng chập để phân đoạn ảnh tĩnh ban đầu, sau đó dùng các "Véc-tơ luồng quang học" (Optical Flow Vector) làm sợi dây liên kết. Hãy tưởng tượng cái mặt nạ tách nền là một miếng cao su đàn hồi. Khi đối tượng chuyển động và biến dạng, các véc-tơ vận tốc này sẽ kéo giãn và định hình lại miếng cao su đó sao cho ôm sát khít lấy viền của nhân vật từ khung hình này sang khung hình khác một cách mượt mà nhất.
+ 
+Slide 13: SỰ HỘI TỤ CÔNG NGHỆ VIDEO AI
+Người 1: Slide số mười ba này là bức tranh toàn cảnh, thể hiện mối liên hệ cốt lõi nhất của toàn bộ chương học. Đây là lúc ba gã khổng lồ công nghệ hội tụ lại để tạo ra các hệ thống Trí tuệ Nhân tạo Video tự trị.
+Người 2: Ba gã khổng lồ đó là những công nghệ nào vậy thầy?
+Người 1: Thứ nhất là Học sâu với các mạng như Xê-en-en (CNN) hay Rét-nét (ResNet), chịu trách nhiệm phân tích nội dung và hình dáng xem "đó là cái gì". Thứ hai là Luồng quang học, đại diện bởi mạng Ráp (RAFT) mà ta vừa học, lo giải quyết yếu tố "chuyển động và thời gian". Và thứ ba là Chuyển động phân lớp (Layered Motion), giải quyết yếu tố "không gian và che khuất". Sự giao thoa của cả ba yếu tố này đã tạo ra một hệ thống AI có khả năng "hiểu" video theo thời gian thực. Các em thấy đấy, không có sự hội tụ này, sẽ không bao giờ có công nghệ Xe tự lái an toàn hay các hệ thống camera giám sát thông minh truy bắt tội phạm.
+ 
+Slide 14: TỔNG KẾT NỘI DUNG TIẾT 5
+Người 1: Nào, bây giờ chúng ta cùng tóm tắt lại những tinh hoa của Tiết học số 5 này. Qua bài học hôm nay, các em đã thấy Học sâu đã đập tan giới hạn của toán học truyền thống như thế nào.
+Người 2: Tức là nhờ mạng nơ-ron hồi quy như mạng Ráp, mình không còn sợ cái quy tắc "độ sáng không đổi" cản trở nữa, nó tự học được luôn từ dữ liệu.
+Người 1: Rất thuộc bài! Điểm chốt thứ hai, ta đã trang bị tư duy Không gian phân lớp. Che khuất không còn là nỗi sợ vì hệ thống đã có "bộ nhớ" lưu trữ các mặt phẳng ở các độ sâu khác nhau một cách độc lập. Và điểm chốt cuối cùng, chúng ta đã chính thức bước vào Kỷ nguyên Video AI. Việc kết hợp giữa trích xuất đặc trưng đứng im và ước lượng chuyển động tinh vi đã mở khóa hàng loạt siêu ứng dụng: từ làm mượt video bằng nội suy khung hình, đến theo dõi đa đối tượng và phân đoạn tách nền video.
+ 
+Slide 15: MỞ KHÓA TIẾT HỌC CUỐI CÙNG (TIẾT 6)
+Người 1: Và cuối cùng, xin chúc mừng các em. Slide mười năm này đánh dấu một cột mốc tự hào: Hành trình lý thuyết của môn Thị giác máy tính mã số In-phô-ba-một-một-một (INFO3111) đã chính thức khép lại.
+Người 2: Nhìn lại mới thấy mình đi xa thật thầy ạ. Từ những buổi đầu lầm lũi tính toán ma trận với các công cụ kinh điển như Síp (SIFT) hay phân lớp bằng Ét-vê-mờ (SVM), cho đến bây giờ là huấn luyện mạng chập Xê-en-en khổng lồ và xử lý cả luồng Video thời gian thực.
+Người 1: Thầy rất ghi nhận sự nỗ lực của các em trong sự "tiến hóa nhận thức" này. Và để chứng minh các em đã thực sự làm chủ kiến thức, nhiệm vụ của Tiết 6 - tiết học cuối cùng - sẽ là báo cáo Đồ án. Các em sẽ phải tiến hành Lai Đê-mô (Live Demo), chạy phần mềm trực tiếp để bảo vệ ứng dụng thực tế của nhóm mình. Điều này nhằm đáp ứng chuẩn đầu ra số ba và số bốn của môn học. Thầy sẽ chấm điểm trực tiếp trên code và kỹ năng làm việc nhóm của các em. Chúc tất cả các nhóm chuẩn bị đồ án thật tự tin, xuất sắc và có một buổi bảo vệ bùng nổ! Chào các em!
+

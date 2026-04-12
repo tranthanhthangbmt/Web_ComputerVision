@@ -1,0 +1,79 @@
+﻿Slide 1: TỔNG KẾT MÔN HỌC & TRÌNH BÀY ĐỒ ÁN
+Người 1: Chào các em. Hôm nay chúng ta bước vào Tiết sáu trên sáu, cũng là chặng dừng chân cuối cùng của môn Thị giác máy tính, mã môn in-phô ba một một một. Hôm nay, thầy trò ta sẽ cùng nhau nhìn lại toàn bộ hành trình đã qua và tiến hành đánh giá cuối kỳ.
+Người 2: Thưa thầy, buổi học cuối cùng này mình sẽ tập trung vào những hoạt động nào để đạt được chuẩn đầu ra xê-lờ-ô ba và xê-lờ-ô bốn (CLO3, CLO4) ạ?
+Người 1: Một câu hỏi rất đúng trọng tâm! Sơ đồ luồng nội dung bài học hôm nay sẽ gồm ba phần chính. Phần một, chúng ta sẽ ôn tập lại toàn bộ chuỗi quy trình cốt lõi của thị giác máy tính. Phần hai là lúc các em thể hiện bản thân qua hoạt động Nhóm, bao gồm báo cáo và thuyết trình đồ án thực tế. Cuối cùng, phần ba sẽ là các thông tin học vụ và đánh giá tổng kết điểm số cho khóa học.
+
+Slide 2: BỨC TRANH TOÀN CẢNH: CHUỖI QUY TRÌNH THỊ GIÁC MÁY TÍNH
+Người 1: Trước khi các em báo cáo, hãy cùng nhìn lại bức tranh toàn cảnh. Chúng ta đã đi qua một sơ đồ bậc thang gồm năm bước. Bước một là trích xuất đặc trưng ở chương bốn. Bước hai là biểu diễn dữ liệu. Bước ba là phân lớp ảnh ở chương năm. Bước bốn là bước nhảy vọt vào kỷ nguyên học sâu ở chương sáu và chương bảy. Và cuối cùng, bước năm là tiến vào không gian thời gian để xử lý video ở chương tám.
+Người 2: Thưa thầy, nhìn vào sơ đồ này, em thấy có vẻ như Học sâu ở bước bốn đã làm thay công việc "tự động hóa trọn gói" cho cả ba bước đầu tiên phải không ạ?
+Người 1: Nhận xét của em rất tinh tế! Nếu như cách truyền thống giống như việc em tự tay chọn lựa từng nguyên liệu, thái rau, ướp thịt để nấu ăn, thì Học sâu – với kiến trúc en-tu-en (end-to-end) – giống như một chiếc nồi nấu thông minh. Em chỉ cần cho nguyên liệu thô vào, mạng lưới tự động trích xuất đặc trưng và đưa ra món ăn hoàn chỉnh ở đầu ra. Tuy nhiên, việc hiểu cách truyền thống sẽ giúp em biết rõ tại sao món ăn lại ngon hay dở.
+
+Slide 3: NHÌN LẠI: ĐẶC TRƯNG THỦ CÔNG & PHÂN LỚP TRUYỀN THỐNG
+Người 1: Giờ ta đi sâu lại vào bước xử lý truyền thống. Ở giai đoạn trích xuất đặc trưng thủ công, ta đã học các bộ trích xuất lừng danh như SIFT (síp) và SURF (sớp) chuyên tìm điểm và cạnh, cùng với HOG (hóc) và LBP chuyên hiểu hình dáng và kết cấu bề mặt.
+Người 2: Thầy ơi, cái đặc tính "bất biến với tỷ lệ và góc quay" của thuật toán SIFT mang lại lợi ích thực tế gì ạ?
+Người 1: Em hãy tưởng tượng em đang phát triển hệ thống nhận diện biển báo giao thông. Dù chiếc xe của em đang ở xa khiến biển báo trông rất nhỏ, hay ở gần làm nó to ra, thậm chí camera bị nghiêng đi, thuật toán SIFT vẫn nhận ra chính xác các điểm đặc trưng của biển báo đó. Sau khi có các vector hình dáng và kết cấu này, ta sẽ dùng quy trình BoF (Bag-of-Features) để gom cụm chúng thành các "từ vựng thị giác", rồi đưa cho các thuật toán phân lớp truyền thống như ca-en-en (KNN - lười biếng, phi tham số) hoặc ét-vi-em (SVM - phân lớp lề tối đa) để ra quyết định.
+
+Slide 4: NHÌN LẠI: SỨC MẠNH CỦA MẠNG CNN (CHƯƠNG 6)
+Người 1: Chuyển sang chương sáu, mọi thứ đã thay đổi hoàn toàn nhờ mạng nơ-ron tích chập, hay xê-en-en (CNN). Kiến trúc cốt lõi của nó chia làm hai nửa. Nửa đầu làm nhiệm vụ trích xuất đặc trưng không gian đa cấp độ, sử dụng các lớp tích chập hai chiều (Conv2D) cộng với các lớp gộp cực đại (Max Pooling). Nửa sau làm nhiệm vụ phân loại xác suất bằng lớp kết nối đầy đủ (Dense) và hàm sốt-mác (Softmax).
+Người 2: Trong slide có nhắc đến "Ứng dụng kép" là nhận diện đối tượng và phát hiện đối tượng. Hai khái niệm này trong thực tế khác nhau như thế nào thưa thầy?
+Người 1: Khác nhau rất rõ ràng. "Nhận diện đối tượng" (Classification) giống như việc em nhìn vào bức ảnh và trả lời câu hỏi: "Bức ảnh này có chứa xe hơi không?". Máy tính sẽ gán một nhãn cho toàn bộ bức ảnh. Còn "Phát hiện đối tượng" (Detection) thì khó hơn nhiều. Nó giống như việc em phải tìm tất cả các xe hơi trên đường và vẽ một chiếc hộp bao quanh từng chiếc xe đó. Để làm được điều này, ta phải vượt qua phương pháp cửa sổ trượt chậm chạp ngày xưa bằng các cấu trúc hiện đại và nhanh như chớp như mạng tích chập toàn phần FCN, mạng Faster R-CNN, hay đặc biệt là mạng dô-lô (YOLO).
+
+Slide 5: NHÌN LẠI: HỌC CHUYỂN GIAO & MẠNG SÂU HIỆN ĐẠI (CHƯƠNG 7)
+Người 1: Tiến đến chương bảy, mạng sâu không ngừng tiến hóa. Từ mạng Vê-gờ-gờ mười sáu (VGG16) đơn giản chỉ dùng các bộ lọc ba nhân ba, chúng ta bước lên Rết-nét (ResNet) giải quyết vấn đề bằng "kết nối tắt" hay "học thặng dư", và sau đó là Mô-bai-nét (MobileNet) sử dụng phép tích chập tách biệt để đưa AI lên điện thoại di động.
+Người 2: Em thấy có sơ đồ tháp đi từ lớp thấp đến lớp trung gian và đỉnh tháp. Cơ chế này liên quan thế nào đến hai chiến lược học chuyển giao ở bên dưới ạ?
+Người 1: Liên kết rất chặt chẽ! Sơ đồ tháp chỉ ra rằng: các lớp thấp ở đáy tháp chỉ học những đường nét, góc cạnh cơ bản; lên trung gian thì thành mắt, mũi; lên đỉnh tháp mới tạo thành khuôn mặt hay chiếc xe hoàn chỉnh. Do đó, khi ta ứng dụng Học chuyển giao, ta có hai lựa chọn. Thứ nhất là "Đóng băng" (Feature Extraction) – ta khóa chặt các lớp dưới để tái sử dụng lại các đặc trưng cơ bản này, và chỉ huấn luyện lại lớp phân loại ở trên cùng.
+Người 2: Vậy còn chiến lược "Tinh chỉnh" (Fine-tuning) thì sao thưa thầy?
+Người 1: Tinh chỉnh là khi em "mở băng" một cách thận trọng ở những lớp trên cùng. Em cho phép mạng cập nhật lại trọng số, nhưng phải nhớ cài đặt tốc độ học - tức là lớn-ninh rết (Learning Rate) - ở mức cực kỳ nhỏ, ví dụ như không phẩy không không một, để tối ưu hóa đặc thù cho bài toán mới mà không phá hỏng những gì mạng đã học được từ trước. Giống như một thợ mộc lành nghề chỉ cần mài dũa thêm một chút kỹ năng là có thể điêu khắc một loại gỗ mới vậy.
+
+Slide 6: NHÌN LẠI: XỬ LÝ VIDEO & DỰ ĐOÁN CHUYỂN ĐỘNG (CHƯƠNG 8)
+Người 1: Ở chặng cuối của chuỗi quy trình cốt lõi, chúng ta đã vượt ra khỏi những bức ảnh tĩnh để bước vào thế giới của video và không gian thời gian ở chương tám. Bốn phương pháp dự đoán chuyển động chính đã được giới thiệu. Đầu tiên là mô hình Tịnh tiến và Tham số, sử dụng các phép biến đổi Áp-phin (Affine) sáu bậc tự do hoặc Hô-mô-gờ-ra-phi (Homography) tám bậc tự do.
+Người 2: Em nhớ Hô-mô-gờ-ra-phi này! Có phải nó là cốt lõi của tính năng chống rung video trên điện thoại thông minh hiện nay không thưa thầy?
+Người 1: Hoàn toàn chính xác! Nó giúp ước lượng các biến đổi toàn cục để ổn định khung hình. Thứ hai là Chuyển động sờ-pờ-lai (Spline), sử dụng lưới điểm điều khiển cắt theo dạng cây tứ phân (Quadtree) để mô phỏng các biến dạng đàn hồi cục bộ. Trong y tế, khi bác sĩ nội soi dạ dày, các mô cơ co bóp liên tục, thuật toán này sẽ giúp ghép và đăng ký ảnh y tế cực kỳ chính xác.
+Người 2: Vậy còn Luồng quang hay Óp-ti-cồ pờ-lâu (Optical Flow) thì sao ạ?
+Người 1: Luồng quang ước lượng một vector vận tốc cho mọi điểm ảnh dựa trên giả định rằng độ sáng của vật thể không thay đổi khi di chuyển. Cuối cùng là Chuyển động phân lớp, giúp tách video thành nhiều mặt phẳng độ sâu khác nhau. Ví dụ, khi em theo dõi một chiếc xe chạy khuất sau gốc cây, thuật toán này sẽ nội suy khung hình, giúp hệ thống theo dõi Đíp-sọt (DeepSORT) không bị mất dấu chiếc xe.
+
+Slide 7: PHẦN 2: BÁO CÁO ĐỒ ÁN CUỐI KỲ (FINAL PRESENTATION)
+Người 1: Kết thúc phần ôn tập, chúng ta sẽ bước sang phần quan trọng nhất của ngày hôm nay: Báo cáo Đồ án cuối kỳ. Mục tiêu cốt lõi của hoạt động này là khảo nghiệm khả năng vận dụng toàn bộ kiến thức trong học kỳ của các em vào một bài toán thực tế. Thông qua đó, chúng ta sẽ đánh giá chuẩn đầu ra xê-lờ-ô ba (CLO3) về chuyên môn lập trình, và xê-lờ-ô bốn (CLO4) về kỹ năng làm việc nhóm và giao tiếp.
+Người 2: Thưa thầy, mỗi nhóm sẽ có tổng cộng bao nhiêu thời gian để thể hiện trên bục ạ?
+Người 1: Tổng thời lượng cho mỗi nhóm là hai mươi phút. Trong đó, các em có mười lăm phút để trình bày slide và chạy đê-mô trực tiếp (Live Demo) ứng dụng của mình. Năm phút còn lại sẽ dành cho chuyên mục Hỏi đáp (Q&A) và phản biện cùng giảng viên và các bạn.
+
+Slide 8: TIÊU CHÍ ĐÁNH GIÁ CHUYÊN MÔN & ỨNG DỤNG (CLO3)
+Người 1: Để các em nắm rõ luật chơi, thầy sẽ công bố bốn tiêu chí chấm điểm chuyên môn. Số một là Tính hoàn thiện: Chương trình hoặc Ứng dụng phải hoạt động trơn tru, không văng lỗi khi chạy đê-mô trực tiếp. Số hai là Mức độ hiểu thuật toán. Em không thể chỉ copy mã nguồn trên mạng, mà phải giải thích được cơ sở lý thuyết.
+Người 2: Có nghĩa là nhóm em phải lập luận được ví dụ như: "Vì sao bài này lại dùng mạng dô-lô (YOLO) để phát hiện vật thể mà không dùng thuật toán ét-vi-em (SVM) truyền thống", đúng không ạ?
+Người 1: Rất chuẩn! Tiêu chí thứ ba là Kỹ năng lập trình, đòi hỏi các em phải thành thạo việc sử dụng thư viện Ốp-pân-xi-vi (OpenCV) hoặc Ten-sơ-phờ-lâu (TensorFlow) với cấu trúc mã nguồn minh bạch. Và cuối cùng là Đánh giá mô hình. Các em phải dùng những độ đo học thuật chuẩn xác như độ chính xác (Accuracy), trung bình độ chính xác trung bình (mAP), tốc độ khung hình trên giây (FPS), hoặc biểu đồ hàm mất mát (Loss) để chứng minh hiệu năng của sản phẩm.
+
+Slide 9: TIÊU CHÍ ĐÁNH GIÁ KỸ NĂNG MỀM & NHÓM (CLO4)
+Người 1: Bên cạnh dòng code khô khan, kỹ năng mềm cũng chiếm trọng số quan trọng không kém. Đánh giá kỹ năng mềm dựa trên ba yếu tố: Kỹ năng thuyết trình, Tổ chức làm việc nhóm, và Năng lực phản biện.
+Người 2: Ở phần tổ chức nhóm, nếu có một bạn trong nhóm không làm gì mà chỉ lên đọc slide thì hệ thống đánh giá thế nào thưa thầy?
+Người 1: Chắc chắn sẽ có cơ chế Đánh giá chéo sự đóng góp của từng thành viên trong cả mã nguồn lẫn tài liệu. Việc phân công nhiệm vụ phải đồng đều. Còn về Năng lực phản biện, các em cần thể hiện khả năng tư duy nhanh nhạy, bảo vệ quan điểm kỹ thuật một cách có khoa học trước những câu hỏi xoáy từ giảng viên và các nhóm đối thủ.
+
+Slide 10: TIẾN HÀNH BÁO CÁO – PHIÊN 1 (SESSION 1)
+Người 1: Không để các em đợi lâu hơn nữa, chúng ta sẽ chính thức bắt đầu Phiên một (Session 1). Trong phiên này, chúng ta sẽ lắng nghe Lượt một, Lượt hai và Lượt ba đến từ các Nhóm số một, số hai và số ba.
+Người 2: Trong lúc ba nhóm đầu tiên báo cáo, các nhóm còn lại ở dưới sẽ làm gì để tận dụng thời gian thưa thầy?
+Người 1: Một quy định rất quan trọng tại lớp: Các nhóm chuẩn bị lên báo cáo phải sẵn sàng mở sẵn môi trường ứng dụng hoặc Cô-láp (Colab) để không làm đứt quãng thời gian. Đối với các nhóm ngồi dưới, các em phải chú ý lắng nghe, tìm ra điểm thiếu sót và đặt câu hỏi phản biện. Những câu hỏi hay, mang tính chất xây dựng kỹ thuật sẽ được thầy ghi nhận và cộng điểm tương tác trực tiếp cho nhóm của các em. Các em đã sẵn sàng chưa? Xin mời Nhóm một bước lên sân khấu!
+
+Slide 11: TIẾN HÀNH BÁO CÁO – PHIÊN 2 (SESSION 2)
+Người 1: Sau khi kết thúc Phiên một rất sôi nổi, chúng ta sẽ bước ngay vào Phiên hai với Lượt bốn, Lượt năm và Lượt sáu, tương ứng với Nhóm bốn, Nhóm năm và Nhóm sáu. Ở phiên này, tiêu điểm phản biện trong phần Hỏi đáp sẽ được thầy nâng độ khó lên một chút.
+Người 2: Thưa thầy, độ khó tăng lên ở đây là giám khảo sẽ xoáy sâu vào những vấn đề gì ạ?
+Người 1: Thầy sẽ yêu cầu các nhóm giải thích rõ lý do tại sao lại chọn cấu trúc mạng đó cho bài toán của mình. Đồng thời, thầy sẽ hỏi cách các em xử lý hiện tượng "học vẹt" hay quá khớp (overfitting). Đặc biệt đối với các nhóm làm ứng dụng thực tế, thầy sẽ kiểm tra cách các em tối ưu hóa tốc độ khung hình trên giây, hay còn gọi là ép-pê-ét (FPS). Ví dụ, nếu ứng dụng nhận diện khuôn mặt của em chạy trên điện thoại mà cứ giật lag, chỉ được năm ép-pê-ét thay vì ba mươi ép-pê-ét, thì dù độ chính xác cao đến mấy, người dùng cũng sẽ không muốn sử dụng.
+
+Slide 12: ĐÚC KẾT THỰC CHIẾN: NHẬN XÉT TỔNG THỂ TỪ GIẢNG VIÊN
+Người 1: Trải qua các phiên báo cáo, thầy có một vài nhận xét đúc kết tổng thể cho toàn lớp. Nhìn vào cột "Điểm sáng", thầy rất khen ngợi khả năng tự nghiên cứu thư viện của các em. Nhiều nhóm đã làm giao diện người dùng du-ai du-ích (UI/UX) rất đẹp và chỉn chu. Có những nhóm còn dũng cảm thử sức với các mạng học sâu rất phức tạp.
+Người 2: Dạ, vậy còn ở cột "Điểm cần cải thiện", việc sử dụng mô hình như "Hộp đen" nghĩa là sao thưa thầy?
+Người 1: "Hộp đen" nghĩa là em chỉ biết tải một đoạn code trên mạng về, ném dữ liệu vào và chờ kết quả chạy ra, nhưng hoàn toàn không hiểu các ma trận toán học bên trong đang nhân chia với nhau thế nào. Ngoài ra, nhiều nhóm còn thiếu bây-xờ-lai (baseline) – tức là không có một mô hình cơ bản để so sánh đối chiếu xem mô hình mới của mình thực sự tốt hơn bao nhiêu. Dữ liệu các em thu thập cũng chưa được làm sạch kỹ, dẫn đến việc mất cân bằng. Các em hãy nhớ kỹ thông điệp cốt lõi này: "Giá trị lớn nhất của một kỹ sư AI không nằm ở việc huấn luyện ra mô hình có độ chính xác chín mươi chín phần trăm, mà ở việc em hiểu rõ tại sao mô hình của mình lại dự đoán sai".
+
+Slide 13: VƯỢT RA NGOÀI GIẢNG ĐƯỜNG: CHÂN TRỜI CÔNG NGHỆ MỚI
+Người 1: Môn học của chúng ta khép lại ở các mạng nơ-ron tích chập xê-en-en (CNN), nhưng thế giới công nghệ ngoài kia không dừng lại ở đó. Thầy muốn mở ra cho các em ba hướng đi mới. Thứ nhất là Vi-dần Trần-pho-mờ (Vision Transformers), viết tắt là Vi-i-tê (ViT). Nó mượn cơ chế tự chú ý từ lĩnh vực xử lý ngôn ngữ tự nhiên để giúp máy tính nhìn bức ảnh một cách toàn cục hơn.
+Người 2: Hướng thứ hai là Mô hình tạo sinh (Generative AI). Cái này có phải là công nghệ đứng sau các con AI vẽ tranh đang rất sốt trên mạng không thầy?
+Người 1: Đúng vậy! Các mô hình như mạng đối kháng Găng (GANs) hay mô hình khuếch tán Đíp-phiu-dần (Diffusion Models) không chỉ giúp máy tính "nhìn hiểu" mà còn giúp nó "sáng tạo" ra những hình ảnh và video hoàn toàn mới, chưa từng tồn tại. Và hướng thứ ba là Thị giác không gian ba chiều. Các em sẽ cần kiến thức này nếu muốn làm việc với xe tự lái, robot, hoặc công nghệ tái tạo không gian Nớp (NeRF). Tương lai của các em nằm ở việc chinh phục những mô hình này.
+
+Slide 14: THÔNG TIN HỌC VỤ & HƯỚNG DẪN NỘP BÀI
+Người 1: Trở lại với thực tại một chút, chúng ta đi đến phần thông tin học vụ. Để hoàn tất môn học, các nhóm cần đóng gói hồ sơ thật kỹ. Hồ sơ bao gồm: Mã nguồn (Source code) dạng đường dẫn Gít-húp (Github) hoặc file nén; Tập dữ liệu (Dataset); và toàn bộ Slide thuyết trình cùng Báo cáo tổng kết dưới dạng file pi-đi-ép (PDF).
+Người 2: Tụi em sẽ nộp ở đâu và điểm số của môn học sẽ được tính như thế nào ạ?
+Người 1: Các em phải tải toàn bộ tài liệu này lên hệ thống học tập điện tử eo-em-ét (LMS) của trường trước thời hạn quy định. Trọng số của Đồ án này rất lớn, chiếm tới năm mươi phần trăm tổng điểm môn học của các em, vì nó kết hợp đánh giá cả kỹ năng chuyên môn lẫn kỹ năng mềm. Điểm số sẽ được thầy chấm và cập nhật lên hệ thống vào tuần tới.
+
+Slide 15: KHÉP LẠI HÀNH TRÌNH INFO3111
+Người 1: Vậy là chúng ta đã chính thức hoàn thành môn học Thị giác máy tính, mã môn in-phô ba một một một. Nhìn lại ngày đầu tiên, hình ảnh trong mắt máy tính chỉ là những ma trận con số. Nhưng giờ đây, như trích dẫn trên slide: "Từ những ma trận điểm ảnh vô tri, chúng ta đã cùng trao cho máy tính khả năng 'nhìn' và 'hiểu' thế giới."
+Người 2: Thay mặt lớp, em cảm ơn thầy vì những bài giảng rất tâm huyết và thực tế trong suốt mười lăm tuần qua ạ.
+Người 1: Thầy cũng xin gửi lời cảm ơn đến tất cả các em. Cảm ơn các em đã nỗ lực, kiên trì đi qua những công thức đạo hàm, những ma trận toán học phức tạp và cả những đêm thức trắng để gỡ lỗi những dòng code khô khan. Chúc các em đạt kết quả cao nhất trong kỳ thi này, và hy vọng ngọn lửa đam mê với Trí tuệ Nhân tạo sẽ tiếp tục đồng hành cùng các em trên con đường sự nghiệp sắp tới. Tạm biệt các em!
+

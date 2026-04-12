@@ -1,0 +1,84 @@
+﻿Slide 1: DỰ ĐOÁN CHUYỂN ĐỘNG (Phần 2) - Tiết 4/6: Luồng quang học (Optical Flow)
+Người 1: Chào các em, ở những tiết học trước của Chương 8, chúng ta đã làm quen với các khái niệm cơ bản về dự đoán chuyển động trong môn Thị giác máy tính. Hôm nay, chúng ta sẽ đi sâu vào Tiết 4 với chủ đề Luồng quang học, hay tiếng Anh còn gọi là Optical Flow.
+Người 2: Thưa thầy, em thấy trên slide có nhắc đến một khối hình hộp 3D mang các chiều là 2, H và W, vậy bài học hôm nay sẽ tập trung vào cấu trúc ma trận này đúng không ạ?
+Người 1: Rất chính xác! Trọng tâm của chúng ta hôm nay là hiểu được phương trình độ sáng, khám phá hai thuật toán khởi thủy là Lucas-Kanade và Horn-Schunck, đồng thời học cách trực quan hóa dữ liệu luồng quang bằng hệ màu hát-ét-vê.
+
+Slide 2: Đặt vấn đề: Tại sao cần một “Trường chuyển động dày đặc”?
+Người 1: Trước tiên, hãy tự hỏi: Tại sao chúng ta lại cần một trường chuyển động dày đặc thay vì các mô hình chuyển động thưa hay mô hình toàn cục như trước đây?
+Người 2: Có phải vì các mô hình trước đây chỉ theo dõi được một vài điểm đặc trưng nổi bật như góc, cạnh, hoặc giả định toàn bộ khung hình di chuyển theo một quy luật duy nhất không thầy?
+Người 1: Đúng vậy em. Các mô hình thưa thớt giống như việc ta chỉ nhìn vào ánh đèn pha của vài chiếc xe chạy trong đêm, rất dễ bỏ sót bức tranh toàn cảnh. Chúng sẽ hoàn toàn "bất lực" trước các chuyển động đàn hồi và phức tạp như một chiếc lá rơi xoay vòng lộn xộn trong gió, hay một đám đông tấp nập di chuyển mỗi người một hướng. Luồng quang học giải quyết triệt để vấn đề này bằng cách yêu cầu tính toán độc lập sự dịch chuyển cho mọi điểm ảnh trên khung hình, giúp ta bắt trọn từng biến dạng cục bộ dù là nhỏ nhất.
+
+Slide 3: Khái niệm Cốt lõi & Cấu trúc Dữ liệu của Luồng quang
+Người 1: Vậy khái niệm cốt lõi của Luồng quang học là gì? Nó chính là một trường véc-tơ vận tốc biểu diễn sự dịch chuyển của mọi điểm ảnh giữa hai khung hình liên tiếp tại thời điểm tê và thời điểm tê cộng đê-tê.
+Người 2: Thế máy tính sẽ cấu trúc khối dữ liệu khổng lồ này như thế nào ạ? Em đoán chắc chắn đầu ra của thuật toán không phải là một bức ảnh màu thông thường rồi.
+Người 1: Một suy luận rất hay! Cấu trúc dữ liệu của luồng quang được mô phỏng bằng một khối ma trận ba chiều với chiều rộng là đắp-lưu, chiều cao là hát, nhưng độ sâu chỉ có hai kênh. Lát cắt thứ nhất là kênh u, lưu trữ vận tốc dịch chuyển theo trục ngang ích. Lát cắt thứ hai là kênh v, lưu trữ vận tốc dịch chuyển theo trục dọc y dài. Tóm lại, kết luận nhanh ở đây là kết quả ta thu được là một ma trận kích thước 2 nhân hát nhân đắp-lưu chứa đựng thông tin động lực học của từng pixel dưới dạng các biến u và v.
+
+Slide 4: Phân biệt: Luồng quang vs. Trường chuyển động (Ảo ảnh và Thực tại)
+Người 1: Ở phần này, thầy muốn các em phân biệt thật rạch ròi hai khái niệm để không bị máy tính đánh lừa: Luồng quang và Trường chuyển động. Trường chuyển động là sự dịch chuyển vật lý thực sự của vật thể ba chiều chiếu lên không gian ảnh hai chiều. Trong khi đó, luồng quang chỉ là sự chuyển động biểu kiến của các dải độ sáng xuất hiện trên ảnh.
+Người 2: Nghĩa là những gì máy tính thấy thay đổi độ sáng chưa chắc đã là chuyển động thật, và ngược lại ạ? Thầy cho em ví dụ thực tế được không?
+Người 1: Rất sẵn lòng. Em hãy tưởng tượng một quả cầu trơn đồng màu đang tự quay quanh trục. Vì màu sắc đồng nhất, các điểm ảnh trên quả cầu không hề thay đổi độ sáng, nên luồng quang bằng không; máy tính lúc này hoàn toàn bị "mù chuyển động" dù vật thể đang quay. Ngược lại, nếu quả cầu đứng im nhưng có một bóng đổ đám mây lướt qua làm thay đổi độ sáng điểm ảnh, máy tính sẽ tạo ra luồng quang ảo và bị đánh lừa rằng quả cầu đang chuyển động.
+
+Slide 5: Phương trình Ràng buộc Độ sáng (Brightness Constancy)
+Người 1: Để tính toán được luồng quang, chúng ta phải dựa vào một giả định tiên quyết cực kỳ quan trọng, gọi là Phương trình Ràng buộc Độ sáng. Nó phát biểu rằng: Một điểm ảnh không tự thay đổi cường độ sáng khi di chuyển sang khung hình tiếp theo.
+Người 2: Tức là nếu em mặc áo màu đỏ đi từ góc này sang góc kia của khung hình, thì độ sáng của cái áo đỏ đó luôn được coi là bất biến ạ? Nếu viết thành công thức toán học thì sao thầy?
+Người 1: Chính xác! Về mặt toán học, ta có công thức: ép của ích phẩy y dài phẩy tê, bằng với ép của ích cộng đê ích phẩy y dài cộng đê y dài phẩy tê cộng đê tê. Tuy nhiên, để máy tính có thể xử lý, ta phải trải qua quá trình tuyến tính hóa bằng khai triển Taylor và loại bỏ các phần tử bậc cao. Ta thu được phương trình tối giản là: đạo hàm của ép theo ích nhân u, cộng đạo hàm của ép theo y dài nhân v, cộng đạo hàm của ép theo thời gian tê, bằng không.
+Người 2: Trong phương trình này thì đâu là những con số máy tính đo được, và đâu là ẩn số mình cần đi tìm ạ?
+Người 1: Máy tính hoàn toàn đo được đạo hàm không gian, tức là gradient độ sáng theo trục ích và trục y dài. Nó cũng đo được đạo hàm thời gian, tức là sự thay đổi độ sáng giữa hai khung hình liên tiếp. Do đó, hai ẩn số duy nhất bài toán cần tìm chính là các véc-tơ vận tốc u và v, tương đương với tốc độ đê ích chia đê tê và đê y dài chia đê tê đấy các em.
+
+Slide 6: Bài toán Thiếu điều kiện (The Ill-Posed Problem)
+Người 1: Ở tiết trước, chúng ta đã tìm ra phương trình độ sáng rút gọn là: đạo hàm của ép theo ích nhân u, cộng đạo hàm của ép theo y dài nhân v, cộng đạo hàm của ép theo thời gian tê, bằng không. Nhưng các em có nhận ra điểm bế tắc toán học nào ở đây không?
+Người 2: Dạ... phương trình này chỉ là một phương trình tuyến tính duy nhất, nhưng ta lại có đến tận hai ẩn số độc lập cần tìm là u và v. Như vậy là một phương trình hai ẩn, suy ra sẽ có vô số nghiệm đúng không thầy?
+Người 1: Một phát hiện rất xuất sắc! Về mặt toán học, đây là một hệ vô định. Trong thị giác máy tính, người ta gọi đây là "Bài toán thiếu điều kiện" hay "Vấn đề Khẩu độ". Em cứ tưởng tượng em đang nhìn một đường thẳng sọc vằn đang di chuyển thông qua một lỗ khóa cửa rất hẹp. Mắt em thấy các vằn đang trượt đi, nhưng em không thể khẳng định đường thẳng đó đang trượt dọc, trượt chéo hay trượt ngang, vì có vô số hướng di chuyển đều tạo ra cùng một ảo ảnh qua lỗ khóa đó. Để giải bài toán này, toán học thuần túy là bất lực. Ta bắt buộc phải "ép" thêm một mệnh đề ràng buộc để khóa chặt lại một điểm duy nhất.
+
+Slide 7: Giải pháp 1: Thuật toán Lucas-Kanade (Cách tiếp cận Cục bộ)
+Người 1: Để giải quyết bế tắc đó, hai nhà khoa học Lucas và Kanade đã đề xuất một giải pháp mang tính cục bộ. Mệnh đề ràng buộc của họ dựa trên giả định "Đồng thuận Cục bộ", tiếng Anh là Local Smoothness.
+Người 2: "Đồng thuận cục bộ" có thể hiểu nôm na như kiểu "bầy chim bay cùng một hướng" không ạ?
+Người 1: Chính xác là như vậy! Thuật toán này giả định rằng các điểm ảnh nằm sát nhau, ví dụ trong một ô vuông cửa sổ lân cận nhỏ, đều thuộc về cùng một vật thể. Do đó, chúng sẽ chia sẻ chung một véc-tơ chuyển động u và v. Thay vì giải bài toán cho một pixel đơn lẻ, họ gom nhóm N pixel lại. Khối dữ liệu gom nhóm này ngay lập tức tạo ra một áp lực toán học lớn, biến hệ phương trình từ "thiếu điều kiện" trở thành một bài toán "Dư điều kiện", tức là có quá nhiều phương trình nhưng vẫn chỉ có hai ẩn số.
+
+Slide 8: Cơ chế Toán học Lucas-Kanade (Over-determined System)
+Người 1: Hãy đi sâu vào cơ chế toán học. Nếu ta dùng một cửa sổ lân cận ba nhân ba, ta sẽ có chín điểm ảnh. Chín điểm ảnh này sinh ra chín phương trình độ sáng, nhưng ta vẫn chỉ tìm hai ẩn u và v. Hệ phương trình lúc này có dạng ma trận a nhân với véc-tơ đê bằng véc-tơ bê. Trong đó, véc-tơ đê chính là chứa hai ẩn u và v của chúng ta.
+Người 2: Nhưng thưa thầy, 9 phương trình mà chỉ có 2 ẩn thì làm sao máy tính tìm được một nghiệm chính xác tuyệt đối ạ? Sẽ luôn có sự sai số chứ?
+Người 1: Rất đúng! Vì hệ dư điều kiện nên sẽ không tồn tại nghiệm chính xác tuyệt đối. Chúng ta phải dùng phương pháp bình phương tối thiểu để tìm ra nghiệm tối ưu nhất. Lời giải toán học sẽ dùng ma trận giả nghịch đảo, được đọc là: véc-tơ đê bằng ma trận a chuyển vị nhân ma trận a, tất cả lấy nghịch đảo, rồi nhân với ma trận a chuyển vị, và nhân tiếp với véc-tơ bê.
+Người 2: Ồ, vậy là giải quyết xong rồi. Nhưng thuật toán này có điểm yếu nào không thầy?
+Người 1: Điểm nghẽn tử huyệt nằm ở cụm "ma trận a chuyển vị nhân ma trận a, tất cả lấy nghịch đảo". Toán học quy định ma trận này bắt buộc phải khả nghịch. Để nó khả nghịch, vùng ảnh chúng ta đang xét phải có các cạnh hoặc góc sắc nét. Nếu em áp dụng Lucas-Kanade lên một mảng tường trắng trơn nhẵn hoàn toàn, thuật toán sẽ sụp đổ ngay lập tức vì không thể đảo ngược ma trận!
+
+Slide 9: Giải pháp 2: Thuật toán Horn-Schunck (Cách tiếp cận Toàn cục)
+Người 1: Bởi vì Lucas-Kanade bó tay với các mảng màu trơn nhẵn, một giải pháp thứ hai đã ra đời: Thuật toán Horn-Schunck. Khác với cách làm cục bộ, Horn-Schunck tiếp cận theo hướng Toàn cục. Họ sử dụng mệnh đề "Tính trơn Toàn cục". Các tác giả coi toàn bộ khung hình như một tấm lưới cao su đàn hồi. Luồng quang học phải thay đổi một cách mượt mà, liên tục trên toàn bức ảnh.
+Người 2: Nếu coi như một tấm lưới cao su, thì làm sao họ ép các pixel tính toán được vận tốc ạ?
+Người 1: Họ thực hiện bằng cách cực tiểu hóa một Hàm Năng lượng, ký hiệu là e. Công thức là: e bằng e-đa-ta, cộng với lam-đa nhân cho e-smooth. Trong đó, e-đa-ta bắt buộc giá trị của phương trình độ sáng phải bám sát mốc không nhất có thể. Còn e-smooth đóng vai trò như một màng bọc phạt lỗi: nó sẽ phạt nặng nếu có sự thay đổi hướng hoặc độ lớn đột ngột giữa các pixel kề nhau. Hằng số lam-đa ở giữa đóng vai trò như một cái nút vặn, giúp người kỹ sư cân bằng giữa việc tin tưởng vào dữ liệu ảnh gốc hay tin tưởng vào độ trơn tru của mảng chuyển động.
+
+Slide 10: So sánh Đối chiếu: Lucas-Kanade vs. Horn-Schunck
+Người 1: Để tổng kết lại hai công nghệ khởi thủy này, chúng ta hãy đặt chúng lên bàn cân. Về triết lý, Lucas-Kanade là tư duy cục bộ, còn Horn-Schunck là tư duy toàn cục.
+Người 2: Hệ quả của hai triết lý này lên đầu ra của bức ảnh là gì thưa thầy?
+Người 1: Rất khác biệt đấy! Lucas-Kanade chỉ hoạt động hiệu quả ở những nơi có góc cạnh rõ ràng, nên nó tạo ra một luồng quang học thưa thớt. Còn Horn-Schunck, nhờ hàm phạt đàn hồi, nó có khả năng suy diễn và điền kín véc-tơ vào cả những mảng trơn nhẵn, tạo ra một luồng quang học dày đặc một trăm phần trăm.
+Người 2: Vậy nếu trong ảnh xuất hiện nhiễu hột ngẫu nhiên thì thuật toán nào chống chịu tốt hơn ạ? Về tốc độ thì sao thầy?
+Người 1: Lucas-Kanade chống nhiễu cực tốt vì nó dựa vào sự đồng thuận của một nhóm pixel, giúp triệt tiêu nhiễu ngẫu nhiên dễ dàng. Nó cũng chạy rất nhanh vì chỉ cần giải trực tiếp một ma trận nghịch đảo. Ngược lại, Horn-Schunck kém hơn với nhiễu; một điểm nhiễu cục bộ có thể lan truyền như gợn sóng nước ra toàn ảnh thông qua hàm phạt đàn hồi. Hơn nữa, nó tính toán rất chậm và nặng nề vì phải dùng phương pháp vòng lặp xấp xỉ liên tục trên toàn khung hình.
+
+Slide 11: Tiêu chuẩn Đánh giá: Các Bộ Dữ liệu Chuẩn (Benchmarks)
+Người 1: Bây giờ, để biết một thuật toán luồng quang học hoạt động tốt hay dở, chúng ta cần một thước đo chuẩn xác. Thước đo này dựa trên các bộ dữ liệu chuẩn, hay còn gọi là Benchmarks, với khái niệm cốt lõi là Ground Truth.
+Người 2: "Ground Truth" có phải là một đáp án hoàn hảo không thầy? Làm sao người ta tạo ra được đáp án hoàn hảo về chuyển động cho từng điểm ảnh ạ?
+Người 1: Em hiểu rất đúng! Ground Truth chính là dữ liệu được dán nhãn véc-tơ chuyển động chuẩn xác tuyệt đối. Để có được nó, người ta phải dùng đến phần cứng chuyên dụng như cảm biến la-de (LIDAR), hệ thống bắt chuyển động (Mocap), hoặc sinh ra từ đồ họa máy tính CGI. Chúng ta có ba bộ dữ liệu tiêu biểu: Đầu tiên là Middlebury, gồm các ảnh chụp thực tế trong phòng thí nghiệm được kiểm soát ánh sáng khắt khe, ưu tiên đo lường độ chính xác vi mô. Thứ hai là MPI Sintel, trích xuất từ phim hoạt hình 3D, chứa nhiều hiệu ứng bóng râm và đặc biệt là sự che khuất (Occlusion) rất nặng - ví dụ như khi nhân vật đi khuất sau một cái cây. Bộ này có độ khó rất cao. Thứ ba là KITTI, dữ liệu xe tự lái thu thập thực tế trên đường phố, chứa các chuyển động lớn và điều kiện ánh sáng ngoài trời cực kỳ khắc nghiệt.
+
+Slide 12: Đánh giá Chất lượng Luồng quang (Evaluation Metrics)
+Người 2: Vậy khi đã có đáp án Ground Truth rồi, mình dùng công thức nào để chấm điểm thuật toán hả thầy?
+Người 1: Chúng ta sử dụng hai chỉ số đánh giá chất lượng chính. Thứ nhất là chỉ số A-E-E (Average Endpoint Error), tức là Sai số điểm cuối. Nó đo khoảng cách hình học tuyệt đối, cho biết độ lệch tổng thể về cả hướng và độ lớn. Công thức tính là căn bậc hai của tổng: u trừ u của Ground Truth tất cả bình phương, cộng với v trừ v của Ground Truth tất cả bình phương.
+Người 2: Dạ vâng, nó giống như tính khoảng cách đường chim bay giữa hai véc-tơ. Thế còn chỉ số thứ hai thì sao ạ?
+Người 1: Chỉ số thứ hai là A-E (Angular Error), hay Sai số Góc. Chỉ số này chỉ đo độ sai lệch thuần túy về hướng di chuyển trong không gian không-thời gian, và loại bỏ hoàn toàn yếu tố vận tốc. Nó được tính bằng hàm ác-cốt của tích vô hướng các véc-tơ đã được chuẩn hóa. Việc dùng kết hợp hai chỉ số này giúp ta biết thuật toán đang đoán sai hướng, sai tốc độ, hay sai cả hai.
+
+Slide 13: Thực hành: Quy trình Triển khai với Thư viện OpenCV
+Người 1: Học lý thuyết đủ rồi, giờ chúng ta sẽ xắn tay áo lên thực hành. Quy trình triển khai luồng quang học với thư viện OpenCV trong Python thực ra rất gọn gàng với 4 bước. Bước một: Nạp video và xử lý sang ảnh xám. Thuật toán kinh điển bắt buộc phải chạy trên ảnh đơn kênh cường độ sáng.
+Người 2: Bước hai là mình đưa vào hàm tính toán của OpenCV đúng không ạ?
+Người 1: Chính xác! Bước hai: Thực thi tính toán luồng dày đặc thông qua hàm c-v-hai chấm calc-Optical-Flow-Farneback. Đây là một biến thể hiện đại và trơn tru hơn dựa trên xấp xỉ ma trận đa thức. Sang Bước ba, hệ thống sẽ trả về cho ta một tensor hay ma trận mảng tên là "flow". Cấu trúc của nó là một khối ba chiều: Chiều cao Hát, Chiều rộng Đắp-lưu và Độ sâu là 2. Nó chứa trực tiếp giá trị vận tốc thô u và v của từng pixel trên hệ tọa độ Đề-các. Cuối cùng là Bước bốn: Chuyển đổi tọa độ. Ta sẽ dùng hàm c-v-hai chấm cart-To-Polar truyền vào u và v để chuyển mảng Đề-các sang dạng tọa độ Cực, tức là tách riêng thành Độ lớn và Góc, chuẩn bị cho việc đổ màu.
+
+Slide 14: Trực quan hóa Trường Luồng quang (Visualization)
+Người 1: Bước đổ màu đó chính là quá trình trực quan hóa trường luồng quang. Làm sao để con người chúng ta nhìn và hiểu được hàng triệu véc-tơ vận tốc đây? Phương pháp đầu tiên là vẽ Đồ thị Vector, hay Quiver Plot.
+Người 2: Em nghĩ nếu vẽ từng mũi tên véc-tơ cho một trăm phần trăm điểm ảnh thì bức ảnh sẽ đen kịt và rối rắm lắm thưa thầy.
+Người 1: Hoàn toàn đồng ý, nên phương pháp hai được ưa chuộng hơn rất nhiều: Mã hóa màu sắc trong không gian hát-ét-vê (HSV). Chúng ta sẽ gán Hướng, tức là Góc, vào kênh H (Sắc độ). Nhờ vậy, màu sắc sẽ nói lên phương hướng ngay lập tức. Ví dụ màu đỏ là đang dịch sang phải, màu xanh lục là dịch lên trên, màu vàng là dịch xuống dưới. Còn Vận tốc, tức là Độ lớn, sẽ được gán vào kênh S hoặc V (Độ bão hòa hoặc Độ sáng). Tâm vòng tròn đứng im sẽ có màu đen. Điểm ảnh di chuyển càng nhanh, vị trí càng bị đẩy ra xa rìa vòng tròn, thì màu sắc hiển thị trên màn hình sẽ càng rực rỡ.
+
+Slide 15: Tổng kết Tiết 4 & Mở khóa Tiết 5
+Người 1: Vậy là chúng ta đã đi đến cuối Tiết 4. Hãy điểm lại ba "chân kiềng" của bài học hôm nay: Khởi nguồn từ Phương trình Độ sáng, tiếp đến là giải quyết "Bài toán thiếu điều kiện" bằng cách ép Đồng thuận Cục bộ hoặc Tính trơn Toàn cục, và cuối cùng là trực quan hóa mảng tensor động lực học bằng hệ màu hát-ét-vê.
+Người 2: Những thuật toán toán học kinh điển này có vẻ rất chặt chẽ. Liệu chúng có điểm yếu chí mạng nào không thưa thầy?
+Người 1: Một câu hỏi sắc sảo! Đây chính là vấn đề mở đường cho tiết học tiếp theo. Toàn bộ nền tảng toán học kinh điển này sẽ sụp đổ hoàn toàn khi ánh sáng môi trường chớp nháy, thay đổi đột ngột, hoặc khi các vật thể che khuất lẫn nhau làm đứt gãy phương trình bảo toàn độ sáng.
+Người 2: Thực tế thì việc ánh sáng thay đổi hay các vật thể lấp bóng nhau xảy ra liên tục mà thầy. Vậy làm sao để máy tính vượt qua rào cản này ạ?
+Người 1: Câu trả lời nằm ở Tiết 5: Kỷ nguyên Học Sâu (Deep Learning). Chúng ta sẽ khám phá cách các Mạng Nơ-ron hiện đại như FlowNet hay RAFT không cần giải phương trình thủ công nữa, mà chúng "học" trực tiếp cách giải quyết luồng quang học từ hàng triệu hình ảnh, thiết lập nên những kỷ lục mới về độ chính xác theo thời gian thực. Các em nhớ về nhà xem trước tài liệu nhé. Cảm ơn các em!
+

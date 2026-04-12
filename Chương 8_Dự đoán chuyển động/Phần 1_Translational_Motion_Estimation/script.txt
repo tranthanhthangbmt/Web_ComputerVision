@@ -1,0 +1,77 @@
+﻿Slide 1: CHƯƠNG 8: DỰ ĐOÁN CHUYỂN ĐỘNG (Motion Estimation)
+Người 1: Chào các em. Chào mừng các em quay lại với môn học Thị giác máy tính. Hôm nay chúng ta sẽ bắt đầu một chương hoàn toàn mới và cực kỳ thú vị: Chương 8 - Dự đoán chuyển động. Trong tiết học đầu tiên của chuỗi sáu tiết thuộc chương này, chúng ta sẽ cùng đi vào phần Giới thiệu và tìm hiểu về Phép liên kết chuyển đổi. Như các em thấy trên hình minh họa, chúng ta sẽ nghiên cứu sự dịch chuyển của một điểm ảnh theo một véc-tơ u, v.
+Người 2: Dạ thưa thầy, dự đoán chuyển động có phải là cách máy tính nhìn một đoạn video và biết được vật thể đang đi về hướng nào không ạ? Giống như camera giao thông phát hiện xe đang chạy vượt quá tốc độ ấy ạ?
+Người 1: Em lấy ví dụ rất thực tế và rất chuẩn xác! Khả năng "nhìn" và phân tích chuyển động chính là cốt lõi của những hệ thống thông minh như vậy.
+ 
+Slide 2: MỤC TIÊU TIẾT 1 (CLO1, CLO2, CLO4)
+Người 1: Và để làm được điều đó, trong tiết học hôm nay, chúng ta có bốn mục tiêu chính cần đạt được. Thứ nhất là "Mở rộng không gian", tức là ta phải nhận thức được video thực chất là sự mở rộng của ảnh tĩnh thêm một chiều nữa, đó là trục thời gian. Về mặt toán học, nó là hàm ép của ích, i, và tê. Thứ hai, ta sẽ tìm hiểu "Mô hình tịnh tiến", cụ thể là hiểu về phép liên kết chuyển đổi và hàm mất mát cực tiểu ét-ét-đê.
+Người 2: Nghe có vẻ bắt đầu nhiều toán học rồi thầy nhỉ. Vậy hai mục tiêu còn lại là gì ạ?
+Người 1: Đúng là sẽ có toán đấy! Mục tiêu thứ ba chính là "Tối ưu hóa toán học", chúng ta sẽ ứng dụng khai triển Taylor để giải quyết bài toán sai số ở mức độ siêu nhỏ, nhỏ hơn cả một điểm ảnh, gọi là mức sub-pixel. Và cuối cùng là "Chiến lược phân cấp", ta sẽ học cách xử lý các vật thể có chuyển động lớn bằng kiến trúc đa độ phân giải, hay còn gọi là chiến lược xử lý từ thô đến tinh.
+ 
+Slide 3: MỞ ĐẦU: KHÔNG GIAN TOÁN HỌC CỦA VIDEO
+Người 1: Nào, chúng ta cùng đi vào phần mở đầu. Hãy nhìn vào không gian toán học của video. Ở những chương trước chúng ta học về ảnh tĩnh, nó là không gian hai chiều, biểu diễn bằng hàm không gian hai chiều là ép của ích, i. Nhưng video thì khác, nó là không gian ba chiều, biểu diễn bằng hàm ba chiều là ép của ích, i, và tê.
+Người 2: Vậy chữ "tê" ở đây chính là thời gian đúng không thầy? Kiểu như mỗi một phần trăm giây trôi qua là có thêm một bức ảnh tĩnh xếp chồng lên nhau để tạo thành video ạ?
+Người 1: Rất thông minh! Đó chính là chuỗi các khung hình liên tiếp. Sự khác biệt cốt lõi và cũng là đặc trưng độc quyền của video so với ảnh tĩnh chính là "thông tin chuyển động". Nó thể hiện qua sự thay đổi của từng điểm ảnh qua từng thời điểm tê khác nhau. Ví dụ như em đang quay video một quả bóng đang lăn, thì tại mỗi thời điểm tê, tọa độ điểm ảnh của quả bóng trong khung hình sẽ thay đổi liên tục.
+ 
+Slide 4: 8.1. PHÉP LIÊN KẾT CHUYỂN ĐỔI (Translational Alignment)
+Người 1: Để máy tính hiểu được quả bóng lăn đi đâu, ta dùng đến "Phép liên kết chuyển đổi". Các em hãy nhìn vào hình minh họa. Ta có một "Ảnh gốc" ở khung hình trước, ký hiệu là y không của ích, và một "Ảnh mục tiêu" ở khung hình sau, ký hiệu là y một của ích. Sự dịch chuyển của vật thể từ ảnh gốc sang ảnh mục tiêu được biểu diễn thông qua một "Véc-tơ chuyển động" có tọa độ là u, v.
+Người 2: Thế bài toán đặt ra ở đây là mình phải lập trình cho máy tính đi tìm cái véc-tơ u, v đó đúng không thầy?
+Người 1: Hoàn toàn chính xác! Bài toán cốt lõi của chúng ta là tìm ra sự dịch chuyển u, v để căn chỉnh sao cho vùng ảnh gốc y không của ích khớp hoàn hảo với vị trí mới của nó trong ảnh mục tiêu y một của ích. Hãy tưởng tượng em đang chơi trò tìm điểm khác biệt giữa hai bức tranh, nhưng ở đây máy tính phải tìm xem chiếc ô tô ở bức ảnh thứ nhất đã dịch chuyển bao nhiêu pixel theo chiều ngang, bao nhiêu pixel theo chiều dọc để đến được vị trí ở bức ảnh thứ hai.
+ 
+Slide 5: GIẢ ĐỊNH CỐT LÕI: RÀNG BUỘC ĐỘ SÁNG KHÔNG ĐỔI
+Người 1: Nhưng để máy tính có cơ sở giải bài toán đó, thuật toán cần dựa trên một giả định cốt lõi nhất, gọi là "Ràng buộc độ sáng không đổi". Hãy tưởng tượng một điểm ảnh tại vị trí ích i ở khung hình số không, nó di chuyển sang vị trí mới là ích i cộng u ở khung hình số một. Ràng buộc này giả định rằng, điểm ảnh đó vẫn duy trì cường độ sáng y hệt như cũ khi di chuyển qua lại giữa hai khung hình.
+Người 2: À, em hiểu rồi! Có nghĩa là nếu cái áo của em màu đỏ tươi ở khung hình thứ nhất, thì sang khung hình thứ hai nó vẫn phải giữ đúng màu đỏ tươi với độ sáng y như vậy, dù em có chạy ra chỗ khác trên màn hình đúng không ạ?
+Người 1: Một sự liên tưởng tuyệt vời! Và từ giả định thực tế đó, ta có một hệ quả toán học làm nền tảng cho mọi tính toán sau này. Đó là phương trình: y một của ích i cộng u, sẽ bằng với y không của ích i. Thầy nhắc lại, độ sáng tại vị trí mới ở khung hình một, bằng đúng với độ sáng tại vị trí cũ ở khung hình không. Các em hãy ghi nhớ kỹ phương trình này nhé!
+
+Slide 6: MỤC TIÊU TOÁN HỌC: CỰC TIỂU HÓA HÀM SSD
+Người 1: Tiếp nối phương trình ràng buộc độ sáng ở phần trước, chúng ta đi đến "Mục tiêu Toán học: Cực tiểu hóa Hàm ét-ét-đê". Hàm mất mát ét-ét-đê, viết tắt của Tổng bình phương các sai số, được tính bằng công thức: e ét-ét-đê của u, bằng tổng của bình phương hiệu số giữa i một của ích i cộng u, và i không của ích i. Nói cách khác, nó bằng tổng các e i bình phương, với e i chính là sai số dư. Mục tiêu của chúng ta là tìm ra véc-tơ u, v sao cho giá trị hàm mất mát này là nhỏ nhất. Cực tiểu hóa được hàm ét-ét-đê đồng nghĩa với việc ta đã tìm ra véc-tơ di chuyển chính xác nhất.
+Người 2: Hàm này giống như việc mình đo độ lệch màu sắc giữa ảnh trước và ảnh sau đúng không thầy? Nếu hai ảnh khớp nhau hoàn toàn thì độ lệch bằng không, hàm ét-ét-đê sẽ nhỏ nhất ạ?
+Người 1: Hoàn toàn chính xác! Em cứ tưởng tượng hai mảnh ghép hình, nếu em đặt lệch thì các đường nét không khớp nhau tạo ra "sai số". Việc cực tiểu hóa hàm ét-ét-đê chính là việc em xê dịch mảnh ghép sao cho chúng khớp khít vào nhau nhất.
+ 
+Slide 7: RÀO CẢN: TÍNH PHI TUYẾN CỦA ĐỘ SÁNG
+Người 1: Tuy nhiên, thực tế không hề dễ dàng như trò chơi xếp hình. Chúng ta vấp phải một "Rào cản: Tính phi tuyến của độ sáng". Trong thế giới thực, hàm tính độ sáng của điểm ảnh là phi tuyến tính, nó biến đổi rất phức tạp, sáng tối thất thường chứ không phải là một đường thẳng đều đặn. Hậu quả là ta rất khó để giải tích và tối ưu hóa trực tiếp hàm ét-ét-đê để tìm ra kết quả véc-tơ chuyển động ngay lập tức chỉ trong một bước tính toán duy nhất.
+Người 2: Vậy máy tính phải làm sao ạ? Không thể tính một phát ra luôn thì đành chịu thua sao thầy?
+Người 1: Chắc chắn là không rồi! Các nhà khoa học đã tìm ra hướng giải quyết gọi là "Cập nhật Gia số". Thay vì tìm ngay đáp án đúng, thuật toán sẽ "đoán" một vị trí u ban đầu. Sau đó, nó dò dẫm từng bước, mỗi bước nhích thêm một khoảng rất nhỏ gọi là đen-ta u, cứ thế tiến dần đến nghiệm chính xác. Giống như em đi trong một căn phòng tối, không thể nhảy một bước tới đích, mà phải dò dẫm từng bước nhỏ một để không bị vấp ngã.
+ 
+Slide 8: GIẢI PHÁP: KHAI TRIỂN TAYLOR & PHƯƠNG PHÁP LUCAS-KANADE
+Người 1: Và công cụ toán học để thực hiện những "bước dò dẫm" đó chính là "Khai triển Taylor và Phương pháp Lucas-Kanade". Để vượt qua tính phi tuyến, thuật toán sử dụng chuỗi Taylor bậc một để "tuyến tính hóa" hàm độ sáng, biến đường cong phức tạp thành đường thẳng để dễ tính toán hơn trong một phạm vi hẹp.
+Người 2: Chà, chuỗi Taylor bậc một, nghe quen quen hồi học Toán Giải tích. Vậy công thức xấp xỉ của nó sẽ được đọc như thế nào cho dễ hiểu ạ?
+Người 1: Rất đơn giản! Công thức là: i một của mở ngoặc ích i cộng u cộng đen-ta u đóng ngoặc, sẽ xấp xỉ bằng i một của ích i cộng u, cộng với di một của ích i cộng u, nhân cho đen-ta u. Trong đó, di một chính là véc-tơ gradient của ảnh, tức là đạo hàm không gian thể hiện sự thay đổi độ sáng tại vị trí điểm ảnh đó.
+ 
+Slide 9: TUYẾN TÍNH HÓA HÀM MẤT MÁT SSD
+Người 1: Nhờ áp dụng chuỗi Taylor, chúng ta đã thực hiện được bước "Tuyến tính hóa Hàm mất mát ét-ét-đê". Khởi điểm của chúng ta là một bài toán phi tuyến tính cực kỳ đau đầu. Nhưng giờ đây, mục tiêu mới của ta đã nhẹ nhàng hơn: đó là chuyển đổi sang dạng bài toán Bình phương tối thiểu tuyến tính.
+Người 2: Có nghĩa là công thức tính ét-ét-đê dài ngoằng lúc nãy cũng được biến đổi cho dễ giải hơn đúng không thầy?
+Người 1: Đúng vậy. Hàm e của u cộng đen-ta u giờ đây sẽ xấp xỉ bằng tổng của bình phương biểu thức: di một của ích i cộng u, nhân cho đen-ta u, rồi cộng với e i. Điểm mấu chốt, hay Key Insight ở đây là gì? Đó là bài toán tìm véc-tơ di chuyển phức tạp ban đầu đã trở thành việc tìm một biến số gia lượng đen-ta u cực nhỏ, sao cho tổng bình phương sai số tuyến tính này đạt giá trị bé nhất.
+ 
+Slide 10: PHƯƠNG TRÌNH RÀNG BUỘC LUỒNG QUANG HỌC
+Người 1: Từ việc tối ưu hóa đó, chúng ta rút ra được một phương trình tối quan trọng đóng vai trò xương sống trong thị giác máy tính, đó là "Phương trình Ràng buộc Luồng quang học". Công thức siêu ngắn gọn: i ích nhân u, cộng i y dài nhân v, cộng i tê bằng không. Thầy đọc lại: i ích nhân u, cộng i y dài nhân v, cộng i tê bằng không.
+Người 2: Phương trình nhìn rất gọn gàng. Thầy giải thích rõ hơn các đại lượng trong phương trình này để chúng em dễ lập trình được không ạ?
+Người 1: Tất nhiên rồi. Ở đây, i ích và i y dài là đạo hàm không gian, thể hiện sự thay đổi độ sáng theo trục ngang và trục dọc của bức ảnh. Cặp u, v chính là véc-tơ chuyển động mà chúng ta đang mỏi mắt đi tìm. Còn i tê là đạo hàm thời gian, nó đại diện cho sự thay đổi độ sáng của cùng một điểm ảnh giữa hai khung hình liên tiếp. Hiểu một cách đơn giản, sự thay đổi không gian nhân với tốc độ di chuyển sẽ bù trừ hoàn hảo cho sự thay đổi về mặt thời gian!
+
+Slide 11: HỆ PHƯƠNG TRÌNH CHUẨN (Normal Equations) AΔu = b
+Người 1: Từ các bước tuyến tính hóa ở slide trước, chúng ta đi đến kết quả cuối cùng là một hệ phương trình chuẩn, đọc là: Ma trận a lớn, nhân với véc-tơ đen-ta u, bằng véc-tơ bê nhỏ. Nhìn vào cấu trúc của hệ này, a lớn chính là Ma trận xấp xỉ Hét-xi-an, nó dùng để mô tả cấu trúc gradient, tức là độ dốc của vùng ảnh. Còn bê nhỏ là véc-tơ phần dư trọng số.
+Người 2: Vậy có nghĩa là khi mình giải xong phương trình này, mình sẽ tìm ra được cái "bước dò dẫm" đen-ta u đúng không thầy?
+Người 1: Rất chính xác! Và toàn bộ thuật toán sẽ chạy theo một vòng lặp gồm 4 bước. Bước một: Tính ma trận a và bê. Bước hai: Giải hệ phương trình để tìm ra gia số đen-ta u. Bước ba: Cập nhật vị trí mới bằng cách lấy u cũ cộng thêm đen-ta u vừa tìm được. Và bước bốn: Lặp lại liên tục quá trình này cho đến khi đen-ta u xấp xỉ bằng không.
+Người 2: Em hiểu rồi, giống như dùng Google Maps đi tìm nhà vậy. Đầu tiên nó chỉ hướng, mình đi một đoạn (đen-ta u), sau đó nó lại tính toán lại (cập nhật), cứ nhích dần nhích dần cho đến khi khoảng cách tới đích bằng không thì dừng lại!
+ 
+Slide 12: GIỚI HẠN THỰC TIỄN CỦA LUCAS-KANADE
+Người 1: Em lấy ví dụ rất sinh động! Tuy nhiên, bất kỳ thuật toán nào cũng có "điểm mù", và phương pháp Lucas-Kanade cũng không ngoại lệ. Thuật toán này hoạt động cực kỳ hoàn hảo với các chuyển động vi mô, tức là vật thể di chuyển rất chậm, chỉ dịch chuyển một quãng rất ngắn giữa hai khung hình. Nhưng nó sẽ thất bại thảm hại nếu vật thể di chuyển một quãng lớn hoặc quá nhanh.
+Người 2: Tại sao lại như vậy thưa thầy? Nhanh hay chậm thì máy tính vẫn tính toán được chứ ạ?
+Người 1: Vấn đề nằm ở "Khai triển Taylor" mà chúng ta dùng để biến đường cong thành đường thẳng. Phép xấp xỉ tuyến tính này chỉ chính xác trong một phạm vi siêu nhỏ. Hãy tưởng tượng em đang đứng trên một quả đồi. Nếu em chỉ bước đi một bước ngắn, mặt đất dưới chân em có vẻ phẳng (đó là tuyến tính). Nhưng nếu em nhảy vọt đi mười mét, em có thể lăn xuống vực! Tương tự, nếu đối tượng di chuyển quá nhanh trong video, phép xấp xỉ bị phá vỡ, sai số trở nên khổng lồ và thuật toán bị "lạc lối".
+ 
+Slide 13: GIẢI PHÁP CƠ HỌC: KIM TỰ THÁP ẢNH (Image Pyramid)
+Người 1: Vậy làm sao để khắc phục việc vật thể di chuyển quá nhanh? Các nhà nghiên cứu đã nghĩ ra một giải pháp cơ học cực kỳ thông minh: Kim tự tháp Ảnh. Ý tưởng là tạo ra nhiều phiên bản của bức ảnh với độ phân giải giảm dần từ dưới lên trên. Tầng đáy là ảnh gốc với độ phân giải cao nhất. Tầng giữa là độ phân giải trung bình. Và tầng chóp là ảnh đã được thu nhỏ nhất.
+Người 2: Thu nhỏ ảnh lại thì có ích gì cho việc tính toán chuyển động vậy thầy?
+Người 1: Đây chính là sự kỳ diệu của tỷ lệ! Em cứ tưởng tượng em đứng ở dưới đường nhìn một chiếc xe máy chạy ngang qua, em sẽ thấy nó phóng rất nhanh. Nhưng nếu em ngồi trên máy bay nhìn xuống, chiếc xe đó di chuyển trông như một con kiến đang bò chậm chạp. Trong ảnh cũng vậy, một chuyển động khổng lồ gây lỗi ở ảnh gốc, khi bị thu nhỏ lại ở tầng chóp, nó sẽ biến thành một chuyển động vi mô chỉ tầm 1 đến 2 pixel. Nhờ thế, thuật toán Lucas-Kanade lại có thể hoạt động bình thường!
+ 
+Slide 14: QUY TRÌNH ƯỚC LƯỢNG ĐA ĐỘ PHÂN GIẢI
+Người 1: Và để áp dụng kim tự tháp ảnh, chúng ta sử dụng quy trình tìm kiếm phân cấp từ thô đến tinh. Gồm 3 bước liên hoàn. Bước 1 ở Mức thô nhất (tức là tầng chóp): thuật toán chạy trên ảnh nhỏ nhất để tìm ra véc-tơ tịnh tiến cơ bản.
+Người 2: Tìm xong ở tầng trên cùng thì mình làm gì tiếp theo ạ?
+Người 1: Ta sang Bước 2 là Chuyển giao: Véc-tơ vừa tìm được sẽ được nhân đôi lên và truyền xuống tầng bên dưới (tầng có độ phân giải cao hơn) để làm hạt giống, hay còn gọi là dự đoán ban đầu. Tiếp đến là Bước 3 - Tinh chỉnh: Tại tầng dưới này, ta lại áp dụng Lucas-Kanade trong phạm vi hẹp để tinh chỉnh độ chính xác đạt tới mức sub-pixel (siêu nhỏ). Quy trình này cứ lặp đi lặp lại, truyền từ trên chóp xuống tận tầng đáy là ảnh gốc.
+Người 2: Cách này giống hệt như họa sĩ vẽ tranh thầy nhỉ! Đầu tiên phác thảo những mảng khối lớn (mức thô), sau đó zoom kỹ vào từng chi tiết để tỉa tót lại cho thật sắc nét (tinh chỉnh).
+ 
+Slide 15: TỔNG KẾT TIẾT 1 & MỞ KHÓA TIẾT 2
+Người 1: Tuyệt vời, em nắm bắt vấn đề rất tốt! Chà, vậy là chúng ta đã đi đến phần Tổng kết của Tiết 1. Hôm nay các em cần nhớ ba điểm cốt lõi: Thứ nhất, ta dùng cơ chế cập nhật gia số Lucas-Kanade để cực tiểu hóa hàm mất mát ét-ét-đê. Thứ hai, ta dùng Khai triển Taylor để giải quyết sự phi tuyến tính. Và thứ ba, ta dùng kiến trúc Kim tự tháp đa độ phân giải để khắc phục điểm yếu với những chuyển động lớn.
+Người 2: Bài học hôm nay rất thú vị. Vậy Tiết 2 mình sẽ học gì tiếp theo thưa thầy?
+Người 1: Thầy sẽ để lại cho em một vấn đề mở đường. Từ đầu đến giờ, mô hình véc-tơ u, v của chúng ta chỉ áp dụng được cho "chuyển động tịnh tiến", tức là vật thể đi ngang, đi dọc, đi chéo trên một mặt phẳng. Nhưng trong thực tế, nếu chiếc camera bị xoay nghiêng, hoặc chiếc xe tiến lại gần camera khiến nó to dần lên (phóng to), hoặc vật thể bị biến dạng thì mô hình u, v hiện tại hoàn toàn "bó tay". Để giải quyết bài toán phức tạp này, hẹn gặp lại các em trong Tiết 2: Khám phá Mô hình Chuyển động Tham số. Chào các em!
+

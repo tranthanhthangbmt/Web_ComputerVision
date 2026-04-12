@@ -8,7 +8,7 @@ Dưới đây là nội dung chi tiết được thiết kế riêng cho **Phầ
 
 ### PHẦN 1.1: Thiết lập môi trường và Cài đặt các gói thư viện (Environment Setup)
 
-**Nội dung Text (Markdown Cell):**
+
 > Môi trường phát triển là tập hợp các công cụ và phần mềm cho phép chúng ta viết, kiểm tra và gỡ lỗi mã. Python là ngôn ngữ được sử dụng phổ biến nhất cho Machine Learning nhờ cú pháp đơn giản, tính linh hoạt và hệ sinh thái thư viện vô cùng mạnh mẽ.
 > 
 > Mặc dù các môi trường đám mây như Google Colab thường đã cài đặt sẵn phần lớn các thư viện cốt lõi cho Data Science (như `numpy`, `pandas`, `matplotlib`, `scikit-learn`), chúng ta vẫn cần cài đặt bổ sung hoặc cập nhật một số công cụ chuyên dụng để phục vụ cho các kỹ thuật Học sâu (Deep Learning) nâng cao trong chương này:
@@ -53,7 +53,7 @@ Dưới đây là nội dung chi tiết cho **Phần 1.2**, tiếp nối mạch 
 
 ### PHẦN 1.2: Khai báo thư viện và Thiết lập cấu hình ban đầu (Imports & Configuration)
 
-**Nội dung Text (Markdown Cell):**
+
 > Sau khi đã cài đặt xong các công cụ cần thiết, bước tiếp theo là khai báo (import) chúng vào không gian làm việc. Trong phần này, chúng ta sẽ thực hiện các cấu hình quan trọng sau:
 > 
 > 1. **Khai báo thư viện cốt lõi:** Import `tensorflow` (thường được viết tắt là `tf`), Keras API nằm trong `tf.keras`, `numpy` để xử lý mảng tính toán, và `matplotlib.pyplot` để trực quan hóa dữ liệu và vẽ đồ thị.
@@ -107,7 +107,7 @@ Dưới đây là nội dung chi tiết cho **Phần 2.1: Tải tập dữ liệ
 
 ### PHẦN 2.1: Tải tập dữ liệu hình ảnh (Loading Dataset)
 
-**Nội dung Text (Markdown Cell):**
+
 > Trong bài thực hành này, chúng ta sẽ sử dụng tập dữ liệu **Fashion MNIST**. Đây là một tập dữ liệu tiêu chuẩn thường được dùng để thay thế cho tập MNIST truyền thống (nhận dạng chữ số) do có độ phức tạp cao hơn. Tập dữ liệu này bao gồm 70.000 hình ảnh thang độ xám (grayscale) có kích thước $28 \times 28$ pixel, đại diện cho các mặt hàng thời trang và được chia thành 10 lớp.
 >
 > Keras cung cấp sẵn một số hàm tiện ích để lấy và tải các tập dữ liệu phổ biến một cách dễ dàng. Tập dữ liệu khi tải về đã được xáo trộn và chia sẵn thành hai phần: một tập huấn luyện (60.000 hình ảnh) và một tập kiểm tra (10.000 hình ảnh). Tuy nhiên, trong học máy thực tế, chúng ta luôn cần một tập xác thực (validation set) để theo dõi và tránh quá khớp (overfitting) trong quá trình huấn luyện. Do đó, chúng ta sẽ giữ lại 5.000 hình ảnh cuối cùng từ tập huấn luyện để làm tập xác thực.
@@ -148,7 +148,7 @@ Dưới đây là nội dung chi tiết cho **Phần 2.2: Chuẩn hóa và Trự
 
 ### PHẦN 2.2: Chuẩn hóa và Trực quan hóa dữ liệu (Normalization & Visualization)
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Chuẩn hóa dữ liệu (Data Normalization):**
 > Như đã thấy ở phần trước, cường độ của mỗi pixel trong ảnh ban đầu được biểu diễn bằng một số nguyên nằm trong khoảng từ 0 (màu đen/trắng tùy hệ màu) đến 255. Tuy nhiên, các Mạng nơ-ron nhân tạo (ANN/CNN) thường hoạt động hiệu quả và hội tụ nhanh hơn nhiều khi các giá trị đầu vào được giữ ở một khoảng nhỏ, thường là quanh mốc 0. Do đó, để đơn giản hóa quá trình tiền xử lý, chúng ta sẽ chuẩn hóa dữ liệu bằng cách chia toàn bộ cường độ pixel cho `255.0`, giúp chuyển đổi kiểu dữ liệu thành số thực (float) và thu hẹp dải giá trị về khoảng ``.
 > 
@@ -202,7 +202,7 @@ Dưới đây là nội dung chi tiết cho **Phần 3.1** để bạn thêm và
 
 ### PHẦN 3.1: Mạng AlexNet - Cột mốc lịch sử & Khối trích xuất đặc trưng
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Sự ra đời của AlexNet**
 > AlexNet được phát triển bởi Alex Krizhevsky, Ilya Sutskever và Geoffrey Hinton, đã giành chiến thắng áp đảo trong cuộc thi ILSVRC 2012 khi giảm tỷ lệ lỗi top-5 xuống chỉ còn 17%, bỏ xa đối thủ thứ hai (26%). Kiến trúc này kế thừa mạng LeNet-5 cổ điển nhưng có quy mô lớn hơn, sâu hơn và là mạng đầu tiên xếp chồng trực tiếp các lớp tích chập lên nhau thay vì bắt buộc xen kẽ một lớp gộp (pooling) sau mỗi lớp tích chập.
 >
@@ -266,7 +266,7 @@ Dưới đây là nội dung chi tiết cho **Phần 3.2: Khối phân loại v�
 
 ### PHẦN 3.2: Mạng AlexNet - Khối phân loại (Fully Connected) & Kỹ thuật Dropout
 
-**Nội dung Text (Markdown Cell):**
+
 > **3. Khối Phân loại và Kỹ thuật Dropout**
 > Sau khi đi qua hàng loạt các lớp tích chập và gộp, dữ liệu không gian 2D sẽ được "làm phẳng" (Flatten) thành một vector 1D để đưa vào các lớp kết nối đầy đủ (Fully Connected - FC), đóng vai trò như một bộ phân loại truyền thống. 
 >
@@ -325,7 +325,7 @@ Dưới đây là nội dung chi tiết cho **Phần 4.1: Cấu trúc dạng kh�
 
 ### PHẦN 4.1: Mạng VGG16 - Sức mạnh của sự đơn giản và Cấu trúc dạng khối
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Sự ra đời và Triết lý thiết kế của VGGNet**
 > VGGNet được phát triển bởi Karen Simonyan và Andrew Zisserman (thuộc Nhóm VGG, Đại học Oxford) và là Á quân của thử thách ILSVRC 2014. Trái ngược với các kiến trúc phức tạp, VGG nổi bật với triết lý thiết kế **cổ điển, cực kỳ đơn giản và mạch thẳng**. 
 > 
@@ -381,7 +381,7 @@ Dưới đây là nội dung chi tiết cho **Phần 4.2: Kế thừa tri thức
 
 ### PHẦN 4.2: Mạng VGG16 - Kế thừa tri thức với Keras Applications (Pre-trained Model)
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Thách thức của VGG16 và Giải pháp**
 > Mặc dù VGG16 có cấu trúc đơn giản, nó lại sở hữu một khối lượng tham số khổng lồ (lên tới khoảng **138 triệu tham số**), đòi hỏi tới hàng tỷ phép toán cho mỗi lần dự đoán. Việc huấn luyện một mạng sâu như vậy từ con số 0 (from scratch) vô cùng tốn kém và cực kỳ dễ dẫn đến quá khớp (overfitting) nếu tập dữ liệu của bạn nhỏ. 
 > 
@@ -426,7 +426,7 @@ Dưới đây là nội dung chi tiết để bạn thêm vào Jupyter Notebook:
 
 ### PHẦN 5.1: GoogLeNet và Đột phá mở rộng chiều ngang (Inception Module)
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Sự ra đời của GoogLeNet**
 > GoogLeNet (hay Inception-v1) được phát triển bởi nhóm nghiên cứu tại Google và đã giành chiến thắng tại thử thách ILSVRC 2014 với tỷ lệ lỗi top-5 dưới 7%. Điều đáng kinh ngạc là dù sâu hơn rất nhiều, GoogLeNet lại sử dụng tham số cực kỳ hiệu quả: mạng chỉ có khoảng 6 triệu tham số, ít hơn 10 lần so với AlexNet (~60 triệu).
 >
@@ -504,7 +504,7 @@ Dưới đây là nội dung chi tiết cho **Phần 5.2: Hoàn thiện GoogLeNe
 
 ### PHẦN 5.2: Hoàn thiện GoogLeNet - Global Average Pooling và Bộ phân loại phụ
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Kiến trúc tổng thể của GoogLeNet**
 > Xương sống của GoogLeNet là một ngăn xếp cực sâu bao gồm **9 mô-đun Inception** được xếp chồng lên nhau, xen kẽ với các lớp gộp cực đại (Max Pooling) để giảm độ phân giải không gian của ảnh và tăng tốc độ tính toán. Mặc dù rất sâu, nhưng nhờ các lớp thắt cổ chai $1 \times 1$, GoogLeNet chỉ có khoảng 6 triệu tham số (ít hơn 10 lần so với AlexNet).
 >
@@ -577,7 +577,7 @@ Dưới đây là nội dung chi tiết cho **Phần 5.2: Hoàn thiện GoogLeNe
 
 ### PHẦN 5.2: Hoàn thiện GoogLeNet - Global Average Pooling và Bộ phân loại phụ
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Kiến trúc tổng thể của GoogLeNet**
 > Xương sống của GoogLeNet là một ngăn xếp cực sâu bao gồm **9 mô-đun Inception** được xếp chồng lên nhau, xen kẽ với các lớp gộp cực đại (Max Pooling) để giảm độ phân giải không gian của ảnh và tăng tốc độ tính toán. Mặc dù rất sâu, nhưng nhờ các lớp thắt cổ chai $1 \times 1$, GoogLeNet chỉ có khoảng 6 triệu tham số (ít hơn 10 lần so với AlexNet).
 >
@@ -655,7 +655,7 @@ Dưới đây là nội dung chi tiết cho phần này để bạn thêm vào J
 
 ### PHẦN 6.1: Đột phá chiều sâu với Mạng ResNet - Học thặng dư và Khối Residual Unit
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Rào cản của mạng học sâu: Triệt tiêu đạo hàm**
 > Khi các mạng nơ-ron trở nên quá sâu (ví dụ hàng chục hay hàng trăm lớp), chúng gặp phải một rào cản tối ưu hóa nghiêm trọng gọi là hiện tượng **Triệt tiêu đạo hàm (Vanishing Gradients)**. Trong quá trình lan truyền ngược (backpropagation), tín hiệu gradient khi truyền về các lớp đầu tiên bị suy giảm đến mức gần như biến mất, khiến trọng số không được cập nhật và mạng ngừng học. Điều này khiến một mạng sâu truyền thống thậm chí còn hoạt động kém hơn một mạng nông.
 >
@@ -730,7 +730,7 @@ Dưới đây là nội dung chi tiết cho **Phần 6.2: Hoàn thiện kiến t
 
 ### PHẦN 6.2: Đột phá chiều sâu với Mạng ResNet - Hoàn thiện kiến trúc ResNet-34
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Xây dựng ngăn xếp ResNet-34 hoàn chỉnh**
 > ResNet-34 là một mạng gồm 34 lớp có trọng số, được cấu tạo bằng cách xếp chồng các Đơn vị thặng dư (Residual Units - RU) lên nhau. Mạng bắt đầu và kết thúc gần giống với kiến trúc GoogLeNet, với phần gốc là một lớp tích chập $7 \times 7$ và một lớp gộp cực đại (Max Pooling).
 >
@@ -793,7 +793,7 @@ Bạn đã sẵn sàng để chuyển sang **Phần 7: Tối ưu cho thiết b�
 
 ### PHẦN 7.1: Tối ưu cho thiết bị di động - Sự dịch chuyển sang Edge Computing và Tích chập tách biệt chiều sâu
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Sự dịch chuyển sang Edge Computing (Điện toán biên)**
 > Các mạng CNN kinh điển như VGG hay ResNet sở hữu độ chính xác rất cao nhưng lại mang nhược điểm chí mạng: dung lượng khổng lồ và chi phí tính toán (FLOPs) quá lớn. Điều này khiến việc chạy trực tiếp chúng trên các thiết bị di động, hệ thống nhúng (IoT) hay trình duyệt Web là gần như bất thi. 
 > 
@@ -856,7 +856,7 @@ Dưới đây là nội dung chi tiết cho **Phần 7.2: MobileNetV2 - Khối t
 
 ### PHẦN 7.2: Sự tiến hóa lên MobileNetV2 và Ma trận lựa chọn mô hình
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Cải tiến của MobileNetV2: Khối thắt cổ chai đảo ngược (Inverted Residuals)**
 > Nếu như ResNet truyền thống thiết kế một khối thặng dư theo trình tự: *Thu hẹp (bằng tích chập 1x1) -> Tích chập (3x3) -> Mở rộng (bằng 1x1)*, thì MobileNetV2 thiết kế lại hoàn toàn luồng dữ liệu này theo hướng ngược lại (đảo ngược) nhằm bảo toàn tối đa thông tin. Một khối MobileNetV2 bao gồm 3 bước:
 > *   **Bước 1 - Mở rộng (Expand):** Dùng tích chập $1 \times 1$ để tăng mạnh số lượng kênh (ngược với ResNet).
@@ -927,7 +927,7 @@ Chào bạn, chúng ta sẽ tiếp tục xây dựng Notebook với **Phần 8: 
 
 ### PHẦN 8.1: Cơ chế chú ý (Attention) và Mạng nén - kích thích SENet (Squeeze-and-Excitation)
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Sự ra đời của SENet và Cơ chế Attention**
 > Mạng nén và kích thích (Squeeze-and-Excitation Network - SENet) là kiến trúc đã giành chiến thắng vang dội tại thử thách ILSVRC 2017 với tỷ lệ lỗi top-5 giảm xuống mức đáng kinh ngạc chỉ còn **2.25%**. 
 > 
@@ -996,7 +996,7 @@ Dưới đây là nội dung chi tiết cho **Phần 8.2: Tích hợp Khối SE 
 
 ### PHẦN 8.2: Tính tương thích linh hoạt - Xây dựng SE-ResNet và SE-Inception
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Triết lý "Cắm và Chạy" (Plug-and-Play)**
 > Như đã tìm hiểu ở phần trước, mạng SENet đã giành chiến thắng tại ILSVRC 2017 với tỷ lệ lỗi top-5 ở mức đáng kinh ngạc là 2.25%. Điều làm nên sự vĩ đại của SENet không phải là việc đập đi xây lại từ đầu, mà là việc nó mở rộng và tăng cường các kiến trúc xuất sắc hiện có (như mạng Inception và ResNet). 
 >
@@ -1067,7 +1067,7 @@ Như bạn yêu cầu, mình sẽ chia phần này thành 2 mục. Dưới đây
 
 ### PHẦN 9.1: Học chuyển giao (Transfer Learning) - Triết lý "Đứng trên vai người khổng lồ" và Trích xuất đặc trưng
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Triết lý Học chuyển giao (Transfer Learning)**
 > Thay vì huấn luyện một mô hình từ con số 0 (từ đầu) vốn cực kỳ tốn kém và dễ dẫn đến quá khớp (overfit) khi dữ liệu nhỏ, Học chuyển giao áp dụng triết lý "Đứng trên vai người khổng lồ". Kỹ thuật này tận dụng một mô hình đã được huấn luyện sẵn (Pre-trained CNN) trên các tập dữ liệu khổng lồ (như ImageNet) để giải quyết một bài toán mới tương tự.
 > 
@@ -1127,7 +1127,7 @@ Dưới đây là nội dung chi tiết cho **Phần 9.2: Học chuyển giao (T
 
 ### PHẦN 9.2: Học chuyển giao (Transfer Learning) - Giai đoạn Tinh chỉnh (Fine-Tuning)
 
-**Nội dung Text (Markdown Cell):**
+
 > **1. Khái niệm Tinh chỉnh (Fine-Tuning)**
 > Sau khi lớp Head mới đã được huấn luyện sơ bộ và ổn định (ở Phần 9.1), chúng ta bước sang giai đoạn 2: Tinh chỉnh. Lúc này, chúng ta sẽ **mở khóa (unfreeze) một vài lớp tích chập ở tầng cao nhất** của mô hình cơ sở (Base Model) và tiếp tục huấn luyện toàn bộ mạng.
 >
@@ -1190,7 +1190,7 @@ Dưới đây là nội dung chi tiết cho **Phần 10.1** để bạn thêm v�
 
 ### PHẦN 10.1: Bài tập thực hành - Xây dựng và Phân tích Kiến trúc Mạng
 
-**Nội dung Text (Markdown Cell):**
+
 > ### Bài tập 1: Hoàn thiện kiến trúc ResNet-34
 > Dựa trên kiến thức ở Phần 6, bạn hãy tự tay xây dựng một mô hình ResNet-34 hoàn chỉnh. 
 > **Yêu cầu:** 
@@ -1284,7 +1284,7 @@ Dưới đây là nội dung chi tiết cho **Phần 10.2: Bài tập Ứng dụ
 
 ### PHẦN 10.2: Bài tập thực hành - Ứng dụng Transfer Learning và Theo dõi huấn luyện với Callbacks
 
-**Nội dung Text (Markdown Cell):**
+
 > ### Bài tập 3: Triển khai Học chuyển giao (Transfer Learning) với tập dữ liệu CIFAR-10
 > Ở phần 9, chúng ta đã tìm hiểu lý thuyết về Học chuyển giao. Bây giờ là lúc bạn tự tay thực hành.
 > **Yêu cầu:**

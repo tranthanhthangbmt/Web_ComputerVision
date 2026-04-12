@@ -1,0 +1,101 @@
+﻿Slide 1: TRANG TIÊU ĐỀ: Tiết 2/6: Chuyển động Tham số & Ứng dụng Thực tiễn
+Người 1: Chào các em. Chào mừng các em quay trở lại với Chương 8 về Dự đoán chuyển động. Hôm nay, chúng ta sẽ bước vào Tiết 2 với một chủ đề cực kỳ thú vị: Chuyển động tham số. Mục tiêu quan trọng nhất của bài hôm nay là phá vỡ những giới hạn của mô hình tịnh tiến cơ bản, từ đó xây dựng một hệ thống Ổn định Video, hay còn gọi là chống rung video.
+Người 2: Chống rung video có phải giống như tính năng trên điện thoại của em không thầy? Kiểu như khi em vừa chạy bộ vừa quay vlog, video gốc thì giật tung lên nhưng qua xử lý thì lại mượt mà như đang lướt trên thanh ray ấy ạ?
+Người 1: Hoàn toàn chính xác! Để làm được phép thuật đó, máy tính không thể chỉ dùng các phép dời hình đơn giản. Nếu nhìn vào hình minh họa trên slide, em sẽ thấy không gian bị biến đổi từ một mặt lưới phẳng sang một mặt lưới cong và xoắn lại trong không gian ba chiều. Đó chính là những biến đổi phức tạp mà ta sẽ tìm hiểu ngay sau đây.
+ 
+Slide 2: GIỚI HẠN CỦA MÔ HÌNH TỊNH TIẾN (TRANSLATION MODEL)
+Người 1: Trước khi đi vào cái phức tạp, hãy nhìn lại mô hình tịnh tiến mà chúng ta đã biết. Nó có một điểm yếu chết người: nó chỉ có 2 Bậc tự do, biểu diễn bằng hai biến u và v.
+Người 2: Hai bậc tự do tức là nó chỉ biết trượt sang trái, sang phải, hoặc đẩy lên, đẩy xuống thôi đúng không ạ? Giống như mình lấy tay di chuyển một bức ảnh in trên mặt bàn.
+Người 1: Đúng thế! Nó xử lý rất tốt các chuyển động quét ngang camera, hay còn gọi là Pan, và chuyển động nghiêng máy lên xuống, gọi là Tilt. Nhưng nếu em cầm camera tiến lại gần để Thu phóng, tức là Zoom, hay em lắc cổ tay xoay nghiêng camera, tức là Roll, thì mô hình này hoàn toàn bất lực. Giải pháp duy nhất lúc này là phải nâng cấp lên một "Mô hình chuyển động toàn cục" với bộ tham số đủ mạnh để chi phối sự biến dạng của toàn bộ khung cảnh.
+ 
+Slide 3: BIẾN ĐỔI AFFINE: MỞ RỘNG LÊN 6 BẬC TỰ DO (6 DoF)
+Người 1: Và ứng cử viên đầu tiên giải cứu chúng ta là Biến đổi Affine. Mô hình này mở rộng không gian lên 6 Bậc tự do bằng cách sử dụng một ma trận hai nhân ba. Công thức toán học của nó đọc như sau:
+Người 1: Tọa độ x phẩy mới, sẽ bằng: a không không nhân x, cộng a không một nhân y, cộng với lượng tịnh tiến tê x. Tương tự, tọa độ y phẩy mới, sẽ bằng: a một không nhân x, cộng a một một nhân y, cộng lượng tịnh tiến tê y.
+Người 2: Chà, từ 2 tham số lên hẳn 6 tham số. Vậy 4 tham số mới này mang lại phép thuật gì vậy thầy?
+Người 1: Nhờ 6 tham số này, ngoài phép Tịnh tiến, ta làm được ba phép biến đổi mới: Thứ nhất là Xoay tròn. Thứ hai là Thu phóng to nhỏ. Và thứ ba là Kéo xô, tưởng tượng như em cầm một hình chữ nhật và xô lệch nó thành hình bình hành vậy. Đặc tính cốt lõi của Affine là sau khi vặn vẹo thế nào đi nữa, các đường thẳng vẫn là đường thẳng, và các đường song song thì mãi mãi song song với nhau.
+ 
+Slide 4: BIẾN ĐỔI HOMOGRAPHY (PHỐI CẢNH): 8 BẬC TỰ DO (8 DoF)
+Người 2: Nhưng thầy ơi, ngoài thực tế là không gian 3D. Ví dụ em đứng giữa đường ray xe lửa nhìn ra xa, hai thanh ray song song trông như đang chụm lại ở phía chân trời. Biến đổi Affine giữ tính song song thì làm sao mô phỏng được cái này ạ?
+Người 1: Một ví dụ quá xuất sắc! Đó chính là lý do Affine phải nhường sân khấu cho biến đổi Homography, hay còn gọi là Biến đổi Phối cảnh, với 8 Bậc tự do. Điểm ăn tiền của nó nằm ở hệ phương trình có chứa phép chia cho chiều sâu. Phương trình của nó sẽ là:
+Người 1: Tọa độ x phẩy bằng một phân số. Tử số là: hát không không nhân x, cộng hát không một nhân y, cộng hát không hai. Và tất cả chia cho mẫu số là: hát hai không nhân x, cộng hát hai một nhân y, cộng một. Trục y phẩy cũng bị chia bởi mẫu số y hệt như vậy.
+Người 2: Phép chia phi tuyến tính này tạo ra hiệu ứng xa gần đúng không ạ?
+Người 1: Chính xác. Biến đổi này phá vỡ tính song song, khiến các vật thể ở xa thì nhỏ lại, ở gần thì to ra, tạo nên ảo giác chiều sâu 3D trên mặt phẳng 2D. Rất chân thực!
+ 
+Slide 5: MA TRẬN SO SÁNH ĐẶC TRƯNG BIẾN ĐỔI KHÔNG GIAN
+Người 1: Để chốt lại, chúng ta hãy nhìn vào bảng ma trận so sánh 3 loại biến đổi này nhé.
+Người 2: Để em thử tóm tắt xem đúng không nha thầy! Mô hình Tịnh tiến có 2 bậc tự do, giữ nguyên mọi hình dáng, góc độ, chỉ dùng để theo dõi, tracking các vật thể đơn giản đang trượt ngang dọc.
+Người 1: Đúng. Còn Affine?
+Người 2: Affine có 6 bậc tự do, bảo toàn được đường thẳng và tính song song. Nó đủ nhanh và nhẹ để làm công cụ hoàn hảo cho các hệ thống chống rung video cơ bản trên điện thoại.
+Người 1: Tuyệt vời! Còn trùm cuối Homography thì sở hữu tận 8 bậc tự do. Do có hiệu ứng xa gần, nó không giữ được tính song song mà chỉ bảo toàn được các đường thẳng.
+Người 2: Em đoán sức mạnh này sẽ được dùng cho những tác vụ xịn xò hơn, ví dụ như ghép hàng chục bức ảnh lại thành một ảnh Panorama toàn cảnh, hay là chèn vật thể ảo vào đời thực trong các ứng dụng thực tế tăng cường AR đúng không thầy?
+Người 1: Chuẩn không cần chỉnh! Sự lựa chọn giữa chúng luôn là bài toán đánh đổi giữa tốc độ xử lý của phần cứng và độ phức tạp của ứng dụng thực tế. Bây giờ chúng ta sẽ nghỉ giải lao vài phút trước khi sang phần tối ưu hóa toán học nhé!
+ 
+Slide 6: TỐI ƯU HÓA: LUCAS-KANADE CHO MÔ HÌNH THAM SỐ
+Người 1: Chào mừng các em quay lại sau giờ giải lao. Chúng ta vừa thống nhất được việc phải dùng các mô hình 6 hoặc 8 tham số. Nhưng câu hỏi đặt ra là: Làm sao máy tính tính ra được các con số đó? Lời giải nằm ở thuật toán tối ưu Lucas-Kanade mở rộng.
+Người 2: Em nhớ thuật toán này! Trước đây mình dùng nó để tìm véc-tơ tịnh tiến nhỏ nhỏ x và y thôi đúng không thầy?
+Người 1: Đúng vậy. Nhưng giờ đây, thay vì tìm tịnh tiến đơn giản, thuật toán phải giải quyết cả một tập hợp tham số p định hình sự biến dạng toàn cục. Công thức xấp xỉ lỗi bây giờ sẽ là: E của p cộng delta p. Trong đó, delta p chính là lượng tinh chỉnh gia số nhỏ xíu mà ta cần tìm để đắp vào bộ tham số chuyển động.
+Người 2: Vậy điểm mấu chốt của công thức này nằm ở đâu ạ?
+Người 1: Nó nằm ở Ma trận Jacobian. Nếu trước đây ta tính đạo hàm ảnh theo không gian x, y, thì bây giờ Jacobian thể hiện đạo hàm của ảnh theo chính các tham số chuyển động của mô hình. Hiểu đơn giản là: "Nếu tôi vặn nghiêng ảnh đi một chút, độ sáng của các điểm ảnh sẽ thay đổi như thế nào?".
+ 
+Slide 7: KIẾN TRÚC GIẢI QUYẾT: HỆ PHƯƠNG TRÌNH CHUẨN
+Người 1: Để giải được bài toán đó, hệ thống sẽ chạy một vòng lặp tối ưu gồm 5 bước liên hoàn.
+Người 2: Giống như mình đang dò đường xuống núi trong sương mù đúng không thầy? Cứ đi từng bước nhỏ một.
+Người 1: Một sự liên tưởng tuyệt vời! Ở Bước 1, ta khởi tạo bộ tham số p ban đầu bằng 0, coi như chưa vặn vẹo gì cả. Bước 2, tính ma trận Jacobian như thầy vừa nói. Bước 3, từ Jacobian ta xây dựng lên ma trận Hessian, gọi tắt là ma trận A lớn.
+Người 2: Vậy Bước 4 chắc chắn là giải phương trình rồi.
+Người 1: Chính xác. Ta giải hệ phương trình tuyến tính: A lớn nhân delta p bằng b nhỏ. Giải ra được delta p, ta bước sang Bước 5 là cập nhật tham số: lấy p cũ cộng với delta p vừa tìm được để ra hình dáng mới. Thuật toán sẽ tiếp tục vòng lặp này cho tới khi delta p cực kỳ nhỏ, tức là ta đã xuống đến đáy thung lũng, thuật toán hội tụ và dừng lại.
+ 
+Slide 8: ỨNG DỤNG THỰC TIỄN: HỆ THỐNG ỔN ĐỊNH VIDEO
+Người 1: Toán học khô khan kết thúc ở đây! Bây giờ chúng ta áp dụng ngay những ma trận đó vào "Quy trình Ổn định Video Tự động" – Video Stabilization. Pipeline này có 3 giai đoạn chính. Em thử đoán xem?
+Người 2: Giai đoạn 1 chắc chắn là Ước lượng chuyển động rồi, ta sẽ dùng Affine hoặc Homography để tính xem khung hình bị lệch bao nhiêu so với khung hình trước.
+Người 1: Rất tốt! Tiếp theo, Giai đoạn 2 là Làm mượt quỹ đạo. Máy tính sẽ dùng một bộ lọc để triệt tiêu các pha giật cục. Và cuối cùng, Giai đoạn 3 là Biến đổi ảnh, hay Image Warping. Ta dùng ma trận vừa tính được để vặn ngược khung hình lại, sinh ra một đoạn video mượt mà như dùng thiết bị chống rung gimbal.
+ 
+Slide 9: TRÁI TIM CỦA HỆ THỐNG: LÀM MƯỢT QUỸ ĐẠO
+Người 1: Để thầy giải thích kỹ hơn Giai đoạn 2, vì đây là "trái tim" của cả hệ thống. Em hãy nhìn vào đồ thị Vị trí theo Thời gian trên màn hình.
+Người 2: Em thấy có hai đường. Một đường màu xám nhấp nhô răng cưa liên tục, và một đường màu cam lượn sóng rất êm. Đường răng cưa là do tay mình bị run khi cầm máy quay đúng không ạ?
+Người 1: Quá chuẩn! Đường răng cưa đó là chuyển động gốc, chứa rất nhiều rung lắc ngẫu nhiên ở tần số cao. Nhưng ẩn bên trong đó là đường màu cam – tức là chuyển động có chủ ý của người quay, như là việc em đang cố tình quét máy từ trái sang phải, nó mang tần số thấp.
+Người 2: Vậy mũi tên hai chiều nối giữa đường răng cưa và đường cong mượt là gì vậy thầy?
+Người 1: Đó chính là Lượng bù trừ! Máy tính đo khoảng cách chênh lệch này để biết cần phải đẩy khung hình ngược lại bao nhiêu ở Giai đoạn 3. Mục tiêu tối thượng của ta là "lọc" sạch nhiễu ngẫu nhiên, chỉ giữ lại quỹ đạo quay phim tự nhiên nhất.
+ 
+Slide 10: THÁCH THỨC HỆ QUẢ: HIỆN TƯỢNG KHUYẾT VÙNG BIÊN
+Người 1: Nhưng cái gì cũng có cái giá của nó! Khi áp dụng vặn xoắn để bù trừ, ta vấp phải một hệ quả vật lý tất yếu. Em nhìn vào hình minh họa xem có thấy gì bất thường không?
+Người 2: Ôi, khung hình bị vặn nghiêng đi, nhưng nó lại bị giới hạn bởi một cái khung viền 16:9 tiêu chuẩn. Thành ra ở bốn góc lòi ra mấy khoảng trống màu đen không có hình ảnh.
+Người 1: Góc chết đó gọi là Missing Borders, hay Hiện tượng Khuyết vùng biên. Khi em vặn ngược khung hình lại để triệt tiêu rung lắc, phần rìa của bức ảnh sẽ bị kéo tụt vào trong, để lộ ra những vùng viền hoàn toàn không chứa dữ liệu pixel nào cả.
+Người 2: Ra là vậy. Máy tính chống rung xong thì hình ảnh lại bị viền đen lẹm vào. Thế có cách nào để lấp đầy mấy cái khoảng đen xấu xí này không thầy? Hay là mình phải cắt bỏ nó đi ạ?
+Người 1: Cắt bỏ cũng là một cách, nhưng không phải cách duy nhất. Chúng ta sẽ cùng nhau điểm qua 3 chiến lược thần thánh để xử lý vấn đề này ở slide tiếp theo nhé!
+
+Slide 11: 3 CHIẾN LƯỢC XỬ LÝ VÙNG BIÊN BỊ KHUYẾT
+Người 1: Vậy là chúng ta đang đối mặt với những khoảng đen xấu xí sinh ra ở viền video sau khi đã chống rung. Có 3 "phép thuật" để xử lý việc này. Cách thứ nhất, đơn giản và phổ biến nhất: Cắt và Phóng to, hay còn gọi là Zoom-in. Ta đơn giản là xén bỏ đi phần viền đen và phóng to khu vực trung tâm lên lấp đầy khung hình.
+Người 2: Em thấy cách này trên điện thoại dùng suốt. Rất nhẹ máy, nhưng đánh đổi là video bị mất một phần góc nhìn hẹp đi và độ phân giải cũng giảm xuống đôi chút đúng không thầy?.
+Người 1: Chuẩn! Cách thứ hai xịn xò hơn nhiều, đó là Lấp đầy, thuật ngữ chuyên ngành gọi là Inpainting. Máy tính sẽ dùng thuật toán thị giác để "ảo giác", tự động phân tích xung quanh và vẽ thêm cảnh vật vào phần viền trống. Rất đẹp mắt, nhưng cực kỳ ngốn tài nguyên, nếu điện thoại của em không đủ mạnh thì không thể chống rung theo thời gian thực được.
+Người 2: Vậy cách thứ 3 là gì ạ?
+Người 1: Đó là Mượn điểm ảnh, hay phương pháp Temporal. Máy tính sẽ lùi lại vài khung hình trước, hoặc tiến tới vài khung hình sau, chắt lọc các điểm ảnh còn sót lại để đắp vá vào khoảng trống hiện tại.
+Người 2: Nghe thông minh quá! Nhưng nếu có một chiếc ô tô đang chạy ngang qua viền khung hình thì sao ạ? Mượn điểm ảnh từ lúc chiếc xe ở vị trí khác đắp vào thì có lỗi không thầy?
+Người 1: Một tư duy phản biện tuyệt vời! Điểm yếu chí mạng của cách này chính là dễ sinh ra hiện tượng bóng mờ, hay còn gọi là "ghosting", khi có vật thể động di chuyển ngang qua vùng biên.
+ 
+Slide 12: THÁCH THỨC NÂNG CAO: BIẾN DẠNG ROLLING SHUTTER
+Người 1: Ngoài góc chết màu đen, khi áp dụng ổn định video, chúng ta còn gặp một bài toán vật lý cực kỳ hóc búa mang tên: Biến dạng Rolling Shutter, hay màn trập cuộn.
+Người 2: Màn trập cuộn là sao ạ? Cảm biến camera không chụp lại toàn bộ bức ảnh trong cùng một khoảnh khắc sao thầy?
+Người 1: Không hề! Cảm biến ghi hình bằng cách quét lần lượt từng dòng từ trên xuống dưới. Khi em cầm máy quay mà rung lắc cực nhanh, các dòng thời gian ghi hình bị lệch pha nhau. Hệ quả là tạo ra hiệu ứng Jello - bức ảnh của em bị cong vênh, vặn vẹo lượn sóng y hệt như một miếng thạch Jello vậy.
+Người 2: Ái chà, vậy mô hình Affine hay Homography của mình có giúp nắn thẳng nó lại được không?
+Người 1: Rất tiếc là không! Mô hình Affine giả định toàn bộ bức ảnh tuân theo một ma trận chuyển động duy nhất, nên nó hoàn toàn bất lực trước loại biến dạng phi tuyến tính cục bộ này. Cứu sáng của bài toán này nằm ở các thuật toán siêu cấp hơn mà ta sẽ không đi sâu hôm nay.
+ 
+Slide 13: HIỆN THỰC HÓA HỆ THỐNG (OPENCV PIPELINE)
+Người 1: Nói nãy giờ, vậy để viết code cho một hệ thống chống rung cơ bản thì chúng ta làm thế nào? Cùng nhìn vào đoạn mã mô phỏng bằng thư viện OpenCV. Nó bao gồm 4 bước. Bước 1, trích xuất đặc trưng: ta dùng các thuật toán như SIFT hoặc SURF bằng lệnh "detector chấm detect And Compute" trên hai ảnh.
+Người 2: Bước 2 là khớp các cặp điểm đặc trưng đó lại với nhau bằng lệnh "matcher chấm match", đúng không ạ?.
+Người 1: Rất đúng. Bước 3 là trái tim của hệ thống: Lõi toán học. Ta gọi hàm "ci vi hai chấm find Homography" để tìm bộ 8 tham số chi phối. Ở đây, phải nạp thêm một tham số là thuật toán RANSAC để loại bỏ những điểm nhiễu bị bắt nhầm.
+Người 2: Vậy bước 4 cuối cùng chắc chắn là bù trừ rung lắc. Em thấy lệnh "ci vi hai chấm warp Perspective" – lệnh này sẽ thực hiện biến đổi không gian, nắn xoắn bức ảnh theo ma trận vừa tìm được để xuất ra video mượt mà!.
+ 
+Slide 14: ĐÁNH GIÁ HIỆU NĂNG: ĐẶT LÊN BÀN CÂN
+Người 1: Trước khi kết thúc, hãy đặt hai mô hình Homography và Affine lên bàn cân. Sự khác biệt lớn nhất giữa chúng là đánh đổi giữa Tốc độ xử lý và Bậc tự do không gian.
+Người 2: Homography có 8 bậc tự do nên nó xử lý góc nhìn 3D đỉnh hơn đúng không thầy?.
+Người 1: Đúng thế, nhưng nó cũng là một "con dao hai lưỡi". Việc tính toán nặng nề hơn, và nguy hiểm nhất là: nếu thuật toán ở bước trước bắt nhầm điểm đặc trưng, 8 tham số này có thể vặn xoắn làm bức ảnh biến dạng một cách thảm họa.
+Người 2: Thế còn Affine 6 bậc tự do thì sao ạ?
+Người 1: Affine thì ngược lại, nó rất nhẹ, tính toán chớp nhoáng, hoàn hảo để chạy theo thời gian thực trên các thiết bị di động yếu. Hơn nữa, nó cực kỳ an toàn, rất ít khi gây ra méo hình nghiêm trọng. Do đó, việc kỹ sư chọn mô hình nào luôn phải dựa trên bài toán đánh đổi giữa năng lực phần cứng và bối cảnh sử dụng.
+ 
+Slide 15: TỔNG KẾT TIẾT 2 & MỞ KHÓA TIẾT 3
+Người 1: Vậy là chúng ta đã đúc kết xong Tiết 2. Mô hình Tham số toàn cục, như Affine hay Homography, đã giải quyết triệt để các chuyển động phức tạp trên toàn khung hình, ứng dụng cực tốt vào việc Ổn định Video tự động.
+Người 2: Giờ là mình chống rung được đủ mọi thể loại rồi, thế còn giới hạn nào nữa không thầy? Chắc là chuyển sang chương khác được rồi ạ.
+Người 1: Khoan đã! Các mô hình này rất mạnh, nhưng chỉ đúng với các vật thể cứng. Thầy đặt một câu hỏi mở đường cho em: Nếu vật thể bị biến dạng đàn hồi cục bộ, ví dụ như một trái tim đang đập, một cơ bắp đang co giãn, hay nụ cười nhếch mép thì sao?. Một ma trận toàn cục áp dụng cho cả ảnh sẽ hoàn toàn thất bại!.
+Người 2: Ồ... vậy làm sao để máy tính hiểu được từng phần da thịt đang chuyển động khác nhau ạ?
+Người 1: Câu trả lời sẽ có trong Tiết 3: "Chuyển động dạng Spline". Chúng ta sẽ học cách thả một mạng lưới các điểm điều khiển cục bộ lên vật thể để bắt trọn từng nhịp co giãn. Hẹn gặp lại các em ở tiết học sau!
+

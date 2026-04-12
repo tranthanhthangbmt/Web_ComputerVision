@@ -1,0 +1,102 @@
+
+### BUỔI 13: CHƯƠNG 8 - DỰ ĐOÁN CHUYỂN ĐỘNG (PHẦN 1)
+**Thời lượng:** 3 tiết
+**Mục tiêu CĐR:** CLO1, CLO2, CLO4
+
+**Tiết 1: Giới thiệu & Phép liên kết chuyển đổi (Translational Alignment)**
+*   **Mở đầu về Xử lý Video và Chuyển động:**
+    *   Video là gì? Sự mở rộng của ảnh tĩnh theo chiều thời gian $f(x,y,t)$.
+    *   Tầm quan trọng của dự đoán chuyển động (nén video, ổn định hình ảnh, theo dõi đối tượng).
+*   **8.1. Phép liên kết chuyển đổi (Translational alignment):**
+    *   Mô hình chuyển động tịnh tiến cơ bản: Tìm sự dịch chuyển $(u, v)$ giữa 2 khung hình.
+    *   Hàm mất mát và đánh giá sai số: Tổng bình phương sai khác (Sum of Squared Differences - SSD).
+    *   Giải pháp tối ưu hóa: Sử dụng khai triển Taylor và các phương pháp gia số (incremental methods) để đạt độ chính xác sub-pixel.
+
+tốt rồi, giờ tôi cần nội dung hiển thị trên các slide, chỉ nội dung hiển thị ko cần nội dung khác. Nếu có hình minh họa từ các tài liệu thì ghi vào. Tổng số slide cho tiết 1 là 15 slide. Giờ viết nội dung chi tiết trên slide cho Tiết 1, phần 1 (slide 1-5)
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
+
+
+**Tiết 2: Chuyển động tham số (Parametric Motion)**
+*   **8.2. Chuyển động tham số:**
+    *   Giới hạn của mô hình tịnh tiến và sự cần thiết của các mô hình toàn cục (global image transformations).
+    *   Các phép biến đổi tham số: Affine (6 tham số) và Homography (8 tham số) để biểu diễn các chuyển động như xoay, thu phóng (zoom), biến dạng góc nhìn.
+*   **Ứng dụng thực tiễn:**
+    *   **Video stabilization (Ổn định video):** Cách ước lượng chuyển động nền (background motion) để loại bỏ rung lắc của camera.
+
+tốt rồi, giờ tôi cần nội dung hiển thị trên các slide, chỉ nội dung hiển thị ko cần nội dung khác. Nếu có hình minh họa từ các tài liệu thì ghi vào. Tổng số slide cho tiết 2 là 15 slide. Giờ viết nội dung chi tiết trên slide cho Tiết 2, phần 1 (slide 1-5)
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
+
+
+**Tiết 3: Chuyển động dạng Spline (Spline-based Motion) & Thực hành**
+*   **8.3. Chuyển động dạng Spline:**
+    *   Cách xử lý các biến dạng đàn hồi không đồng nhất (non-rigid/elastic deformations) mà mô hình tham số không giải quyết được.
+    *   Biểu diễn chuyển động bằng mạng lưới điểm điều khiển (Spline control grid / Quadtree spline).
+    *   **Ứng dụng:** Đăng ký ảnh y tế (Medical image registration - ví dụ: căn chỉnh ảnh chụp MRI).
+*   **Hoạt động lớp học (CLO1, CLO4):**
+    *   Giảng viên demo thuật toán liên kết ảnh đơn giản bằng OpenCV.
+    *   Sinh viên làm việc nhóm (CLO4): Đọc tài liệu chuẩn bị cho bài thuyết trình đồ án cuối kỳ.
+
+tốt rồi, giờ tôi cần nội dung hiển thị trên các slide, chỉ nội dung hiển thị ko cần nội dung khác. Nếu có hình minh họa từ các tài liệu thì ghi vào. Tổng số slide cho tiết 3 là 15 slide. Giờ viết nội dung chi tiết trên slide cho Tiết 3, phần 1 (slide 1-5).
+
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
+---
+
+### BUỔI 14: CHƯƠNG 8 - DỰ ĐOÁN CHUYỂN ĐỘNG (PHẦN 2 & TỔNG KẾT)
+**Thời lượng:** 3 tiết
+**Mục tiêu CĐR:** CLO1, CLO2, CLO3, CLO4
+
+**Tiết 4: Luồng quang (Optical Flow)**
+*   **8.4. Luồng quang (Optical flow):** *(Chỉnh lại số thứ tự từ 8.3 thành 8.4 theo logic)*
+    *   **Khái niệm:** Trường vector vận tốc biểu diễn sự dịch chuyển của từng điểm ảnh (pixel) độc lập giữa 2 khung hình.
+    *   **Phương trình ràng buộc Luồng quang (Brightness Constancy Equation):** Giả định độ sáng của điểm ảnh không đổi khi di chuyển: $I_x u + I_y v + I_t = 0$.
+    *   **Giải pháp kinh điển:**
+        *   Tối ưu hóa cục bộ (Lucas-Kanade): Giả định các pixel lân cận có chung một chuyển động.
+        *   Tối ưu hóa toàn cục (Horn-Schunck): Thêm ràng buộc về độ trơn (smoothness) của trường chuyển động.
+*   **Thực hành (CLO1, CLO2):** Giới thiệu hàm `cv2.calcOpticalFlowFarneback()` trong thư viện OpenCV.
+
+tốt rồi, giờ tôi cần nội dung hiển thị trên các slide, chỉ nội dung hiển thị ko cần nội dung khác. Nếu có hình minh họa từ các tài liệu thì ghi vào. Tổng số slide cho tiết 4 là 15 slide. Giờ viết nội dung chi tiết trên slide cho Tiết 4, phần 1 (slide 1-5)
+
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
+
+
+**Tiết 5: Deep Learning trong Luồng quang & Chuyển động phân lớp**
+*   **Luồng quang bằng Học sâu (Deep Learning approaches):**
+    *   Sự thay thế các phương pháp toán học truyền thống bằng Mạng nơ-ron: FlowNet (mô hình tiên phong), SPyNet (tiếp cận theo kim tự tháp không gian).
+    *   Mô hình hiện đại RAFT (Recurrent All-Pairs Field Transforms) cho dự đoán luồng quang có độ chính xác cao.
+*   **8.5. Chuyển động phân lớp (Layered motion):** *(Chỉnh lại số thứ tự từ 8.4)*
+    *   Mô hình hóa cảnh video thành nhiều lớp (layers) chuyển động ở các độ sâu khác nhau, giải quyết bài toán che khuất (occlusions).
+    *   **Ứng dụng thực tiễn:**
+        *   Nội suy khung hình (Frame interpolation/Slow motion).
+        *   Tách nền video (Video object segmentation) và theo dõi đối tượng (Object tracking).
+tốt rồi, giờ tôi cần nội dung hiển thị trên các slide, chỉ nội dung hiển thị ko cần nội dung khác. Nếu có hình minh họa từ các tài liệu thì ghi vào. Tổng số slide cho tiết 5 là 15 slide. Giờ viết nội dung chi tiết trên slide cho Tiết 5, phần 1 (slide 1-5)
+
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
+
+
+**Tiết 6: Trình bày đồ án và Tổng kết môn học (CLO3, CLO4)**
+*   **Tổng kết môn học:**
+    *   Ôn tập lại chuỗi quy trình Thị giác máy tính: Trích xuất đặc trưng (Sift, Surf, HOG) $\rightarrow$ Phân lớp ảnh (KNN, SVM, BoF) $\rightarrow$ Mạng học sâu (CNN, VGG, ResNet, MobileNet) $\rightarrow$ Phân tích chuỗi Video (Motion Estimation).
+*   **Hoạt động Nhóm - Đánh giá Đồ án/Bài tập lớn (CLO3, CLO4):**
+    *   Các nhóm sinh viên tiến hành báo cáo/thuyết trình dự án thực tế đã được giao từ đầu học kỳ.
+    *   Giảng viên nhận xét, đánh giá khả năng vận dụng thuật toán (CLO3) và kỹ năng làm việc nhóm (CLO4).
+tốt rồi, giờ tôi cần nội dung hiển thị trên các slide, chỉ nội dung hiển thị ko cần nội dung khác. Nếu có hình minh họa từ các tài liệu thì ghi vào. Tổng số slide cho tiết 6 là 15 slide. Giờ viết nội dung chi tiết trên slide cho Tiết 6, phần 1 (slide 1-5)
+
+---------------
+tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
+---------------
+tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)

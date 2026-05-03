@@ -56,7 +56,7 @@ Dựa trên nội dung trong file "Chương 8_Tiết 1.md" hãy tạo slide thuy
 hãy tạo infographic nội dung bài học cho tôi, từ tài liệu này. Đây là tiết 1/6 của buổi học. Trên tiêu đề cần có tiêu đề Tiết 1/6. (nội dung "Chương 8_Tiết 1.md"). 
 ++++++++++++++++++++++++++++++
 [tạo script lời thuyết trình, chỉ chọn slide cần làm]
-hãy kiểm tra 15 slide trong file "Ch8_Phần 6_Computer_Vision_Final_Session.pdf", hãy liệt kê nội dung trên từng slide, viết tiêu đề slide rồi sau đó nội dung bên trong, viết đúng thứ tự, làm cho slide 1-5 trước. Làm thật chính xác cho từng slide nhé.
+hãy kiểm tra 15 slide trong file "Ch9_Phần 2_Advanced_GAN_Evolution.pdf", hãy liệt kê nội dung trên từng slide, viết tiêu đề slide rồi sau đó nội dung bên trong, viết đúng thứ tự, làm cho slide 1-5 trước. Làm thật chính xác cho từng slide nhé.
 -----------
 tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)
 -------------
@@ -64,7 +64,7 @@ tốt đấy, tương tự, hoàn thành các slide còn lại (slide 11-15)
 
 ++++++++++++++++++++
 [select slide, script.txt (cấu trúc đầu ra), các ebook môn học]
-tốt rồi, dựa trên nội dung trên từng slide trên, giờ tôi muốn viết kịch bản cho Chương 8, Tiết 6/6 (từ nội dung các slide đã viết ở trên, "Ch8_Phần 6_Computer_Vision_Final_Session.pdf") có cấu trúc đầu ra giống như trong file "script.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, nên bổ xung thêm các ví dụ thực tế sinh động, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói.
+tốt rồi, dựa trên nội dung trên từng slide trên, giờ tôi muốn viết kịch bản cho Chương 9, Tiết 2/3 (từ nội dung các slide đã viết ở trên, "Ch9_Phần 2_Advanced_GAN_Evolution.pdf") có cấu trúc đầu ra giống như trong file "Kịch bản Chương 2_Tiết 1.txt", hãy viết lời thuyết trình cho các slide 1-5 bám sát nội dung trên các slide này, nên bổ xung thêm các ví dụ thực tế sinh động, từ script này tôi sẽ chuyển sang audio để làm video nên nếu có công thức toán thì viết dạng lời nói.
 
 ++++++++++++++++++++
 tốt đấy, tương tự, làm tiếp các slide tiếp theo (slide 6-10)

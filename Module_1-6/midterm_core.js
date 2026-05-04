@@ -2,9 +2,9 @@ console.log("🚀 [MIDTERM_CORE] ĐÃ NẠP THÀNH CÔNG HỆ THỐNG MỚI - BY
 
 const midtermApp = {
     config: {
-        totalQuestions: 40, // 4 chương × 10 câu = 40 (sẽ tăng khi thêm chương 5-8)
+        totalQuestions: 50, // 5 chương × 10 câu = 50 (sẽ tăng khi thêm chương 6-8)
         questionsPerModule: 10,
-        timeLimitMinutes: 40, // 40 phút cho 40 câu
+        timeLimitMinutes: 50, // 50 phút cho 50 câu
         allowedEmailDomain: '@donga.edu.vn',
         // Mỗi chương có thể chứa nhiều file CSV (các tiết), hệ thống sẽ gom lại rồi random
         modules: [
@@ -30,9 +30,13 @@ const midtermApp = {
                 "DB/MD_Chuong4-T1.csv",
                 "DB/MD_Chuong4-T2.csv",
                 "DB/MD_Chuong4-T3.csv"
+            ]},
+            { id: 5, name: "Chương 5 - Phân lớp ảnh", files: [
+                "DB/MD_Chuong5-T1.csv",
+                "DB/MD_Chuong5-T2.csv",
+                "DB/MD_Chuong5-T3.csv"
             ]}
             // === THÊM CHƯƠNG MỚI TẠI ĐÂY ===
-            // { id: 5, name: "Chương 5 - Phân lớp ảnh", files: ["DB/MD_Chuong5-T1.csv", ...] },
             // { id: 6, name: "Chương 6 - Mạng CNN", files: ["DB/MD_Chuong6-T1.csv", ...] },
             // { id: 7, name: "Chương 7 - Deep Learning cho TGMT", files: ["DB/MD_Chuong7-T1.csv", ...] },
             // { id: 8, name: "Chương 8 - Dự đoán chuyển động", files: ["DB/MD_Chuong8-T1.csv", ...] },

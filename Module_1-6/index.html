@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Trắc Nghiệm Sinh Viên</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Custom Config for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1F2937',
+                        light: '#F3F4F6'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.goHome()">
+                <div class="bg-primary text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800 hidden sm:block">Quiz Master</h1>
+            </div>
+            <div id="header-title"
+                class="text-sm sm:text-lg font-medium text-gray-600 truncate max-w-[200px] sm:max-w-md">
+                Trang chủ
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="openTeacherLogin()" class="text-gray-500 hover:text-mit transition-colors" title="Trang Giảng Viên">
+                    <i class="fa-solid fa-chalkboard-user text-xl"></i>
+                </button>
+                <button onclick="app.goHome()" class="text-gray-500 hover:text-primary transition-colors" title="Trang chủ trắc nghiệm">
+                    <i class="fa-solid fa-house text-xl"></i>
+                </button>
+                <a href="../index.html" class="text-gray-500 hover:text-primary transition-colors" title="Về khoá học chính">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="hidden fixed inset-0 bg-white bg-opacity-80 z-50 flex justify-center items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary"></div>
+        </div>
+
+        <!-- View: Module Selection -->
+        <div id="view-modules" class="view-section fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Chọn Học Phần</h2>
+                <p class="text-gray-600 mb-6">Lựa chọn module kiến thức bạn muốn ôn luyện hôm nay</p>
+
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <button onclick="app.showTestSetup()"
+                        class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all flex items-center">
+                        <i class="fa-solid fa-pen-to-square mr-2"></i> Tạo Đề Luyện Tập
+                    </button>
+                    <a href="midterm.html?nocache=1"
+                        class="bg-gradient-to-r from-red-600 to-rose-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:shadow-red-500/30 transform hover:-translate-y-1 transition-all flex items-center border-2 border-red-400">
+                        <i class="fa-solid fa-graduation-cap mr-2"></i> Thi Giữa Kỳ (Chuẩn MIT)
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="module-list">
+                <!-- Modules will be injected here -->
+            </div>
+        </div>
+
+        <!-- View: Test Setup -->
+        <div id="view-test-setup" class="view-section hidden fade-in max-w-2xl mx-auto">
+            <div class="mb-6 flex items-center">
+                <button onclick="app.goHome()" class="mr-4 text-gray-500 hover:text-primary">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-gray-900">Cấu Hình Bài Kiểm Tra</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Chọn các Module:</label>
+                    <div class="space-y-3" id="test-module-list">
+                        <!-- Checkboxes will be injected here -->
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <label for="question-count" class="block text-sm font-medium text-gray-700 mb-2">Số lượng câu
+                        hỏi:</label>
+                    <div class="flex items-center">
+                        <input type="number" id="question-count" min="10" max="200" value="30"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 p-2 border">
+                        <span class="ml-3 text-gray-500 text-sm">(Tối đa: <span id="max-questions">...</span>)</span>
+                    </div>
+                </div>
+
+                <button onclick="app.startCustomTest()"
+                    class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">
+                    Bắt đầu làm bài
+                </button>
+            </div>
+        </div>
+
+        <!-- View: Part Selection -->
+        <div id="view-parts" class="view-section hidden fade-in">
+            <div class="mb-6 flex items-center">
+                <button onclick="app.goHome()" class="mr-4 text-gray-500 hover:text-primary">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </button>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900" id="module-name-display">Module Name</h2>
+                    <p class="text-gray-500 text-sm">Chọn phần bài tập để bắt đầu</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="part-list">
+                <!-- Parts will be injected here -->
+            </div>
+        </div>
+
+        <!-- View: Quiz Interface -->
+        <div id="view-quiz" class="view-section hidden fade-in h-full">
+            <div class="flex flex-col lg:flex-row gap-6 h-full">
+
+                <!-- Left Column: Question Area -->
+                <div class="lg:w-3/4 flex flex-col">
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                        <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-300"
+                            style="width: 0%"></div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 flex-grow relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Câu
+                                <span id="current-question-number">1</span></span>
+                            <span id="question-status" class="text-sm font-medium text-gray-500">Chưa trả lời</span>
+                        </div>
+
+                        <h3 id="question-text"
+                            class="text-xl sm:text-2xl font-semibold text-gray-800 mb-8 leading-relaxed">
+                            Nội dung câu hỏi sẽ hiển thị ở đây?
+                        </h3>
+
+                        <div class="space-y-4" id="options-container">
+                            <!-- Options will be injected here -->
+                        </div>
+
+                        <!-- Feedback Area -->
+                        <div id="feedback-area" class="mt-6 hidden p-4 rounded-lg border-l-4">
+                            <p id="feedback-text" class="font-medium"></p>
+                        </div>
+
+                        <!-- Navigation Buttons (Mobile mostly, but useful for all) -->
+                        <div class="mt-8 flex justify-between">
+                            <button onclick="app.prevQuestion()"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                                id="btn-prev">
+                                <i class="fa-solid fa-chevron-left mr-2"></i> Trước
+                            </button>
+                            <button onclick="app.nextQuestion()"
+                                class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50"
+                                id="btn-next">
+                                Tiếp <i class="fa-solid fa-chevron-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Question Palette (Calendar Style) -->
+                <div class="lg:w-1/4">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+                        <h4 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Danh sách câu hỏi</h4>
+                        <div class="grid grid-cols-5 gap-2" id="question-palette">
+                            <!-- Question numbers will be injected here -->
+                        </div>
+
+                        <div class="mt-6 space-y-2 text-sm text-gray-600">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-gray-200 mr-2"></div> Chưa làm
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div> Đúng
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div> Sai
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div> Đang chọn
+                            </div>
+                        </div>
+
+                        <button onclick="app.backToParts()"
+                            class="w-full mt-6 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fa-solid fa-list mr-2"></i> Chọn phần khác
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 Quiz Master. Designed for Students.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    
+    <!-- Teacher Login Modal -->
+    <div id="teacher-login-modal" class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
+            <button onclick="closeTeacherLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-red-50 text-mit rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-user-shield text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800">Xác Thực Giảng Viên</h2>
+                <p class="text-gray-500 text-sm mt-2">Vui lòng nhập thông tin xác thực để truy cập bảng điểm.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Tài khoản</label>
+                    <input type="text" id="teacher-username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mit focus:border-transparent outline-none transition-all" placeholder="Nhập tài khoản...">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Mật khẩu</label>
+                    <input type="password" id="teacher-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mit focus:border-transparent outline-none transition-all" placeholder="Nhập mật khẩu..." onkeypress="if(event.key === 'Enter') checkTeacherLogin()">
+                </div>
+                
+                <div id="teacher-login-error" class="hidden p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Tài khoản hoặc mật khẩu không chính xác!
+                </div>
+                
+                <button onclick="checkTeacherLogin()" class="w-full bg-mit text-white font-bold py-3.5 rounded-xl hover:bg-red-700 transition-colors shadow-md mt-2 flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTeacherLogin() {
+            document.getElementById('teacher-login-modal').classList.remove('hidden');
+            document.getElementById('teacher-username').value = '';
+            document.getElementById('teacher-password').value = '';
+            document.getElementById('teacher-login-error').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('teacher-username').focus();
+            }, 100);
+        }
+
+        function closeTeacherLogin() {
+            document.getElementById('teacher-login-modal').classList.add('hidden');
+        }
+
+        function checkTeacherLogin() {
+            const user = document.getElementById('teacher-username').value.trim();
+            const pass = document.getElementById('teacher-password').value.trim();
+            
+            if (user === 'admin' && pass === '-Abcd1234') {
+                closeTeacherLogin();
+                // Chuyển hướng tới Google Sheets
+                window.open('https://docs.google.com/spreadsheets/d/1ZqrJNJwPyd2UvV4so1N0jqzvrX5gylhR_fZ3djw2iMg/edit?usp=sharing', '_blank');
+            } else {
+                document.getElementById('teacher-login-error').classList.remove('hidden');
+                document.getElementById('teacher-password').value = '';
+                document.getElementById('teacher-password').focus();
+            }
+        }
+    </script>
+</body>
+
+</html>

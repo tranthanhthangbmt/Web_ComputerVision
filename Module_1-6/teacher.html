@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Giảng Viên - Quiz Master</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Config for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1F2937',
+                        light: '#F3F4F6',
+                        mit: '#A31F34' /* MIT Red */
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="midterm-style.css">
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2 rounded-lg">
+                    <i class="fa-solid fa-chalkboard-user text-xl text-mit"></i>
+                </div>
+                <h1 class="text-xl font-display font-bold hidden sm:block">Trang Quản Lý Giảng Viên</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <a href="../index.html" class="text-slate-300 hover:text-white transition-colors text-sm font-medium">
+                    <i class="fa-solid fa-house mr-1"></i> Trang chủ
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 relative">
+        
+        <div class="flex justify-between items-end mb-6 border-b border-slate-200 pb-4">
+            <div>
+                <h2 class="text-3xl font-display font-bold text-slate-900">Danh Sách Điểm Thi</h2>
+                <p class="text-slate-500 mt-1 text-sm">Quản lý kết quả Kiểm tra giữa kỳ của sinh viên.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="class-filter" class="text-sm font-bold text-slate-700">Lọc theo Lớp:</label>
+                <select id="class-filter" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-mit focus:border-mit block w-40 p-2.5 font-medium shadow-sm">
+                    <option value="ALL">Tất cả các lớp</option>
+                    <!-- Options injected by JS -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase">Tổng số bài nộp</p>
+                    <p class="text-2xl font-bold text-slate-800 mt-1" id="stat-total">0</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl"><i class="fa-solid fa-file-lines"></i></div>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase">Điểm trung bình</p>
+                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="stat-avg">0.0</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl"><i class="fa-solid fa-chart-simple"></i></div>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase">Cảnh báo gian lận</p>
+                    <p class="text-2xl font-bold text-red-600 mt-1" id="stat-cheat">0</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xl"><i class="fa-solid fa-shield-halved"></i></div>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase">Lớp đang xem</p>
+                    <p class="text-2xl font-bold text-purple-600 mt-1" id="stat-class">Tất Cả</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-xl"><i class="fa-solid fa-users-rectangle"></i></div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-slate-600">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Thời gian nộp</th>
+                            <th scope="col" class="px-6 py-4">Lớp</th>
+                            <th scope="col" class="px-6 py-4">Tài khoản Sinh viên</th>
+                            <th scope="col" class="px-6 py-4 text-center">Điểm số</th>
+                            <th scope="col" class="px-6 py-4 text-center">T/G Làm Bài</th>
+                            <th scope="col" class="px-6 py-4 text-center">Cảnh báo</th>
+                            <th scope="col" class="px-6 py-4 text-right">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody" class="divide-y divide-slate-100">
+                        <!-- Rows injected by JS -->
+                        <tr>
+                            <td colspan="7" class="px-6 py-10 text-center text-slate-500">
+                                <div class="inline-block animate-spin w-6 h-6 border-4 border-slate-300 border-t-mit rounded-full mb-2"></div>
+                                <p>Đang tải dữ liệu...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal: Detail View -->
+    <div id="modal-detail" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4 lg:p-10 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-full max-h-full flex flex-col transform scale-95 transition-transform duration-300" id="modal-detail-content">
+            
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800">Chi Tiết Bài Làm</h3>
+                    <p class="text-sm text-slate-500 mt-1">Sinh viên: <span id="detail-email" class="font-bold text-slate-700"></span> - Lớp: <span id="detail-class" class="font-bold text-slate-700"></span></p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right mr-4 hidden sm:block">
+                        <p class="text-xs text-slate-400 font-bold uppercase">Điểm số</p>
+                        <p class="text-2xl font-display font-bold text-mit" id="detail-score">0</p>
+                    </div>
+                    <button onclick="teacherApp.closeModal()" class="w-10 h-10 bg-white border border-slate-200 rounded-full text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors focus:outline-none shadow-sm">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-grow p-6 overflow-y-auto bg-slate-100 custom-scrollbar">
+                <div class="max-w-4xl mx-auto space-y-6" id="detail-questions">
+                    <!-- Detail injected by JS -->
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Script (Bust cache version 2) -->
+    <script src="teacher.js?v=2"></script>
+</body>
+
+</html>

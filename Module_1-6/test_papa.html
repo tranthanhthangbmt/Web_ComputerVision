@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+    <h1>Testing Papa Parse on localhost:8000</h1>
+    <div id="output"></div>
+    <script>
+        Papa.parse("DB/MD1.csv", {
+            download: true,
+            header: true,
+            complete: function(results) {
+                document.getElementById('output').innerText = "SUCCESS: " + results.data.length + " rows";
+            },
+            error: function(err) {
+                document.getElementById('output').innerText = "ERROR: " + JSON.stringify(err);
+            }
+        });
+    </script>
+</body>
+</html>

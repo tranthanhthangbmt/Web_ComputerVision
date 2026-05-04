@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Thị Giác Máy Tính</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-outfit { font-family: 'Outfit', sans-serif; }
+        
+        /* Custom scrollbar for table */
+        .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Cấu hình Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwCC_JYl86o9wN3GO41yUk12eJ9plxhGE",
+            authDomain: "aiud-exam.firebaseapp.com",
+            projectId: "aiud-exam",
+            storageBucket: "aiud-exam.firebasestorage.app",
+            messagingSenderId: "1056714823604",
+            appId: "1:1056714823604:web:8148dcb1018debf34dc4e1"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.firebaseDB = firebase.firestore();
+    </script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col relative overflow-hidden">
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[1000] flex flex-col items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 border-t-4 border-indigo-600">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600 text-2xl">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">Đăng Nhập Quản Trị</h2>
+                <p class="text-slate-500 mt-2 text-sm">Vui lòng xác thực để truy cập hệ thống điểm thi</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Tài Khoản</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-user text-slate-400"></i>
+                        </div>
+                        <input type="text" id="login-username" class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" placeholder="Nhập tài khoản...">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Mật Khẩu</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-slate-400"></i>
+                        </div>
+                        <input type="password" id="login-password" class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" placeholder="Nhập mật khẩu...">
+                    </div>
+                </div>
+                
+                <p id="login-error" class="text-red-500 text-sm text-center hidden font-medium mt-2"><i class="fa-solid fa-circle-exclamation"></i> Tài khoản hoặc mật khẩu không chính xác!</p>
+
+                <button id="btn-login" class="w-full mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all shadow-md shadow-indigo-500/30 flex items-center justify-center gap-2">
+                    Đăng Nhập <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
+                </div>
+                <h1 class="font-outfit text-xl font-bold tracking-wide">Quản Trị Điểm Thi - Thị Giác Máy Tính</h1>
+            </div>
+            <a href="midterm.html" class="text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Về trang làm bài
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Dashboard Stats & Controls -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 flex flex-col md:flex-row gap-6 items-end justify-between">
+            
+            <!-- Filter by Class -->
+            <div class="flex-grow md:w-1/4">
+                <label for="class-select" class="block text-sm font-semibold text-slate-700 mb-2">Chọn Lớp</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-graduation-cap text-slate-400"></i>
+                    </div>
+                    <select id="class-select" class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-semibold uppercase">
+                        <option value="">-- Tất cả các lớp --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter by Date -->
+            <div class="flex-grow md:w-1/4">
+                <label for="date-filter" class="block text-sm font-semibold text-slate-700 mb-2">Ngày làm bài</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-calendar-days text-slate-400"></i>
+                    </div>
+                    <input type="date" id="date-filter" class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-semibold">
+                </div>
+            </div>
+
+            <div class="flex gap-3 w-full md:w-auto">
+                <button id="btn-fetch" class="flex-1 md:flex-none px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> Tải Dữ Liệu Lớp
+                </button>
+                <button id="btn-export" class="flex-1 md:flex-none px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-file-csv"></i> Xuất File Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[600px]">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list text-indigo-500"></i> Bảng Điểm Chi Tiết
+                </h2>
+                <div class="text-sm font-medium text-slate-500">
+                    Sĩ số đã nộp: <span id="student-count" class="text-indigo-600 font-bold">0</span> sinh viên
+                </div>
+            </div>
+            
+            <div class="flex-grow table-container overflow-auto relative">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                    <thead class="bg-slate-100 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">STT</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Họ Tên</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Mã ID</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Lớp</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Hình thức</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Môn thi</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Email Sinh Viên</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Điểm Số (Hệ 10)</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Thời Gian Làm</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Vi Phạm (Thoát tab)</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700">Ngày Giờ Nộp</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-slate-700 text-center">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="bg-white divide-y divide-slate-100">
+                        <!-- Empty State -->
+                        <tr>
+                            <td colspan="12" class="px-6 py-20 text-center text-slate-400">
+                                <i class="fa-solid fa-folder-open text-4xl mb-3 text-slate-300"></i>
+                                <p>Vui lòng nhập tên lớp và ấn "Tải Dữ Liệu" để hiển thị điểm thi.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Chi Tiết Bài Làm -->
+    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800">Chi Tiết Bài Làm</h3>
+                    <p id="modal-student-email" class="text-sm text-slate-500 font-medium">email@donga.edu.vn</p>
+                </div>
+                <button id="btn-close-modal" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto" id="modal-content">
+                <!-- Chi tiết câu hỏi sẽ được inject vào đây -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Toast -->
+    <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

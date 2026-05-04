@@ -226,7 +226,7 @@
                 <i class="fa-solid fa-puzzle-piece mr-2"></i>Trắc nghiệm
             </button>
         </div>
-        
+
         <!-- Tab Content: Theory -->
         <div id="theory" class="tab-content active">
             <!-- PART SELECTION & INFOGRAPHIC -->
@@ -234,11 +234,14 @@
                 style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; flex-grow: 1;">
                     <button class="part-btn active" onclick="loadPart(1, this)"><span class="desktop-icon"><i
-                                class="fa-solid fa-circle-play"></i> Tiết 1</span><span class="desktop-text">: Supervised Learning & KNN</span><span class="mobile-text">1</span></button>
+                                class="fa-solid fa-circle-play"></i> Tiết 1</span><span class="desktop-text">:
+                            Supervised Learning & KNN</span><span class="mobile-text">1</span></button>
                     <button class="part-btn" onclick="loadPart(2, this)"><span class="desktop-icon"><i
-                                class="fa-solid fa-circle-play"></i> Tiết 2</span><span class="desktop-text">: The Visual Dictionary</span><span class="mobile-text">2</span></button>
+                                class="fa-solid fa-circle-play"></i> Tiết 2</span><span class="desktop-text">: The
+                            Visual Dictionary</span><span class="mobile-text">2</span></button>
                     <button class="part-btn" onclick="loadPart(3, this)"><span class="desktop-icon"><i
-                                class="fa-solid fa-circle-play"></i> Tiết 3</span><span class="desktop-text">: SVM Image Classification</span><span class="mobile-text">3</span></button>
+                                class="fa-solid fa-circle-play"></i> Tiết 3</span><span class="desktop-text">: SVM Image
+                            Classification</span><span class="mobile-text">3</span></button>
                 </div>
                 <!-- Infographic Button -->
                 <button class="part-btn info-btn" onclick="showInfographic()"
@@ -246,13 +249,13 @@
                     <i class="fa-solid fa-images"></i><span class="btn-text">Infographic</span>
                 </button>
             </div>
-            
+
             <div class="bg-white p-4 rounded-xl shadow-sm" style="height: 800px;">
                 <!-- PDF Viewer / Slide Player -->
                 <iframe id="pdf-frame" width="100%" height="100%" style="border: none;"></iframe>
             </div>
         </div>
-        
+
         <!-- Tab Content: Practice -->
         <div id="practice" class="tab-content">
             <div class="notebook-section">
@@ -270,11 +273,14 @@
                         <tr>
                             <td>Tuần 5</td>
                             <td>Thực hành phân lớp ảnh (KNN & SVM)</td>
-                            <td><span class="badge easy" style="background-color: #f9ab00; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Thực hành</span></td>
+                            <td><span class="badge easy"
+                                    style="background-color: #f9ab00; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Thực
+                                    hành</span></td>
                             <td style="display: flex; gap: 5px;">
                                 <a href="https://colab.research.google.com/github/tranthanhthangbmt/Web_ComputerVision/blob/main/Ch%C6%B0%C6%A1ng%205_Ph%C3%A2n%20l%E1%BB%9Bp%20%E1%BA%A3nh/Th%E1%BB%B1c%20h%C3%A0nh/Chuong_5_PhanLopAnh.ipynb"
                                     target="_blank" class="btn-start"
-                                    style="padding: 5px 10px; font-size: 0.8rem; background-color: #f9ab00; border-color: #f9ab00; color: #fff; text-decoration: none; display: inline-flex; align-items: center;"><i class="fa-brands fa-google mr-1"></i> Colab</a>
+                                    style="padding: 5px 10px; font-size: 0.8rem; background-color: #f9ab00; border-color: #f9ab00; color: #fff; text-decoration: none; display: inline-flex; align-items: center;"><i
+                                        class="fa-brands fa-google mr-1"></i> Colab</a>
                                 <a href="Thực hành/Thực hành Chương 5.pdf" download class="btn-start"
                                     style="padding: 5px 10px; font-size: 0.8rem; background-color: #0d6efd; border-color: #0d6efd; color: #fff; text-decoration: none; display: inline-flex; align-items: center;"><i
                                         class="fa-solid fa-download mr-1"></i> Slide</a>
@@ -284,7 +290,7 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Tab Content: Quiz -->
         <div id="quiz" class="tab-content">
             <!-- Dynamic Quiz Link -->
@@ -294,18 +300,18 @@
             </div>
         </div>
     </div>
-    
+
     <!-- INFOGRAPHIC MODAL -->
     <div id="info-modal" class="info-modal">
         <span class="close-modal" onclick="closeInfographic()">&times;</span>
         <img class="modal-content" id="info-image">
         <div id="caption"></div>
     </div>
-    
+
     <footer class="footer">
         <p>&copy; 2026 Computer Vision Course.</p>
     </footer>
-    
+
     <script>
         // Tab function
         function openTab(evt, tabName) {

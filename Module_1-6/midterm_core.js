@@ -95,6 +95,8 @@ const midtermApp = {
             void view.offsetWidth; // trigger reflow
             view.classList.add('fade-in');
         }
+        // Cuộn lên đầu trang để tránh bị thanh header che khuất nội dung
+        window.scrollTo(0, 0);
     },
 
     // --- Authentication ---
@@ -379,6 +381,14 @@ const midtermApp = {
         
         badgeClassName.textContent = className;
         
+        // Push layout down to accommodate the badge
+        document.body.classList.add('pt-10');
+        const header = document.querySelector('header');
+        if (header) {
+            header.classList.remove('top-0');
+            header.classList.add('top-10');
+        }
+
         // Với Firebase, dữ liệu được truyền thẳng vào máy chủ Google siêu tốc
         badge.classList.add('bg-emerald-600');
         badgeStatusIcon.className = 'fa-solid fa-cloud-check';
@@ -567,12 +577,14 @@ const midtermApp = {
     jumpToQuestion: function (index) {
         this.state.currentIndex = index;
         this.renderQuestion();
+        window.scrollTo(0, 0);
     },
 
     nextQuestion: function () {
         if (this.state.currentIndex < this.config.totalQuestions - 1) {
             this.state.currentIndex++;
             this.renderQuestion();
+            window.scrollTo(0, 0);
         }
     },
 
@@ -580,6 +592,7 @@ const midtermApp = {
         if (this.state.currentIndex > 0) {
             this.state.currentIndex--;
             this.renderQuestion();
+            window.scrollTo(0, 0);
         }
     },
 

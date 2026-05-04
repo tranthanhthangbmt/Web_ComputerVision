@@ -2,9 +2,9 @@ console.log("🚀 [MIDTERM_CORE] ĐÃ NẠP THÀNH CÔNG HỆ THỐNG MỚI - BY
 
 const midtermApp = {
     config: {
-        totalQuestions: 50, // 5 chương × 10 câu = 50 (sẽ tăng khi thêm chương 6-8)
+        totalQuestions: 50, // Cố định 50 câu
         questionsPerModule: 10,
-        timeLimitMinutes: 50, // 50 phút cho 50 câu
+        timeLimitMinutes: 60, // 60 phút cho 50 câu
         allowedEmailDomain: '@donga.edu.vn',
         // Mỗi chương có thể chứa nhiều file CSV (các tiết), hệ thống sẽ gom lại rồi random
         modules: [
@@ -35,9 +35,23 @@ const midtermApp = {
                 "DB/MD_Chuong5-T1.csv",
                 "DB/MD_Chuong5-T2.csv",
                 "DB/MD_Chuong5-T3.csv"
+            ]},
+            { id: 6, name: "Chương 6 - Mạng CNN", files: [
+                "DB/MD_Chuong6-T1.csv",
+                "DB/MD_Chuong6-T2.csv",
+                "DB/MD_Chuong6-T3.csv"
+            ]},
+            { id: 7, name: "Chương 7 - Deep Learning cho TGMT", files: [
+                "DB/MD_Chuong7-T1.csv",
+                "DB/MD_Chuong7-T2.csv",
+                "DB/MD_Chuong7-T3.csv"
+            ]},
+            { id: 8, name: "Chương 8 - Dự đoán chuyển động", files: [
+                "DB/MD_Chuong8-T1.csv",
+                "DB/MD_Chuong8-T2.csv",
+                "DB/MD_Chuong8-T3.csv"
             ]}
             // === THÊM CHƯƠNG MỚI TẠI ĐÂY ===
-            // { id: 6, name: "Chương 6 - Mạng CNN", files: ["DB/MD_Chuong6-T1.csv", ...] },
             // { id: 7, name: "Chương 7 - Deep Learning cho TGMT", files: ["DB/MD_Chuong7-T1.csv", ...] },
             // { id: 8, name: "Chương 8 - Dự đoán chuyển động", files: ["DB/MD_Chuong8-T1.csv", ...] },
         ]
@@ -313,9 +327,9 @@ const midtermApp = {
         const results = await Promise.all(modulePromises);
         let allPicked = results.flat();
 
-        // Tự động tính lại tổng số câu = số chương × questionsPerModule
-        const expectedTotal = this.config.modules.length * this.config.questionsPerModule;
-        this.config.totalQuestions = expectedTotal;
+        // Tự động tính lại tổng số câu = số chương × questionsPerModule (ĐÃ BỎ ĐỂ CỐ ĐỊNH 50 CÂU)
+        // const expectedTotal = this.config.modules.length * this.config.questionsPerModule;
+        // this.config.totalQuestions = expectedTotal;
 
         // Final shuffle of all questions
         this.shuffleArray(allPicked);
